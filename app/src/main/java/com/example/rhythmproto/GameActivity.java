@@ -6,6 +6,7 @@ import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
@@ -32,8 +33,11 @@ public class GameActivity extends AppCompatActivity {
 
     int score; // 총 점수
 
+    int combo; // 콤보 수
+
     TextView scoreTV;
     TextView judgmentTV;
+    TextView comboTV;
     AnimationController animationController;
     private List<NoteView>[] lanes = new List[5];  // 5개의 레인을 위한 배열
     private Runnable gameUpdateRunnable = new Runnable() {
@@ -44,7 +48,8 @@ public class GameActivity extends AppCompatActivity {
         }
     }; //게임 핸들러 스레드
     MediaPlayer mediaPlayer; // 노래 플레이어 객체
-    int dalay_StartTime = 1330; // 노래 시작 시간 +시간은 더 빠르게, -시간은 더 느리게
+    int dalay_StartTime = 950; // 노래 시작 시간 +시간은 더 빠르게, -시간은 더 느리게 (통상적으로 배속 * 판정선배율 - 170하면 맞음)
+    String color; // 판정 색깔코드
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,6 +77,7 @@ public class GameActivity extends AppCompatActivity {
 
         score = 0;
         judgmentTV = findViewById(R.id.judgmentTV); // 판정텍스트뷰
+        comboTV = findViewById(R.id.comboTV); // 콤보텍스트뷰
 
         judgmentLineView = findViewById(R.id.judgmentLineView);
         setupJudgmentLine();    // 판정선 메소드
@@ -135,11 +141,12 @@ public class GameActivity extends AppCompatActivity {
 
     private void preparedNotesInBackGround() {
         new Thread(() -> {
-            runOnUiThread(()->{
+            runOnUiThread(() -> {
                 noteManager.createNotesFromData(notes);
             });
         }).start();
     }  // 파싱데이터로 노트데이터를 실행하는 메소드 &UI쓰레드로 처리하여 부담줄이기& - 5/2 오전3시 이 작업으로 렉이 70%이상 줄어든듯^^!
+
     public GameActivity() {
         for (int i = 0; i < lanes.length; i++) {
             lanes[i] = new ArrayList<>();
@@ -158,52 +165,56 @@ public class GameActivity extends AppCompatActivity {
         }
     } //처리됐거나 화면을 벗어난 노트는 리스트에서 제거하는 메소드
 
-    public void checkJudgment(List<NoteView> notes, float judgmentLineY) {
-        for (NoteView note : notes) {
-            if (!note.isJudged()) {  // 판정되지 않은 노트만 처리
-                float distance = Math.abs(note.getY() - judgmentLineY); //노트의 y위치와 판정y위치의 거리차이
-                String judgment;
-                if (distance < JudgmentWindow.BAD) {
-                    if (distance <= JudgmentWindow.PERFECT) {
-                        note.setJudgment("Perfect");
-                        judgment = "PERFECT";
-                        updateScore(judgment);
-                        animationController.startAnimation(judgmentTV, judgment);  // 화면중앙에 노트판정 텍스트를 애니메이션 효과로 출력하는 메소드(매개변수는 String 형태)
-                    } else if (distance <= JudgmentWindow.GREAT) {
-                        note.setJudgment("Great");
-                        judgment = "GREAT";
-                        updateScore(judgment);
-                        animationController.startAnimation(judgmentTV, judgment);
-                    } else if (distance <= JudgmentWindow.GOOD) {
-                        note.setJudgment("Good");
-                        judgment = "GOOD";
-                        updateScore(judgment);
-                        animationController.startAnimation(judgmentTV, judgment);
-                    } else if (distance <= JudgmentWindow.BAD) {
-                        note.setJudgment("BAD");
-                        judgment = "BAD";
-                        updateScore(judgment);
-                        animationController.startAnimation(judgmentTV, judgment);
-                    }
-                    note.setJudged(true);
+    public void checkJudgment(NoteView note, float judgmentLineY) {
+        float checkY = (note.getY()) + (note.getHeight()/2.0f); // 노트의 y위치 - Height / 2 (노트블럭의 중간) 을 더해줌
+
+        if (!note.isJudged()) {  // 판정되지 않은 노트만 처리
+            float distance = Math.abs(checkY - judgmentLineY); //노트의 y위치와 판정y위치의 거리차이
+            String judgment;
+            if (distance < JudgmentWindow.BAD) {
+                if (distance <= JudgmentWindow.PERFECT) {
+                    comboIncrease(); //콤보수 증가 메소드
+                    note.setJudgment("Perfect"); //판정처리
+                    judgment = "PERFECT";
+                    color = "#FFEB3B";  // 노란색 코드
+                    updateScore(judgment); //판정에따라 점수를 추가
+                    animationController.startAnimation(judgmentTV, judgment, color);  // 화면중앙에 노트판정 텍스트를 애니메이션 효과로 출력하는 메소드(매개변수는 String 형태)
+                } else if (distance <= JudgmentWindow.GREAT) {
+                    comboIncrease();
+                    note.setJudgment("Great");
+                    judgment = "GREAT";
+                    color = "#8BC34A";  // 초록색 코드
+                    updateScore(judgment);
+                    animationController.startAnimation(judgmentTV, judgment, color);
+                } else if (distance <= JudgmentWindow.GOOD) {
+                    comboIncrease();
+                    note.setJudgment("Good");
+                    judgment = "GOOD";
+                    color = "#FF9800";  // 주황색 코드
+                    updateScore(judgment);
+                    animationController.startAnimation(judgmentTV, judgment, color);
+                } else if (distance <= JudgmentWindow.BAD) {
+                    comboReset();
+                    note.setJudgment("BAD");
+                    judgment = "BAD";
+                    color = "#606060";  // 회색 코드
+                    updateScore(judgment);
+                    animationController.startAnimation(judgmentTV, judgment, color);
                 }
+                note.setJudged(true);
             }
         }
     } // 판정 처리 메소드
 
-    private NoteView findClosetNote(List<NoteView> notes) {
-        NoteView closet = null;
-        float minDistance = Float.MAX_VALUE;
+    private void comboIncrease() {
+        combo += 1;
+        comboTV.setText("" + combo);
+    } // 콤보에 +1후 콤보텍스트뷰에 1을 더하는 메소드
 
-        for (NoteView note : notes) {
-            float distance = Math.abs(note.getY() - judgmentLineY);
-            if (distance < minDistance) {    //노트가 존재하는지 확인하는 메소드
-                minDistance = distance;
-                closet = note;
-            }
-        }
-        return closet;
-    }  //가장 가까운 노트를 찾아주는 NoteView메소드
+    private void comboReset() {
+        combo = 0;
+        comboTV.setText("" + combo);
+    } // 콤보 리셋후 콤보텍스트뷰에 0을 세팅하는 메소드
 
     public void updateScore(String judgment) {
         if (judgment == null) return;
@@ -222,7 +233,7 @@ public class GameActivity extends AppCompatActivity {
                 score -= 500;
                 break;
         }
-        runOnUiThread(()-> displayScore(score)); // 점수를 화면에 표시
+        runOnUiThread(() -> displayScore(score)); // 점수를 화면에 표시
     } // 노트에 판정따른 스코어 +- 메소드
 
     //       스코어 관련 메소드묶음     +++
@@ -235,7 +246,7 @@ public class GameActivity extends AppCompatActivity {
         judgmentLineView.post(new Runnable() {
             @Override
             public void run() { // 화면이 생성된후 JudgmentLineView(게임판크기)의 높이를 토대로 생성할것이기 떄문에. post() 메소드를 사용하면 레이아웃이 그려진후 높이를 가져올 수 있게됨.
-                judgmentLineY = judgmentLineView.getHeight() * 0.915f;
+                judgmentLineY = judgmentLineView.getHeight() * 0.74f;
                 judgmentLineView.setLinePosition(judgmentLineY);
             }
         });
@@ -245,17 +256,31 @@ public class GameActivity extends AppCompatActivity {
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SoundManager.getInstance().playSound(); // 판정 종소리 효과음
+                //SoundManager.getInstance().playSound(); // 판정 종소리 효과음
                 List<NoteView> laneNotes = noteManager.getLaneNotes(index); //NoteManager의 lane1Notes에서 노트1 데이터 받아오기
                 NoteView closetNote = findClosetNote(laneNotes);
                 if (closetNote != null) {
-                    //checkJudgment(closetNote, judgmentLineY); 원래코드 - 리스트에서 데이터가 삭제 안되는 관계로 일단은 판정을 최대아랫범위보다 줄이고, 최대 아랫범위 내의 값만으로 판정을 처리하게 만듬. 05/02 새벽1시3분
-                    checkJudgment(laneNotes, judgmentLineY); // 판정체크
+                    checkJudgment(closetNote, judgmentLineY); // 원래코드 - 리스트에서 데이터가 삭제 안되는 관계로 일단은 판정을 최대아랫범위보다 줄이고, 최대 아랫범위 내의 값만으로 판정을 처리하게 만듬. 05/02 새벽1시3분
+                    //checkJudgment(laneNotes, judgmentLineY); // 판정체크
                     //updateScore(closetNote.getJudgment()); //점수 업데이트 - 이것또한 판정이후에 처리하는게 훨씬 깔끔해서 GameActivity - checkJudgment() 메소드 안에서 판정에따라 처리하게 변경.
                 }
             }
         });
-    }  // 버튼객체와, 인덱스로 판정리스너를 삽입해주는 메소드
+    }     // 버튼객체와, 인덱스로 판정리스너를 삽입해주는 메소드
+
+    private NoteView findClosetNote(List<NoteView> notes) {
+        NoteView closet = null;
+        float minDistance = Float.MAX_VALUE;
+
+        for (NoteView note : notes) {
+            float distance = Math.abs(note.getY() - judgmentLineY);
+            if (distance < minDistance) {    //노트가 존재하는지 확인하는 메소드
+                minDistance = distance;
+                closet = note;
+            }
+        }
+        return closet;
+    }  //가장 가까운 노트를 찾아주는 NoteView메소드
 
     @Override
     protected void onDestroy() {
@@ -266,4 +291,26 @@ public class GameActivity extends AppCompatActivity {
         }
         gameHandler.removeCallbacksAndMessages(null);
     } // 뷰가 꺼질때 노래,종소리도 같이 null로 초기화
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        switch (keyCode) {
+            case KeyEvent.KEYCODE_A:
+                button1.performClick();
+                return true;
+            case KeyEvent.KEYCODE_S:
+                button2.performClick();
+                return true;
+            case KeyEvent.KEYCODE_SEMICOLON:
+                button3.performClick();
+                return true;
+            case KeyEvent.KEYCODE_APOSTROPHE:
+                button4.performClick();
+                return true;
+            /*case KeyEvent.KEYCODE_M:
+                button5.performClick();
+                return true;*/
+        }
+        return super.onKeyDown(keyCode, event);
+    } //키보드 지원을 위한 키보드 A,S,;,' 키를 1,2,3,4번 버튼을 눌러주게하는 메소드
 }

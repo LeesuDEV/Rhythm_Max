@@ -6,7 +6,7 @@ import android.media.SoundPool;
 
 public class SoundManager {
     private static SoundManager instance;
-    private SoundPool soundPool;
+    final private SoundPool soundPool;
     private int soundID;
 
     private SoundManager() {
@@ -16,7 +16,7 @@ public class SoundManager {
                 .build();
 
         soundPool = new SoundPool.Builder()
-                .setMaxStreams(5)
+                .setMaxStreams(20)
                 .setAudioAttributes(audioAttributes)
                 .build();
     }
@@ -29,7 +29,7 @@ public class SoundManager {
     }
 
     public void loadSound(Context context) {
-        soundID = soundPool.load(context, R.raw.ring, 1);
+        soundID = soundPool.load(context, R.raw.clap, 1);
     }
 
     public void playSound() {

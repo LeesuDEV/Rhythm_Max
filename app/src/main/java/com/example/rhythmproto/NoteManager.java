@@ -3,6 +3,7 @@ package com.example.rhythmproto;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Handler;
+import android.util.Log;
 import android.view.ViewGroup;
 
 import java.util.ArrayList;
@@ -12,11 +13,8 @@ public class NoteManager {
     private Context context;
     private ViewGroup noteLayout; // 노트가 표시될 레이아웃
     private List<NoteView> notes = new ArrayList<>(); // 생성된 노트 뷰들을 관리하는 리스트
-    private static final int UPDATE_INTERVAL = 30; // 30 밀리초 간격으로 업데이트
     private Handler handler = new Handler();
-    private long gameStartTime;
     private int note_Speed = 1500; //노트의 배속 (내려오는데 걸리는 시간)
-
     private List<NoteView>[] lanes = new List[5];  // 5개의 레인을 위한 배열
 
     public NoteManager(Context context, ViewGroup noteLayout) {
@@ -63,7 +61,8 @@ public class NoteManager {
         // x 좌표 값에 따라 레인 인덱스를 결정
         int laneIndex = getLaneIndex(x);
         int layoutWidth = noteLayout.getWidth();
-        float laneWidth = layoutWidth / 5.0f;  // 5개 레인을 가정 165가 나와야함
+        float laneWidth = layoutWidth / 4.0f;  // 5개 레인을 가정 165가 나와야함 4개레인 230.25
+        Log.d("laneWidth",String.valueOf(laneWidth));
         float returnValue = (laneWidth * laneIndex);
         return returnValue;
     }  // getLaneIndex의 x값으로 float X좌표값을 반환

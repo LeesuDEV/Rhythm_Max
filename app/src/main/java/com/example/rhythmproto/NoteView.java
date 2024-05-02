@@ -6,7 +6,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Paint;
 import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.view.View;
@@ -21,7 +20,6 @@ public class NoteView extends View {
     float value; // 노트의 현재 y위치 값
     private int screenHeight; //화면의 높이
     private int width, height; // 노트의 크기
-    private Paint paint; // 노트의 색과 스타일 설정
     private ViewGroup noteLayout;
     private String judgment = "BAD"; // 판정 문자
     private Bitmap noteWhite,noteBlue;
@@ -47,7 +45,7 @@ public class NoteView extends View {
         this.y = y; // 초기 y 위치
         setX(x);
         setY(y);
-        this.width = 165; // 적절한 크기 설정
+        this.width = 230; // 적절한 크기 설정
         this.height = 50; // 적절한 크기 설정
         loadNoteImage();
         setBackgroundColor(Color.parseColor("#000000"));
@@ -112,7 +110,7 @@ public class NoteView extends View {
         return judgment;
     }  // 판정 문자열 반환 메소드
 
-    private void updateVisualsBasedOnJudgment() {  //임시적으로 판정이 작동하면 노트블럭의 색상을 변경
+    private void updateVisualsBasedOnJudgment() {
         switch (judgment) {
             case "Perfect":
                 removeNoteFromLayout();
@@ -131,7 +129,7 @@ public class NoteView extends View {
                 setJudged(true);
                 break;
         }
-    }
+    }  // 판정결과에 따라 노트객체를 레이아웃에서 삭제하고 + "판정됨" 을 표시하는 judged 값을 true로 변경
 
     private void removeNoteFromLayout() {
         if (noteLayout != null) {

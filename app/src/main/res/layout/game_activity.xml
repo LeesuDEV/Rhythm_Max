@@ -13,8 +13,9 @@
         android:background="#000000">
 
         <FrameLayout
-            android:layout_width="335dp"
-            android:layout_height="575dp"
+            android:layout_marginRight="2dp"
+            android:layout_width="333dp"
+            android:layout_height="700dp"
             android:orientation="horizontal"
             android:background="#000000"
             android:layout_gravity="top|center"
@@ -38,17 +39,7 @@
             android:layout_gravity="center" />
 
 
-        <TextView
-            android:id="@+id/scoreTV"
-            android:layout_marginTop="300dp"
-            android:layout_width="80dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="0"
-            android:textAlignment="center"
-            android:textColor="#D3D3D3"
-            android:textSize="13dp"
-            android:textStyle="bold" />
+
 
         <Button
             android:layout_margin="13dp"
@@ -130,15 +121,40 @@
         </LinearLayout>
         
         <TextView
+            android:layout_marginTop="70dp"
             android:id="@+id/judgmentTV"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="PERFECT"
+            android:text=""
             android:textColor="#ffffff"
             android:textSize="24sp"
             android:textStyle="bold"
             android:visibility="visible"/>
+
+        <TextView
+            android:layout_marginTop="70dp"
+            android:id="@+id/comboTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|center"
+            android:text="0"
+            android:textColor="#979797"
+            android:textSize="50sp"
+            android:textStyle="bold"
+            android:visibility="visible"/>
+
+        <TextView
+            android:id="@+id/scoreTV"
+            android:layout_marginTop="300dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="0"
+            android:textAlignment="center"
+            android:textColor="#ECECEC"
+            android:textSize="13sp"
+            android:textStyle="bold" />
 
     </FrameLayout>
 </LinearLayout>
