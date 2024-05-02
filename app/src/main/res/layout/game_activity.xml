@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".MainActivity">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#000000">
+
+        <FrameLayout
+            android:layout_width="335dp"
+            android:layout_height="575dp"
+            android:orientation="horizontal"
+            android:background="#000000"
+            android:layout_gravity="top|center"
+            android:id="@+id/noteView">
+
+            <com.example.rhythmproto.JudgmentLineView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/judgmentLineView"
+                />
+        </FrameLayout>
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/gear" />
+        <ImageView
+            android:layout_marginTop="162dp"
+            android:layout_width="336.5dp"
+            android:layout_height="550dp"
+            android:src="@drawable/line"
+            android:layout_gravity="center" />
+
+
+        <TextView
+            android:id="@+id/scoreTV"
+            android:layout_marginTop="300dp"
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="0"
+            android:textAlignment="center"
+            android:textColor="#D3D3D3"
+            android:textSize="13dp"
+            android:textStyle="bold" />
+
+        <Button
+            android:layout_margin="13dp"
+            android:id="@+id/quitGameBtn"
+            android:layout_gravity="right"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:text="X"
+            android:background="#8E1212"
+            android:layout_marginLeft="60dp"/>
+
+        <LinearLayout
+            android:layout_marginTop="240sp"
+            android:layout_width="350sp"
+            android:layout_height="90sp"
+            android:layout_gravity="center"
+            android:orientation="horizontal"
+            android:weightSum="5">
+
+            <Button
+                android:id="@+id/button1"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="#00ff0000"
+                android:gravity="center"
+                android:text=""
+                android:textAlignment="center"
+                android:textColor="@color/white"
+                android:textSize="25dp" />
+
+            <Button
+                android:id="@+id/button2"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="#00ff0000"
+                android:gravity="center"
+                android:text=""
+                android:textAlignment="center"
+                android:textColor="@color/white"
+                android:textSize="25dp" />
+
+            <Button
+                android:id="@+id/button3"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="#00ff0000"
+                android:gravity="center"
+                android:text=""
+                android:textAlignment="center"
+                android:textColor="@color/white"
+                android:textSize="25dp" />
+
+            <Button
+                android:id="@+id/button4"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="#00ff0000"
+                android:gravity="center"
+                android:text=""
+                android:textAlignment="center"
+                android:textColor="@color/white"
+                android:textSize="25dp" />
+
+            <Button
+                android:id="@+id/button5"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="#00ff0000"
+                android:gravity="center"
+                android:text=""
+                android:textAlignment="center"
+                android:textColor="@color/white"
+                android:textSize="25dp" />
+        </LinearLayout>
+        
+        <TextView
+            android:id="@+id/judgmentTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="PERFECT"
+            android:textColor="#ffffff"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:visibility="visible"/>
+
+    </FrameLayout>
+</LinearLayout>
