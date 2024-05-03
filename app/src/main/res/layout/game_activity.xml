@@ -20,6 +20,45 @@
             android:background="#000000"
             android:layout_gravity="top|center"
             android:id="@+id/noteView">
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="520dp"
+                android:weightSum="4"
+                android:id="@+id/lineLight">
+                <ImageView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:src="@drawable/line_light"
+                    android:scaleType="fitXY"
+                    android:id="@+id/lane1_light"
+                    android:visibility="invisible"/>
+                <ImageView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:src="@drawable/line_light"
+                    android:scaleType="fitXY"
+                    android:id="@+id/lane2_light"
+                    android:visibility="invisible"/>
+                <ImageView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:src="@drawable/line_light"
+                    android:scaleType="fitXY"
+                    android:id="@+id/lane3_light"
+                    android:visibility="invisible"/>
+                <ImageView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:src="@drawable/line_light"
+                    android:scaleType="fitXY"
+                    android:id="@+id/lane4_light"
+                    android:visibility="invisible"/>
+            </LinearLayout>
 
             <com.example.rhythmproto.JudgmentLineView
                 android:layout_width="match_parent"
@@ -57,7 +96,7 @@
             android:layout_height="90sp"
             android:layout_gravity="center"
             android:orientation="horizontal"
-            android:weightSum="5">
+            android:weightSum="4">
 
             <Button
                 android:id="@+id/button1"
@@ -97,18 +136,6 @@
 
             <Button
                 android:id="@+id/button4"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:background="#00ff0000"
-                android:gravity="center"
-                android:text=""
-                android:textAlignment="center"
-                android:textColor="@color/white"
-                android:textSize="25dp" />
-
-            <Button
-                android:id="@+id/button5"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"

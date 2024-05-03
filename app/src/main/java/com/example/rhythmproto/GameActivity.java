@@ -7,10 +7,12 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -32,14 +34,19 @@ public class GameActivity extends AppCompatActivity {
     private JudgmentLineView judgmentLineView;
 
     int score; // 총 점수
-
     int combo; // 콤보 수
 
-    TextView scoreTV;
-    TextView judgmentTV;
-    TextView comboTV;
+    TextView scoreTV;  // 점수 텍스트뷰
+    TextView judgmentTV;  // 판정 텍스트뷰
+    TextView comboTV;  //콤보 텍스트뷰
+    ImageView laneLight1,laneLight2,laneLight3,laneLight4;  // 라인 불빛 이미지뷰
     AnimationController animationController;
     private List<NoteView>[] lanes = new List[5];  // 5개의 레인을 위한 배열
+
+    MediaPlayer mediaPlayer; // 노래 플레이어 객체
+    int dalay_StartTime = 1050; // 노래 시작 시간 +시간은 더 빠르게, -시간은 더 느리게 (통상적으로 배속 * 판정선배율 - 170하면 맞음) // 컴퓨터 950
+    String color; // 판정 색깔코드
+
     private Runnable gameUpdateRunnable = new Runnable() {
         @Override
         public void run() {
@@ -47,9 +54,7 @@ public class GameActivity extends AppCompatActivity {
             gameHandler.postDelayed(this, 16); // 예를 들어, 16ms는 (약 60FPS)
         }
     }; //게임 핸들러 스레드
-    MediaPlayer mediaPlayer; // 노래 플레이어 객체
-    int dalay_StartTime = 950; // 노래 시작 시간 +시간은 더 빠르게, -시간은 더 느리게 (통상적으로 배속 * 판정선배율 - 170하면 맞음)
-    String color; // 판정 색깔코드
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,7 +78,11 @@ public class GameActivity extends AppCompatActivity {
         button2 = findViewById(R.id.button2);
         button3 = findViewById(R.id.button3);
         button4 = findViewById(R.id.button4);
-        button5 = findViewById(R.id.button5);
+
+        laneLight1 = findViewById(R.id.lane1_light);
+        laneLight2 = findViewById(R.id.lane2_light);
+        laneLight3 = findViewById(R.id.lane3_light);
+        laneLight4 = findViewById(R.id.lane4_light);
 
         score = 0;
         judgmentTV = findViewById(R.id.judgmentTV); // 판정텍스트뷰
@@ -82,11 +91,15 @@ public class GameActivity extends AppCompatActivity {
         judgmentLineView = findViewById(R.id.judgmentLineView);
         setupJudgmentLine();    // 판정선 메소드
 
-        laneButtonListener(button1, 1);  // 판정처리 리스너 레인1
-        laneButtonListener(button2, 2);  // 판정처리 리스너 레인2
-        laneButtonListener(button3, 3);  // 판정처리 리스너 레인3
-        laneButtonListener(button4, 4);  // 판정처리 리스너 레인4
-        laneButtonListener(button5, 5);  // 판정처리 리스너 레인5
+        /*laneButtonListener(button1, 1,laneLight1);  // 판정처리 리스너 레인1
+        laneButtonListener(button2, 2,laneLight2);  // 판정처리 리스너 레인2
+        laneButtonListener(button3, 3,laneLight3);  // 판정처리 리스너 레인3
+        laneButtonListener(button4, 4,laneLight4);  // 판정처리 리스너 레인4*/
+
+        laneButtonTouchListener(button1, 1,laneLight1);  // 판정 터치 리스너 레인1
+        laneButtonTouchListener(button2, 2,laneLight2);  // 판정 터치 리스너 레인2
+        laneButtonTouchListener(button3, 3,laneLight3);  // 판정 터치 리스너 레인3
+        laneButtonTouchListener(button4, 4,laneLight4);  // 판정 터치 리스너 레인4
 
         mediaPlayer = new MediaPlayer();
 
@@ -252,21 +265,40 @@ public class GameActivity extends AppCompatActivity {
         });
     }  // 화면높이의 0.9비율에 판정선 위치 설정하는 메소드
 
-    public void laneButtonListener(Button btn, int index) {
+    /*public void laneButtonListener(Button btn, int index,ImageView laneLightNum) {
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //SoundManager.getInstance().playSound(); // 판정 종소리 효과음
-                List<NoteView> laneNotes = noteManager.getLaneNotes(index); //NoteManager의 lane1Notes에서 노트1 데이터 받아오기
-                NoteView closetNote = findClosetNote(laneNotes);
-                if (closetNote != null) {
-                    checkJudgment(closetNote, judgmentLineY); // 원래코드 - 리스트에서 데이터가 삭제 안되는 관계로 일단은 판정을 최대아랫범위보다 줄이고, 최대 아랫범위 내의 값만으로 판정을 처리하게 만듬. 05/02 새벽1시3분
-                    //checkJudgment(laneNotes, judgmentLineY); // 판정체크
-                    //updateScore(closetNote.getJudgment()); //점수 업데이트 - 이것또한 판정이후에 처리하는게 훨씬 깔끔해서 GameActivity - checkJudgment() 메소드 안에서 판정에따라 처리하게 변경.
-                }
+                touchEvent(btn,index,laneLightNum);
             }
         });
-    }     // 버튼객체와, 인덱스로 판정리스너를 삽입해주는 메소드
+    }     // onCLickListener */
+
+    public void laneButtonTouchListener(Button btn, int index,ImageView laneLightNum) {
+        btn.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    touchEvent(btn, index, laneLightNum);
+                    return true; // 이벤트를 여기서 종료
+                }
+                return false;
+            }
+        });
+    }
+
+    public void touchEvent(Button btn, int index,ImageView laneLightNum){
+        SoundManager.getInstance().playSound(); // 판정 종소리 효과음
+        laneLightNum.setVisibility(View.VISIBLE); // 해당라인 불빛기둥 생성
+        new Handler().postDelayed(() -> laneLightNum.setVisibility(View.INVISIBLE),100); // 해당라인 불빛기둥 0.5초후 끔
+        List<NoteView> laneNotes = noteManager.getLaneNotes(index); //NoteManager의 lane1Notes에서 노트1 데이터 받아오기
+        NoteView closetNote = findClosetNote(laneNotes);  //받아온 라인의 노트배열에서 판정선과 젤 가까운 노트를 찾는 메소드 실행.
+        if (closetNote != null) {
+            checkJudgment(closetNote, judgmentLineY); // 원래코드 - 리스트에서 데이터가 삭제 안되는 관계로 일단은 판정을 최대아랫범위보다 줄이고, 최대 아랫범위 내의 값만으로 판정을 처리하게 만듬. 05/02 새벽1시3분
+            //checkJudgment(laneNotes, judgmentLineY); // 판정체크
+            //updateScore(closetNote.getJudgment()); //점수 업데이트 - 이것또한 판정이후에 처리하는게 훨씬 깔끔해서 GameActivity - checkJudgment() 메소드 안에서 판정에따라 처리하게 변경.
+        }
+    }    // 버튼객체와, 인덱스로 판정리스너를 삽입해주는 메소드
 
     private NoteView findClosetNote(List<NoteView> notes) {
         NoteView closet = null;
@@ -296,7 +328,7 @@ public class GameActivity extends AppCompatActivity {
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         switch (keyCode) {
             case KeyEvent.KEYCODE_A:
-                button1.performClick();
+                button1.performClick();   //클릭을 처리(ClickListener)
                 return true;
             case KeyEvent.KEYCODE_S:
                 button2.performClick();
