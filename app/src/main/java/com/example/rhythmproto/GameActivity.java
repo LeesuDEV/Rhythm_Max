@@ -26,6 +26,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GameActivity extends AppCompatActivity {
+    String songName;
+    String songDifficulty;
+    String songBPM;
+    int songImage; //곡 이미지
+
 
     Button exitbutton;
     Button button1, button2, button3, button4, button5;
@@ -40,6 +45,11 @@ public class GameActivity extends AppCompatActivity {
 
     int score; // 총 점수
     int combo; // 콤보 수
+    int perfect; // 퍼펙트 수
+    int great;
+    int good;  // ~
+    int bad;
+    int miss; // 미스 수
 
     TextView scoreTV;  // 점수 텍스트뷰
     TextView judgmentTV;  // 판정 텍스트뷰
@@ -47,6 +57,8 @@ public class GameActivity extends AppCompatActivity {
     TextView accuracyTV; // 정확도 텍스트뷰
     static int stackCombo;  //누적 콤보
     int maxCombo; // 최고 콤보
+    double accuracy; // 정확도
+    String accuracy_s; // 정확도 텍스트포맷 %.1f% 까지 포맷
 
     ImageView laneLight1, laneLight2, laneLight3, laneLight4;  // 라인 불빛 이미지뷰
     AnimationController animationController;
@@ -74,8 +86,15 @@ public class GameActivity extends AppCompatActivity {
             NoteManager.lanes[i] = new ArrayList<>();
         }  // 노트매니저의 lanes를 초기화해줌
 
+        /*---------------------인턴트로 받아올 자료 시작----------------------*/
         Intent intent = getIntent();
-        notes = intent.getParcelableArrayListExtra("notes");
+        notes = intent.getParcelableArrayListExtra("notes"); // 인턴트로 받아온 노트정보 어레이리스트 notes에 담기
+         songName = intent.getStringExtra("songName");
+         songDifficulty = intent.getStringExtra("songDifficulty");
+         songBPM = intent.getStringExtra("songBPM");
+         songImage = intent.getIntExtra("songImage",1); //곡 정보들을 게임액티비티에 전달.
+
+        /*---------------------인턴트로 받아올 자료 끝----------------------*/
 
         exitbutton = findViewById(R.id.quitGameBtn);
         exitbutton.setOnClickListener(new View.OnClickListener() {
@@ -147,7 +166,7 @@ public class GameActivity extends AppCompatActivity {
             AssetFileDescriptor afd = getResources().openRawResourceFd(R.raw.xeon);
             mediaPlayer.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
             mediaPlayer.prepareAsync();
-            mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+            mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {  //노래준비 리스너 - 노래가 불러와지길 기다림
                 @Override
                 public void onPrepared(MediaPlayer mp) {
                     new Handler().postDelayed(() -> {
@@ -168,7 +187,36 @@ public class GameActivity extends AppCompatActivity {
                         e.printStackTrace();  // 예외 처리
                     }
                 }
+            }); //노래준비 리스너 - 노래가 불러와지길 기다림
+            mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                @Override
+                public void onCompletion(MediaPlayer mp) {
+                    //노래재생이 끝날때 수행할 코드
+                    /*---------------------결과 창 엑티비티로 인턴트 전송 시작---------------------*/
+                    Intent intent = new Intent(GameActivity.this,ResultActivity.class);
+                    intent.putExtra("songImage",songImage);  // 곡이미지 인턴트전송
+                    intent.putExtra("songName",songName);  // 곡이름 인턴트전송
+                    intent.putExtra("songDifficulty",songDifficulty);  // 곡 난이도 인턴트전송
+                    intent.putExtra("songBpm",songBPM);  // 곡 bpm 인턴트전송
+
+                    intent.putExtra("perfect",perfect); //퍼펙~ 미스까지 데이터를 인턴트로 전송
+                    intent.putExtra("great",great);
+                    intent.putExtra("good",good);
+                    intent.putExtra("bad",bad);
+                    intent.putExtra("miss",miss);
+
+                    intent.putExtra("stackCombo",stackCombo); //스택콤보 인턴트전송
+                    intent.putExtra("maxCombo",maxCombo); //맥스콤보 인턴트 전송
+                    intent.putExtra("score",score); //점수 인턴트전송
+                    intent.putExtra("accuracy",accuracy_s); //정확도 인턴트전송
+
+
+                    startActivity(intent); //결과 화면으로 이동
+                    finish();
+                    /*---------------------결과 창 엑티비티로 인턴트 전송 끝---------------------*/
+                }
             });
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -207,7 +255,9 @@ public class GameActivity extends AppCompatActivity {
                     comboIncrease(); //콤보수 증가 메소드
                     note.setJudgment("Perfect"); //판정처리
                     updateScore(judgment);  //판정에따라 점수를 추가
+                    increaseMaxCombo(combo); // 맥스콤보 로직
                     animationController.startAnimation(judgmentTV, judgment, color);  // 화면중앙에 노트판정 텍스트를 애니메이션 효과로 출력하는 메소드(매개변수는 String 형태)
+                    noteManager.removeNoteFromLane(note); // lanes 배열에서 이 객체의 노트뷰를 삭제.
                 } else if (distance <= JudgmentWindow.GREAT) {
                     heal = 3;
                     judgment = "GREAT";
@@ -218,6 +268,7 @@ public class GameActivity extends AppCompatActivity {
                     comboIncrease();
                     note.setJudgment("Great");
                     updateScore(judgment);
+                    increaseMaxCombo(combo);
                     animationController.startAnimation(judgmentTV, judgment, color);
                     noteManager.removeNoteFromLane(note); // lanes 배열에서 이 객체의 노트뷰를 삭제.
                 } else if (distance <= JudgmentWindow.GOOD) {
@@ -230,6 +281,7 @@ public class GameActivity extends AppCompatActivity {
                     comboIncrease();
                     note.setJudgment("Good");
                     updateScore(judgment);
+                    increaseMaxCombo(combo);
                     animationController.startAnimation(judgmentTV, judgment, color);
                     noteManager.removeNoteFromLane(note); // lanes 배열에서 이 객체의 노트뷰를 삭제.
                 } else if (distance <= JudgmentWindow.BAD) {
@@ -242,6 +294,7 @@ public class GameActivity extends AppCompatActivity {
                     comboReset();
                     note.setJudgment("BAD");
                     updateScore(judgment);
+                    increaseMaxCombo(combo);
                     animationController.startAnimation(judgmentTV, judgment, color);
                     noteManager.removeNoteFromLane(note); // lanes 배열에서 이 객체의 노트뷰를 삭제.
                 }
@@ -278,18 +331,23 @@ public class GameActivity extends AppCompatActivity {
             case "PERFECT":
                 score += maxScore; //점수 증가
                 stackCombo ++; //누적노트 증가
+                perfect ++; //퍼펙트 수 증가
+
                 break;
             case "GREAT":
                 score += maxScore*0.75;
                 stackCombo ++;
+                great ++;
                 break;
             case "GOOD":
                 score += maxScore*0.5;
                 stackCombo ++;
+                good ++;
                 break;
             case "BAD":
                 score -= maxScore*0.25;
                 stackCombo ++;
+                bad ++;
                 break;
             case "MISS":
                 break;
@@ -301,6 +359,12 @@ public class GameActivity extends AppCompatActivity {
 
     } // 노트에 판정따른 스코어 +- 메소드
 
+    public void increaseMaxCombo(int combo){
+        if(combo >= maxScore) {
+            maxScore = combo;
+        }
+    }  // 현재콤보가 맥스콤보보다 크거나 같을때 max콤보가 증가하는 메소드
+
     //       스코어 관련 메소드묶음     +++
     private void displayScore(int score) {
         scoreTV.setText("" + score);
@@ -308,8 +372,8 @@ public class GameActivity extends AppCompatActivity {
 
     private void displayAccuracy(int score) {
         if (stackCombo != 0) {
-            double accuracy = (double) score / (stackCombo * maxScore);
-            String accuracy_s = String.format("%.1f%%", accuracy * 100);
+            accuracy = (double) score / (stackCombo * maxScore);
+            accuracy_s = String.format("%.1f%%", accuracy * 100);
             accuracyTV.setText(accuracy_s);
         }
     }  // 현재 정확도를 실시간으로 화면에 표시해주는 메소드 ( 계산포함 )
@@ -418,6 +482,8 @@ public class GameActivity extends AppCompatActivity {
             mediaPlayer.release();
             mediaPlayer = null;  //노래 끄기
         }
+
+        stackCombo = 0;
 
         /*if (gameHandler != null) {
             gameHandler.removeCallbacksAndMessages(null); // NoteView 의 Animator에서 판정시 리스트에서 삭제하게 바꿈 05/04 23:15분 판정노트 검사후 삭제하는 핸들러

@@ -115,6 +115,7 @@ public class NoteView extends View {
                             noteLayout.removeView(noteView); // 뷰에서 노트 제거  -- 아마 판정
 
                             activity.noteManager.removeNoteFromLane(noteView); // lanes 배열에서 이 객체의 노트뷰를 삭제.
+                            activity.miss ++;  // 미스 수 증가
                         }
                     } else if (noteView.isJudged()) {  // -- 노래가 판정 됐을시
                         activity.noteManager.removeNoteFromLane(noteView); // lanes 배열에서 이 객체의 노트뷰를 삭제.
