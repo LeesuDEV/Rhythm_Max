@@ -12,9 +12,9 @@ public class NoteManager {
     private Context context;
     private ViewGroup noteLayout; // 노트가 표시될 레이아웃
     private List<NoteView> notes = new ArrayList<>(); // 생성된 노트 뷰들을 관리하는 리스트
-    private Handler handler = new Handler();
+    public Handler handler = new Handler();
     private int note_Speed = 1500; //노트의 배속 (내려오는데 걸리는 시간)
-    private List<NoteView>[] lanes = new List[5];  // 5개의 레인을 위한 배열
+    public static List<NoteView>[] lanes = new List[5];  // 5개의 레인을 위한 배열
 
     public NoteManager(Context context, ViewGroup noteLayout) {
         this.context = context;
@@ -106,6 +106,12 @@ public class NoteManager {
                 return null;
         }
     }
+
+    public synchronized void removeNoteFromLane(NoteView note) {
+        for (List<NoteView>lane : lanes) {
+            lane.remove(note);
+        }
+    }  // NoteView내에서 판정됐거나 Miss처리된 객체를 리스트에서 삭제하는 동기화 메소드
 
     public void shutdownHandler() {
         handler.removeCallbacksAndMessages(null);  //GameActvity 종료시 예약메세지와 콜백을 삭제하기위함

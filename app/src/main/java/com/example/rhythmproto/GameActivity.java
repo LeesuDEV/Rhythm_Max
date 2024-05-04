@@ -2,6 +2,7 @@ package com.example.rhythmproto;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.animation.ValueAnimator;
 import android.content.Intent;
 import android.content.res.AssetFileDescriptor;
 import android.media.MediaPlayer;
@@ -22,21 +23,17 @@ import com.airbnb.lottie.LottieAnimationView;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 public class GameActivity extends AppCompatActivity {
 
     Button exitbutton;
     Button button1, button2, button3, button4, button5;
-    private NoteManager noteManager;
-    private Handler gameHandler = new Handler(); // 게임 핸들러, 실시간 처리를위해 사용
+    public NoteManager noteManager;
     private Thread noteThread; // 노트매니저 Ui Thread를 담을 쓰레드
 
     ArrayList<NoteData> notes;
     private float judgmentLineY;   //판정선 y축 좌표
-    private float missedY;   //미스판정 y축 좌표
-
     private float judgmentLineY_Rate = 0.80f;  //판정선의 (전체 게임판 * 0.x배) 설정 높이값
     private float missedY_Rate = 0.95f;  //미스판정 y축 비율
     private JudgmentLineView judgmentLineView;
@@ -49,10 +46,9 @@ public class GameActivity extends AppCompatActivity {
     TextView comboTV;  //콤보 텍스트뷰
     ImageView laneLight1, laneLight2, laneLight3, laneLight4;  // 라인 불빛 이미지뷰
     AnimationController animationController;
-    private List<NoteView>[] lanes = new List[5];  // 5개의 레인을 위한 배열
 
     MediaPlayer mediaPlayer; // 노래 플레이어 객체
-    int dalay_StartTime = 1120; // 노래 시작 시간 +시간은 더 빠르게, -시간은 더 느리게 (통상적으로 배속 * 판정선배율 - 170하면 맞음) // 컴퓨터 1110 / 휴대폰 1080~1120
+    int dalay_StartTime = 1140; // 노래 시작 시간 +시간은 더 빠르게, -시간은 더 느리게 (통상적으로 배속 * 판정선배율 - 170하면 맞음) // 컴퓨터 1110 / 휴대폰 1080~1120
     String color; // 판정 색깔코드
 
     LottieAnimationView animationView1;  // 판정시 폭죽 이펙트효과
@@ -62,19 +58,17 @@ public class GameActivity extends AppCompatActivity {
 
     ProgressBar healthBar; // 체력 바
 
-    private Runnable gameUpdateRunnable = new Runnable() {
-        @Override
-        public void run() {
-            updateAllNotes();
-            gameHandler.postDelayed(this, 16); // 예를 들어, 16ms는 (약 60FPS)
-        }
-    }; //게임 핸들러 스레드 - 처리됐거나 놓친노트블럭을 삭제하는 메소드
+    public List<ValueAnimator> animators = new ArrayList<>();
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.game_activity);
+
+        for (int i = 0; i < NoteManager.lanes.length; i++) {
+            NoteManager.lanes[i] = new ArrayList<>();
+        }  // 노트매니저의 lanes를 초기화해줌
 
         Intent intent = getIntent();
         notes = intent.getParcelableArrayListExtra("notes");
@@ -105,7 +99,6 @@ public class GameActivity extends AppCompatActivity {
 
         judgmentLineView = findViewById(R.id.judgmentLineView);
         setupJudgmentLine();    // 판정선 메소드
-        setupMissedY();  //미스 판정선 초기화 메소드
         healthBar = findViewById(R.id.health_Bar);
 
         /*laneButtonListener(button1, 1, laneLight1);  // 판정처리 리스너 레인1
@@ -129,10 +122,10 @@ public class GameActivity extends AppCompatActivity {
         animationView4.setAnimation(R.raw.hit); // 애니메이션파일이 담긴 json을 세팅해줌
         animationView4.setSpeed(3.0f);
 
-        laneButtonTouchListener(button1, 1,laneLight1,animationView1);  // 판정 터치 리스너 레인1
-        laneButtonTouchListener(button2, 2,laneLight2,animationView2);  // 판정 터치 리스너 레인2
-        laneButtonTouchListener(button3, 3,laneLight3,animationView3);  // 판정 터치 리스너 레인3
-        laneButtonTouchListener(button4, 4,laneLight4,animationView4);  // 판정 터치 리스너 레인4
+        laneButtonTouchListener(button1, 1, laneLight1, animationView1);  // 판정 터치 리스너 레인1
+        laneButtonTouchListener(button2, 2, laneLight2, animationView2);  // 판정 터치 리스너 레인2
+        laneButtonTouchListener(button3, 3, laneLight3, animationView3);  // 판정 터치 리스너 레인3
+        laneButtonTouchListener(button4, 4, laneLight4, animationView4);  // 판정 터치 리스너 레인4
 
         mediaPlayer = new MediaPlayer();
 
@@ -140,7 +133,7 @@ public class GameActivity extends AppCompatActivity {
 
         animationController = new AnimationController();  // 애니메이션 컨트롤러 (판정텍스트가 연속실행시 버벅여서 컨트롤러로 실행중이면 끄고 초기화하게 처리)
 
-        gameHandler.post(gameUpdateRunnable); // 게임핸들러에 쓰레드를 입혀서 동작
+        // gameHandler.post(gameUpdateRunnable); // 게임핸들러에 쓰레드를 입혀서 동작 - NoteView 의 Animator에서 판정시 리스트에서 삭제하게 바꿈 05/04 23:15분
     }
 
     public void startGame() {
@@ -187,46 +180,9 @@ public class GameActivity extends AppCompatActivity {
     }  // 파싱데이터로 노트데이터를 실행하는 메소드 &UI쓰레드로 처리하여 부담줄이기& - 5/2 오전3시 이 작업으로 렉이 70%이상 줄어든듯^^!
 
     public GameActivity() {
-        for (int i = 0; i < lanes.length; i++) {
-            lanes[i] = new ArrayList<>();
-        }
     }
 
-    public void updateAllNotes() {
-        String judgment;  //판정 문자
-        int damage;  //데미지 값
 
-        for (List<NoteView> lane : lanes) {
-            Iterator<NoteView> iterator = lane.iterator();
-            while (iterator.hasNext()) {
-                Log.d("CHECK","CHECK");
-                NoteView note = iterator.next();
-                // 여기에서 노트의 상태를 로그로 출력
-                Log.d("NoteDebug", "Processing note in lane. OffScreen: " + note.isOffScreen() + ", Judged: " + note.isJudged());
-                float checkY = (note.getY()) + (note.getHeight() / 2.0f); // 노트의 y위치 - Height / 2 (노트블럭의 중간) 을 더해줌
-
-                if (note.isOffScreen() || note.isJudged()) {
-                    iterator.remove();
-                    Log.d("NoteDebug", "Note removed: OffScreen or already judged");
-                }
-                if (!note.isJudged()) {  // 판정되지 않은 노트만 처리
-                    float distance = checkY - missedY; //노트의 y위치와 미스판정y위치의 거리차이
-
-                    if (distance >= 5) {  // 판정선과 300이상 거리가 벌어졌을 시
-                        damage = 5;
-                        judgment = "Miss";
-                        color = "#606060";  // 회색 코드
-
-                        reduceHealth(damage); //체력감소 메소드
-                        comboReset();
-                        note.setJudgment("MISS");
-                        updateScore(judgment);
-                        animationController.startAnimation(judgmentTV, judgment, color);
-                    }
-                }
-            }
-        }
-    } //처리됐거나 화면을 벗어난 노트는 리스트에서 제거하는 메소드
 
 
     public void checkMiss(NoteView note, float missedY) {
@@ -251,7 +207,7 @@ public class GameActivity extends AppCompatActivity {
         }
     } // 미스 처리 메소드
 
-    public void checkJudgment(NoteView note, float judgmentLineY,LottieAnimationView animationView) {
+    public void checkJudgment(NoteView note, float judgmentLineY, LottieAnimationView animationView) {
         float checkY = (note.getY()) + (note.getHeight() / 2.0f); // 노트의 y위치 - Height / 2 (노트블럭의 중간) 을 더해줌
 
         if (!note.isJudged()) {  // 판정되지 않은 노트만 처리
@@ -282,6 +238,7 @@ public class GameActivity extends AppCompatActivity {
                     note.setJudgment("Great");
                     updateScore(judgment);
                     animationController.startAnimation(judgmentTV, judgment, color);
+                    noteManager.removeNoteFromLane(note); // lanes 배열에서 이 객체의 노트뷰를 삭제.
                 } else if (distance <= JudgmentWindow.GOOD) {
                     heal = 2;
                     judgment = "GOOD";
@@ -293,6 +250,7 @@ public class GameActivity extends AppCompatActivity {
                     note.setJudgment("Good");
                     updateScore(judgment);
                     animationController.startAnimation(judgmentTV, judgment, color);
+                    noteManager.removeNoteFromLane(note); // lanes 배열에서 이 객체의 노트뷰를 삭제.
                 } else if (distance <= JudgmentWindow.BAD) {
                     damage = 5;
                     judgment = "BAD";
@@ -304,13 +262,14 @@ public class GameActivity extends AppCompatActivity {
                     note.setJudgment("BAD");
                     updateScore(judgment);
                     animationController.startAnimation(judgmentTV, judgment, color);
+                    noteManager.removeNoteFromLane(note); // lanes 배열에서 이 객체의 노트뷰를 삭제.
                 }
                 note.setJudged(true);
             }
         }
     } // 판정 처리 메소드
 
-    public void animationHit(LottieAnimationView animationViewIndex){
+    public void animationHit(LottieAnimationView animationViewIndex) {
         animationViewIndex.setVisibility(View.VISIBLE); // 애니메이션 뷰 활성화
         animationViewIndex.playAnimation(); //애니메이션 재생
         animationViewIndex.addAnimatorListener(new AnimatorListenerAdapter() {
@@ -326,7 +285,7 @@ public class GameActivity extends AppCompatActivity {
         comboTV.setText("" + combo);
     } // 콤보에 +1후 콤보텍스트뷰에 1을 더하는 메소드
 
-    private void comboReset() {
+    public void comboReset() {
         combo = 0;
         comboTV.setText("" + combo);
     } // 콤보 리셋후 콤보텍스트뷰에 0을 세팅하는 메소드
@@ -370,23 +329,14 @@ public class GameActivity extends AppCompatActivity {
         });
     }  // 화면높이의 judgmentLineY_Rate 비율에 판정선 위치를 설정하는 메소드
 
-    private void setupMissedY() {
-        judgmentLineView.post(new Runnable() {
-            @Override
-            public void run() { // 화면이 생성된후 JudgmentLineView(게임판크기)의 높이를 토대로 생성할것이기 떄문에. post() 메소드를 사용하면 레이아웃이 그려진후 높이를 가져올 수 있게됨.
-                missedY = judgmentLineView.getHeight() * missedY_Rate;
-            }
-        });
-    }  // 화면높이의 0.9비율에 판정선 위치 설정하는 메소드
-
-    public void touchEvent(int index, ImageView laneLightNum,LottieAnimationView animationView) {
+    public void touchEvent(int index, ImageView laneLightNum, LottieAnimationView animationView) {
         SoundManager.getInstance().playSound(); // 판정 종소리 효과음
         laneLightNum.setVisibility(View.VISIBLE); // 해당라인 불빛기둥 생성
         new Handler().postDelayed(() -> laneLightNum.setVisibility(View.INVISIBLE), 100); // 해당라인 불빛기둥 0.5초후 끔
         List<NoteView> laneNotes = noteManager.getLaneNotes(index); //NoteManager의 lane1Notes에서 노트1 데이터 받아오기
         NoteView closetNote = findClosetNote(laneNotes);  //받아온 라인의 노트배열에서 판정선과 젤 가까운 노트를 찾는 메소드 실행.
         if (closetNote != null) {
-            checkJudgment(closetNote, judgmentLineY,animationView); // 원래코드 - 리스트에서 데이터가 삭제 안되는 관계로 일단은 판정을 최대아랫범위보다 줄이고, 최대 아랫범위 내의 값만으로 판정을 처리하게 만듬. 05/02 새벽1시3분
+            checkJudgment(closetNote, judgmentLineY, animationView); // 원래코드 - 리스트에서 데이터가 삭제 안되는 관계로 일단은 판정을 최대아랫범위보다 줄이고, 최대 아랫범위 내의 값만으로 판정을 처리하게 만듬. 05/02 새벽1시3분
             //checkJudgment(laneNotes, judgmentLineY); // 판정체크
             //updateScore(closetNote.getJudgment()); //점수 업데이트 - 이것또한 판정이후에 처리하는게 훨씬 깔끔해서 GameActivity - checkJudgment() 메소드 안에서 판정에따라 처리하게 변경.
         }
@@ -406,7 +356,7 @@ public class GameActivity extends AppCompatActivity {
         return closet;
     }  //가장 가까운 노트를 찾아주는 NoteView메소드
 
-    public void reduceHealth(int damage){
+    public void reduceHealth(int damage) {
         int currentHealth = healthBar.getProgress();
 
         currentHealth -= damage;
@@ -418,15 +368,15 @@ public class GameActivity extends AppCompatActivity {
     public void increaseHealth(int heal) {
         int currentHealth = healthBar.getProgress();
 
-        if(currentHealth != healthBar.getMax()){
-          currentHealth += heal;
-          if (currentHealth > healthBar.getMax()) currentHealth = healthBar.getMax();
+        if (currentHealth != healthBar.getMax()) {
+            currentHealth += heal;
+            if (currentHealth > healthBar.getMax()) currentHealth = healthBar.getMax();
         }
 
         healthBar.setProgress(currentHealth);
     }  // 체력이 증가하는 메소드
 
-    public void laneButtonTouchListener(Button btn, int index,ImageView laneLightNum,LottieAnimationView animationView) {
+    public void laneButtonTouchListener(Button btn, int index, ImageView laneLightNum, LottieAnimationView animationView) {
         btn.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -448,13 +398,30 @@ public class GameActivity extends AppCompatActivity {
             noteThread = null;  // 쓰레드 참조를 해제하여 가비지 컬렉션을 도울 수 있도록 함
         }
 
-        noteManager.shutdownHandler(); //노트매니저의 노트생성 스케줄과 콜백 제거메소드
+        for (ValueAnimator animator : animators) {
+            if (animator != null) {
+                animator.cancel();  // 애니메이터 작업 취소(쓰레드는 꺼져도 애니메이터는 계속 돌아가고있으므로 멈춰줘야 없어진객체에 Miss처리를 하지않음)
+            }
+        }
+
+        if (noteManager.handler != null) {
+            noteManager.shutdownHandler(); //노트매니저의 노트생성 스케줄과 콜백 제거메소드
+        }
+
+        if (NoteManager.lanes != null) {
+            NoteManager.lanes = null;   //노트매니저의 노트리스트 배열을 초기화
+            NoteManager.lanes = new List[5];  //그대로두면 NullPointException이 뜨니 배열크기를 다시 지정해줌 (onCreate에서 초기화해도 됨)
+        }
 
         if (mediaPlayer != null) {
             mediaPlayer.release();
-            mediaPlayer = null;
+            mediaPlayer = null;  //노래 끄기
         }
-        gameHandler.removeCallbacksAndMessages(null);
+
+        /*if (gameHandler != null) {
+            gameHandler.removeCallbacksAndMessages(null); // NoteView 의 Animator에서 판정시 리스트에서 삭제하게 바꿈 05/04 23:15분 판정노트 검사후 삭제하는 핸들러
+        }*/
+
     } // 뷰가 꺼질때 노래,종소리도 같이 null로 초기화
 
         /*
@@ -486,4 +453,27 @@ public class GameActivity extends AppCompatActivity {
     } //키보드 지원을 위한 키보드 A,S,;,' 키를 1,2,3,4번 버튼을 눌러주게하는 메소드
 
     */
+
+    /*
+    private Runnable gameUpdateRunnable = new Runnable() {
+        @Override
+        public void run() {
+            updateAllNotes();
+            gameHandler.postDelayed(this, 50); // 예를 들어, 16ms는 (약 60FPS)
+        }
+    }; //게임 핸들러 스레드 - 처리됐거나 놓친노트블럭을 삭제하는 메소드
+
+    public void updateAllNotes() {
+        for (List<NoteView> lane : NoteManager.lanes) {
+            Iterator<NoteView> iterator = lane.iterator();
+            while (iterator.hasNext()) {
+                NoteView note = iterator.next();
+                // 여기에서 노트의 상태를 로그로 출력
+                float checkY = (note.getY()) + (note.getHeight() / 2.0f); // 노트의 y위치 - Height / 2 (노트블럭의 중간) 을 더해줌
+                if (note.isJudged()) {
+                    iterator.remove();
+                }
+            }
+        }
+    } //처리됐거나 화면을 벗어난 노트는 리스트에서 제거하는 메소드 -- NoteView 의 Animator에서 판정시 리스트에서 삭제하게 바꿈 05/04 23:15분 */
 }
