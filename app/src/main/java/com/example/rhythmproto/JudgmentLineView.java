@@ -20,8 +20,8 @@ public class JudgmentLineView extends View {
 
     private void init() {
         paint = new Paint();
-        paint.setColor(Color.BLUE);
-        paint.setStrokeWidth(10);
+        paint.setColor(Color.parseColor("#02DCEF"));
+        paint.setStrokeWidth(20);
     }
 
     public void setLinePosition(float positionY) {

@@ -3,7 +3,6 @@ package com.example.rhythmproto;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Handler;
-import android.util.Log;
 import android.view.ViewGroup;
 
 import java.util.ArrayList;
@@ -20,6 +19,7 @@ public class NoteManager {
     public NoteManager(Context context, ViewGroup noteLayout) {
         this.context = context;
         this.noteLayout = noteLayout;
+        this.handler = new Handler(); // 핸들러 초기화
 
         for (int i = 0; i < lanes.length; i++) {
             lanes[i] = new ArrayList<>();
@@ -62,7 +62,6 @@ public class NoteManager {
         int laneIndex = getLaneIndex(x);
         int layoutWidth = noteLayout.getWidth();
         float laneWidth = layoutWidth / 4.0f;  // 5개 레인을 가정 165가 나와야함 4개레인 230.25
-        Log.d("laneWidth",String.valueOf(laneWidth));
         float returnValue = (laneWidth * laneIndex);
         return returnValue;
     }  // getLaneIndex의 x값으로 float X좌표값을 반환
@@ -108,9 +107,7 @@ public class NoteManager {
         }
     }
 
-    /*public void startGame() {
-        for (NoteView note : notes) {
-            note.startFalling(noteLayout.getHeight(), 2000); // 예: 전체 높이까지 2000ms 동안 이동
-        }
-    }*/
+    public void shutdownHandler() {
+        handler.removeCallbacksAndMessages(null);  //GameActvity 종료시 예약메세지와 콜백을 삭제하기위함
+    }  // NoteManager 노트생성 핸들러 종료메소드
 }
