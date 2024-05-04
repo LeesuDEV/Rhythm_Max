@@ -36,6 +36,7 @@ public class GameActivity extends AppCompatActivity {
     private float judgmentLineY;   //판정선 y축 좌표
     private float judgmentLineY_Rate = 0.80f;  //판정선의 (전체 게임판 * 0.x배) 설정 높이값
     private float missedY_Rate = 0.95f;  //미스판정 y축 비율
+    int maxScore = 1000; //퍼펙트 스코어 (기준점)
     private JudgmentLineView judgmentLineView;
 
     int score; // 총 점수
@@ -44,6 +45,10 @@ public class GameActivity extends AppCompatActivity {
     TextView scoreTV;  // 점수 텍스트뷰
     TextView judgmentTV;  // 판정 텍스트뷰
     TextView comboTV;  //콤보 텍스트뷰
+    TextView accuracyTV; // 정확도 텍스트뷰
+    static int stackCombo;  //누적 콤보
+    int maxCombo; // 최고 콤보
+
     ImageView laneLight1, laneLight2, laneLight3, laneLight4;  // 라인 불빛 이미지뷰
     AnimationController animationController;
 
@@ -94,8 +99,10 @@ public class GameActivity extends AppCompatActivity {
         laneLight4 = findViewById(R.id.lane4_light);
 
         score = 0;
-        judgmentTV = findViewById(R.id.judgmentTV); // 판정텍스트뷰
-        comboTV = findViewById(R.id.comboTV); // 콤보텍스트뷰
+        judgmentTV = findViewById(R.id.judgmentTV); // 판정 텍스트뷰
+        comboTV = findViewById(R.id.comboTV); // 콤보 텍스트뷰
+        accuracyTV = findViewById(R.id.accuracyTV); //정확도 테스트뷰
+        scoreTV = findViewById(R.id.scoreTV); // 점수 텍스트뷰
 
         judgmentLineView = findViewById(R.id.judgmentLineView);
         setupJudgmentLine();    // 판정선 메소드
@@ -295,29 +302,43 @@ public class GameActivity extends AppCompatActivity {
 
         switch (judgment) {
             case "PERFECT":
-                score += 1000;
+                score += maxScore; //점수 증가
+                stackCombo ++; //누적노트 증가
                 break;
             case "GREAT":
-                score += 700;
+                score += maxScore*0.75;
+                stackCombo ++;
                 break;
             case "GOOD":
-                score += 300;
+                score += maxScore*0.5;
+                stackCombo ++;
                 break;
             case "BAD":
-                score -= 500;
+                score -= maxScore*0.25;
+                stackCombo ++;
                 break;
             case "MISS":
-                score -= 500;
                 break;
         }
-        runOnUiThread(() -> displayScore(score)); // 점수를 화면에 표시
+        runOnUiThread(() -> {
+            displayScore(score); // 점수를 화면에 표시
+            displayAccuracy(score); // 정확도를 화면에 표시
+        });
+
     } // 노트에 판정따른 스코어 +- 메소드
 
     //       스코어 관련 메소드묶음     +++
     private void displayScore(int score) {
-        scoreTV = findViewById(R.id.scoreTV);
         scoreTV.setText("" + score);
     } // 점수를 ScoreTv에 표시해주는 메소드
+
+    private void displayAccuracy(int score) {
+        if (stackCombo != 0) {
+            double accuracy = (double) score / (stackCombo * maxScore);
+            String accuracy_s = String.format("%.1f%%", accuracy * 100);
+            accuracyTV.setText(accuracy_s);
+        }
+    }
 
     private void setupJudgmentLine() {
         judgmentLineView.post(new Runnable() {

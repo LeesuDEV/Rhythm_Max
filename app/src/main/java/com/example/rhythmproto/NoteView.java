@@ -104,6 +104,7 @@ public class NoteView extends View {
                             judgment = "Miss";  // 판정 텍스트
                             String color = "#606060";  // 회색 코드
 
+                            activity.stackCombo ++; // 누적노트 증가
                             activity.reduceHealth(damage); //체력감소 메소드
                             activity.comboReset();  // 콤보 초기화
                             setJudgment("MISS");  // 판정 처리후 레이아웃에서 노트뷰를 제거하는 메소드

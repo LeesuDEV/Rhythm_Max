@@ -195,14 +195,14 @@
         </LinearLayout>
 
         <TextView
-            android:layout_marginTop="70dp"
+            android:layout_marginTop="100dp"
             android:id="@+id/judgmentTV"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:text=""
             android:textColor="#ffffff"
-            android:textSize="24sp"
+            android:textSize="35sp"
             android:textStyle="bold"
             android:visibility="visible"/>
 
@@ -230,5 +230,14 @@
             android:textSize="18sp"
             android:textStyle="bold" />
 
+        <TextView
+            android:id="@+id/accuracyTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="50dp"
+            android:text="0.0%"
+            android:textColor="#BCBCBC"
+            android:textStyle="bold"/>
     </FrameLayout>
 </LinearLayout>
