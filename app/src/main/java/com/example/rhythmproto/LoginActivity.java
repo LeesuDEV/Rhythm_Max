@@ -35,6 +35,8 @@ public class LoginActivity extends AppCompatActivity {
         profileImage = findViewById(R.id.profile);
         startup = findViewById(R.id.startup);
 
+        Log.d("check","check");
+
 
         // 카카오가 설치되어 있는지 확인 하는 메서드또한 카카오에서 제공 콜백 객체를 이용함
         Function2<OAuthToken, Throwable, Unit> callback = new  Function2<OAuthToken, Throwable, Unit>() {
@@ -84,7 +86,6 @@ public class LoginActivity extends AppCompatActivity {
             public Unit invoke(User user, Throwable throwable) {
                 // 로그인이 되어있으면
                 if (user!=null){
-
                     // 유저의 아이디
                     Log.d(TAG,"invoke: id" + user.getId());
                     // 유저의 어카운트정보에 이메일

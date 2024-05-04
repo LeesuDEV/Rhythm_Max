@@ -139,10 +139,9 @@
             android:background="#8E1212" />
 
         <LinearLayout
-            android:layout_marginTop="270sp"
             android:layout_width="350sp"
-            android:layout_height="180sp"
-            android:layout_gravity="center"
+            android:layout_height="match_parent"
+            android:layout_gravity="top|center"
             android:orientation="horizontal"
             android:weightSum="4">
 
