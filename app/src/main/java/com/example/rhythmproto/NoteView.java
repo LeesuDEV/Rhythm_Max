@@ -100,7 +100,7 @@ public class NoteView extends View {
                     // 화면 범위를 벗어나면 노트 제거 및 미스 판정 처리
                     if (!noteView.isJudged()) {  // -- 판정되지 않은 객체만 검사
                         if (value > screenHeight - 100) {  // -- 스크린높이 - 100 위치만큼 온 노트객체에 대해 MISS판정 처리
-                            damage = 5; //받을 데미지
+                            damage = 10; //받을 데미지
                             judgment = "Miss";  // 판정 텍스트
                             String color = "#606060";  // 회색 코드
 
@@ -124,7 +124,7 @@ public class NoteView extends View {
             animator.start();
             activity.animators.add(animator); // 애니메이터 관리를 위한 GameActivity의 애니메이터 어레이에 추가
         }
-    } //노트의 실시간 떨어지는 애니메이션 메소드
+    } //노트의 실시간 떨어지는 애니메이션 메소드 ++ 미스판정 처리 메소드 ++ 판정된메소드 리스트에서 삭제
 
     public void setJudgment(String judgment) {
         this.judgment = judgment;

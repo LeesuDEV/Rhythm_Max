@@ -24,7 +24,7 @@ public class NoteManager {
         for (int i = 0; i < lanes.length; i++) {
             lanes[i] = new ArrayList<>();
         }
-    }
+    } // 노트매니저 초기화값
 
     public void createNotesFromData(List<NoteData> notesData) {
         long gameStartTime = System.currentTimeMillis();
@@ -38,7 +38,7 @@ public class NoteManager {
                 createNoteView(data);
             }, delay);
         }
-    }
+    }  // 레인별 노트 데이터를 지연시간을 계산하여 대기 큐에 올린후, 차례가되면 해당 데이터를 가지고 노트출력을 시작하는 메소드
 
     private void createNoteView(NoteData data) {
         // 노트 라인 위치 계산 (x 값에 따라)
@@ -50,11 +50,11 @@ public class NoteManager {
         // 노트를 내리는 로직 시작
         startFallingAnimation(noteView, noteLayout.getHeight(), note_Speed); // 노트 애니메이션 시작
         assignNoteToLane(data.x,noteView);  //data.x (2번레인 = 103)값을 매개변수로 lane을 구별하여 각 lane의 List<>에 데이터 삽입
-    }
+    }  // 노트의 파싱데이터로 각 노트를 레인을 구분하여 레인에 데이터를 넣어주고. 노트의 떨어지는 애니메이션 시작을 선언하는 메소드
 
     private void startFallingAnimation(NoteView noteView, int endY, int duration) {
-        noteView.startFalling(noteView,endY, duration); // 노트의 떨어지는 애니메이션
-    }
+        noteView.startFalling(noteView,endY, duration);
+    } // 노트의 떨어지는 애니메이션
 
 
     private float calculateXPosition(int x) {
@@ -105,7 +105,7 @@ public class NoteManager {
             default:
                 return null;
         }
-    }
+    }  // GameActivity의 TouchEvent에서 해당 터치버튼의 노트라인 데이터를 반환받고자 할때 사용하는 메소드
 
     public synchronized void removeNoteFromLane(NoteView note) {
         for (List<NoteView>lane : lanes) {

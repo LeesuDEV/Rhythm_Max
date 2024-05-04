@@ -46,6 +46,7 @@
                     android:scheme = "${KAKAO_URI}" />
             </intent-filter>
         </activity>
+        <activity android:name=".MissionFail"/>
         <activity android:name=".GameActivity"/>
     </application>
 

@@ -35,7 +35,6 @@ public class GameActivity extends AppCompatActivity {
     ArrayList<NoteData> notes;
     private float judgmentLineY;   //판정선 y축 좌표
     private float judgmentLineY_Rate = 0.80f;  //판정선의 (전체 게임판 * 0.x배) 설정 높이값
-    private float missedY_Rate = 0.95f;  //미스판정 y축 비율
     int maxScore = 1000; //퍼펙트 스코어 (기준점)
     private JudgmentLineView judgmentLineView;
 
@@ -143,7 +142,7 @@ public class GameActivity extends AppCompatActivity {
         // gameHandler.post(gameUpdateRunnable); // 게임핸들러에 쓰레드를 입혀서 동작 - NoteView 의 Animator에서 판정시 리스트에서 삭제하게 바꿈 05/04 23:15분
     }
 
-    public void startGame() {
+     public void startGame() {
         try {
             AssetFileDescriptor afd = getResources().openRawResourceFd(R.raw.xeon);
             mediaPlayer.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
@@ -188,31 +187,6 @@ public class GameActivity extends AppCompatActivity {
 
     public GameActivity() {
     }
-
-
-
-
-    public void checkMiss(NoteView note, float missedY) {
-        float checkY = (note.getY()) + (note.getHeight() / 2.0f); // 노트의 y위치 - Height / 2 (노트블럭의 중간) 을 더해줌
-        String judgment;  //판정 문자
-        int damage;  //데미지 값
-
-        if (!note.isJudged()) {  // 판정되지 않은 노트만 처리
-            float distance = checkY - missedY; //노트의 y위치와 미스판정y위치의 거리차이
-
-            if (distance >= 300) {  // 판정선과 300이상 거리가 벌어졌을 시
-                damage = 5;
-                judgment = "Miss";
-                color = "#606060";  // 회색 코드
-
-                reduceHealth(damage); //체력감소 메소드
-                comboReset();
-                note.setJudgment("MISS");
-                updateScore(judgment);
-                animationController.startAnimation(judgmentTV, judgment, color);
-            }
-        }
-    } // 미스 처리 메소드
 
     public void checkJudgment(NoteView note, float judgmentLineY, LottieAnimationView animationView) {
         float checkY = (note.getY()) + (note.getHeight() / 2.0f); // 노트의 y위치 - Height / 2 (노트블럭의 중간) 을 더해줌
@@ -338,7 +312,7 @@ public class GameActivity extends AppCompatActivity {
             String accuracy_s = String.format("%.1f%%", accuracy * 100);
             accuracyTV.setText(accuracy_s);
         }
-    }
+    }  // 현재 정확도를 실시간으로 화면에 표시해주는 메소드 ( 계산포함 )
 
     private void setupJudgmentLine() {
         judgmentLineView.post(new Runnable() {
@@ -378,13 +352,19 @@ public class GameActivity extends AppCompatActivity {
     }  //가장 가까운 노트를 찾아주는 NoteView메소드
 
     public void reduceHealth(int damage) {
-        int currentHealth = healthBar.getProgress();
+        int currentHealth = healthBar.getProgress();  // 현재체력 가져오기
+        currentHealth -= damage;  // 현재체력에 데미지만큼 깎음
 
-        currentHealth -= damage;
-        if (currentHealth < 0) currentHealth = 0; //체력이 0 이하로 내려가지않도록 처리
+        if (currentHealth < 0) {
+            currentHealth = 0; //체력이 0 이하로 내려가지않도록 처리
+
+            Intent intent = new Intent(GameActivity.this,MissionFail.class);
+            startActivity(intent);  // 체력이 0이됐으니, 인턴트를 통해 게임오버 화면으로 이동
+            finish();
+        }
 
         healthBar.setProgress(currentHealth);
-    }  // 체력이 줄어드는 메소드
+    }  // 체력이 줄어드는 메소드  ++ 체력이 0이하가 되면 게임오버 화면으로 이동
 
     public void increaseHealth(int heal) {
         int currentHealth = healthBar.getProgress();
