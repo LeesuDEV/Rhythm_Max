@@ -66,6 +66,7 @@ public class LoginActivity extends AppCompatActivity {
         logoutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                startup.setVisibility(View.GONE);
                 UserApiClient.getInstance().logout(new Function1<Throwable, Unit>() {
                     @Override
                     public Unit invoke(Throwable throwable) {
@@ -103,6 +104,7 @@ public class LoginActivity extends AppCompatActivity {
                         public void onClick(View v) {
                             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                             startActivity(intent);
+                            finish();
                         }
 
                     });
