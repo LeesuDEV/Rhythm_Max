@@ -5,7 +5,7 @@ import android.media.AudioAttributes;
 import android.media.SoundPool;
 
 public class SoundManager {
-    private static SoundManager instance;
+    public static SoundManager instance;
     final private SoundPool soundPool;
     private int soundID;
 

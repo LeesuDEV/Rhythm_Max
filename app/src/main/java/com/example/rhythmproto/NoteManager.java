@@ -79,28 +79,32 @@ public class NoteManager {
     private void assignNoteToLane(int index,NoteView noteView){
         if (getLaneIndex(index) == 0) {
             lanes[0].add(noteView);
-        } else if (getLaneIndex(index) == 1) {
+        }
+        else if (getLaneIndex(index) == 1) {
             lanes[1].add(noteView);
-        } else if (getLaneIndex(index) == 2) {
+        }
+        else if (getLaneIndex(index) == 2) {
             lanes[2].add(noteView);
-        } else if (getLaneIndex(index) == 3) {
+        }
+        else if (getLaneIndex(index) == 3) {
             lanes[3].add(noteView);
-        } else if (getLaneIndex(index) == 4) {
+        }
+        else if (getLaneIndex(index) == 4) {
             lanes[4].add(noteView);
         }
     }// 레인별 노트를 노트리스트에 담아주는 메소드
 
     public List<NoteView> getLaneNotes(int laneIndex) {
         switch (laneIndex) {
-            case 1:
+            case 0:
                 return lanes[0];
-            case 2:
+            case 1:
                 return lanes[1];
-            case 3:
+            case 2:
                 return lanes[2];
-            case 4:
+            case 3:
                 return lanes[3];
-            case 5:
+            case 4:
                 return lanes[4];
             default:
                 return null;

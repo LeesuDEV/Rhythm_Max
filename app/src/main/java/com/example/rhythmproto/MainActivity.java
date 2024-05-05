@@ -6,8 +6,10 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
@@ -18,14 +20,17 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     LinearLayout odysseus;
+    LinearLayout Xeus;
 
     String songName;
     String songDifficulty;
     String songBPM;
     int songImage; //곡 이미지
+    int song_mp3; //노래 파일
     int noteData; //채보데이터
     int difficultySet = 1;  //  1은 easy 2는 hard
     String selectSong = ""; // 선택된 곡
+    Switch clapSoundSwitch; // 타격음 소리 스위치
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +38,19 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         odysseus = findViewById(R.id.odysseus);
+        Xeus = findViewById(R.id.Xeus);
+        clapSoundSwitch = findViewById(R.id.ClapSoundSwitch);
+
+        clapSoundSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    SoundManager.getInstance().loadSound(MainActivity.this); // 판정타격음 스위치를 켰다면 타격소리를 로딩
+                } else {
+                    SoundManager.instance = null;
+                }
+            }
+        });
 
         odysseus.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -41,18 +59,28 @@ public class MainActivity extends AppCompatActivity {
             }
         }); //오디세우스 레이아웃 클릭시
 
-        SoundManager.getInstance().loadSound(this); //판정 드럼소리 로딩
+        Xeus.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                selectSong(Xeus);  // 곡선택 로직 동작후 커스텀다이어로그 생성
+            }
+        }); //제우스 레이아웃 클릭시
     }
 
     public void selectSong(LinearLayout song) {
         switch (song.getId()){
             case R.id.odysseus :
-                selectSong = "odysseus";
+                selectSong = "odysseus";  // 선택된곡 String으로 난이도 조절 메소드에서 곡정보를 인식
                 odysseus(); // 곡정보를 odysseus로 설정
                 showCustomDialog();
                 break;
+            case R.id.Xeus :
+                selectSong = "xeus";  // 선택된곡 String으로 난이도 조절 메소드에서 곡정보를 인식
+                xeus(); // 곡정보를 xeus로  설정
+                showCustomDialog();
+                break;
         }
-    }
+    } //레이아웃 이름을 가지고와서 곡정보를 세팅하고 다이어로그를 띄움
 
     public void showCustomDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
@@ -97,6 +125,7 @@ public class MainActivity extends AppCompatActivity {
         startBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 List<NoteData> notes = OsuFileParser.parseOsuFile(MainActivity.this, noteData);  // 선택된곡 노트데이터를 리스트에 삽입
                 Intent intent = new Intent(MainActivity.this, GameActivity.class); // 인턴트생성
                 intent.putParcelableArrayListExtra("notes", new ArrayList<>(notes)); // 채보리스트를 인턴트에 담아서 전송
@@ -104,6 +133,7 @@ public class MainActivity extends AppCompatActivity {
                 intent.putExtra("songName",songName);  // 곡이름 인턴트전송
                 intent.putExtra("songDifficulty",songDifficulty);  // 곡 난이도 인턴트전송
                 intent.putExtra("songBpm",songBPM);  // 곡 bpm 인턴트전송
+                intent.putExtra("song_mp3",song_mp3);  // 곡 노래mp3 인턴트 전송
                 startActivity(intent);
                 dialog.dismiss();
             }
@@ -122,15 +152,36 @@ public class MainActivity extends AppCompatActivity {
             songImage = R.drawable.odysseus_img;  // 오디세우스 이미지설정
             songBPM = "187";  // 오디세우스 bpm
             songName = "Odysseus[EASY]";  // 오디세우스 곡제목
-            songDifficulty = "★★★★★";  // 오디세우스 난이도
-            noteData = R.raw.odysseus;
+            songDifficulty = "★★★★★★";  // 오디세우스 난이도
+            noteData = R.raw.odysseus; // 오디세우스 채보 데이터
+            song_mp3 = R.raw.xeon; // 오디세우스 mp3파일
         }
         if (difficultySet == 2) {
-            songImage = R.drawable.odysseus_img;  // 오디세우스 이미지설정
-            songBPM = "187";  // 오디세우스 bpm
-            songName = "Odysseus[HARD]";  // 오디세우스 곡제목
-            songDifficulty = "★★★★★★★★";  // 오디세우스 난이도
-            noteData = R.raw.odysseus;
+            songImage = R.drawable.odysseus_img;
+            songBPM = "187";
+            songName = "Odysseus[HARD]";
+            songDifficulty = "★★★★★★★★";
+            noteData = R.raw.odysseus_hard;
+            song_mp3 = R.raw.xeon;
+        }
+    }  // 오디세우스 곡 정보 설정 메소드
+
+    public void xeus(){
+        if (difficultySet == 1) {
+            songImage = R.drawable.xeus_img;
+            songBPM = "148";
+            songName = "Xeus[EASY]";
+            songDifficulty = "★★★★★★";
+            noteData = R.raw.xeus_easy;
+            song_mp3 = R.raw.xeus;
+        }
+        if (difficultySet == 2) {
+            songImage = R.drawable.xeus_img;
+            songBPM = "148";
+            songName = "Xeus[HARD]";
+            songDifficulty = "★★★★★★★★★";
+            noteData = R.raw.xeus_hard ;
+            song_mp3 = R.raw.xeus;
         }
     }  // 오디세우스 곡 정보 설정 메소드
 
@@ -147,6 +198,11 @@ public class MainActivity extends AppCompatActivity {
             case "odysseus" :
                 odysseus();
                 changeDialogInfo(songImageView,songNameTV,difficultyTV,bpmTV); // 다이어로그 정보 변경
+                break;
+            case "xeus" :
+                xeus();
+                changeDialogInfo(songImageView,songNameTV,difficultyTV,bpmTV); // 다이어로그 정보 변경
+                break;
         }
     }
 

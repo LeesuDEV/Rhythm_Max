@@ -6,12 +6,13 @@ import android.animation.ValueAnimator;
 import android.content.Intent;
 import android.content.res.AssetFileDescriptor;
 import android.media.MediaPlayer;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -30,10 +31,11 @@ public class GameActivity extends AppCompatActivity {
     String songDifficulty;
     String songBPM;
     int songImage; //곡 이미지
+    int song_mp3; //노래 파일
 
 
     Button exitbutton;
-    Button button1, button2, button3, button4, button5;
+    Button[] button; // 레인 버튼배열
     public NoteManager noteManager;
     private Thread noteThread; // 노트매니저 Ui Thread를 담을 쓰레드
 
@@ -42,6 +44,10 @@ public class GameActivity extends AppCompatActivity {
     private float judgmentLineY_Rate = 0.80f;  //판정선의 (전체 게임판 * 0.x배) 설정 높이값
     int maxScore = 1000; //퍼펙트 스코어 (기준점)
     private JudgmentLineView judgmentLineView;
+    int[] buttonPositions = new int[4]; //각 버튼의 위치
+    int[] buttonWidths = new int[4]; //각 버튼의 크기정보
+    int currentLane = -1; //초기 레인 인덱스
+    boolean touched = false; // 터치상태를 인식하는 변수
 
     int score; // 총 점수
     int combo; // 콤보 수
@@ -60,17 +66,15 @@ public class GameActivity extends AppCompatActivity {
     double accuracy; // 정확도
     String accuracy_s; // 정확도 텍스트포맷 %.1f% 까지 포맷
 
-    ImageView laneLight1, laneLight2, laneLight3, laneLight4;  // 라인 불빛 이미지뷰
+    ImageView[] laneLights = new ImageView[4];  // 라인 불빛 이미지뷰
+
     AnimationController animationController;
 
     MediaPlayer mediaPlayer; // 노래 플레이어 객체
-    int dalay_StartTime = 1140; // 노래 시작 시간 +시간은 더 빠르게, -시간은 더 느리게 (통상적으로 배속 * 판정선배율 - 170하면 맞음) // 컴퓨터 1110 / 휴대폰 1080~1120
+    int dalay_StartTime = 1140; // 노래 시작 시간 +시간은 더 빠르게, -시간은 더 느리게 (통상적으로 배속 * 판정선배율 - 170하면 맞음) // 컴퓨터 1110 / 휴대폰 1140
     String color; // 판정 색깔코드
 
-    LottieAnimationView animationView1;  // 판정시 폭죽 이펙트효과
-    LottieAnimationView animationView2;
-    LottieAnimationView animationView3;
-    LottieAnimationView animationView4;
+    LottieAnimationView[] animationViews = new LottieAnimationView[4];  // 판정시 폭죽 이펙트효과
 
     ProgressBar healthBar; // 체력 바
 
@@ -89,10 +93,11 @@ public class GameActivity extends AppCompatActivity {
         /*---------------------인턴트로 받아올 자료 시작----------------------*/
         Intent intent = getIntent();
         notes = intent.getParcelableArrayListExtra("notes"); // 인턴트로 받아온 노트정보 어레이리스트 notes에 담기
-         songName = intent.getStringExtra("songName");
-         songDifficulty = intent.getStringExtra("songDifficulty");
-         songBPM = intent.getStringExtra("songBPM");
-         songImage = intent.getIntExtra("songImage",1); //곡 정보들을 게임액티비티에 전달.
+        songName = intent.getStringExtra("songName");
+        songDifficulty = intent.getStringExtra("songDifficulty");
+        songBPM = intent.getStringExtra("songBPM");
+        songImage = intent.getIntExtra("songImage", 1); //곡 정보들을 게임액티비티에 전달.
+        song_mp3 = intent.getIntExtra("song_mp3", 1); // 곡 노래mp3를 게임액티비티에 전달.
 
         /*---------------------인턴트로 받아올 자료 끝----------------------*/
 
@@ -106,15 +111,39 @@ public class GameActivity extends AppCompatActivity {
             }
         });
 
-        button1 = findViewById(R.id.button1);
-        button2 = findViewById(R.id.button2);
-        button3 = findViewById(R.id.button3);
-        button4 = findViewById(R.id.button4);
 
-        laneLight1 = findViewById(R.id.lane1_light);
-        laneLight2 = findViewById(R.id.lane2_light);
-        laneLight3 = findViewById(R.id.lane3_light);
-        laneLight4 = findViewById(R.id.lane4_light);
+        button = new Button[]{
+                findViewById(R.id.button1),
+                findViewById(R.id.button2),
+                findViewById(R.id.button3),
+                findViewById(R.id.button4)
+        };  //버튼배열 초기화
+
+        ViewTreeObserver vto = button[3].getViewTreeObserver();
+        vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                    button[3].getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                } else {
+                    button[3].getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                }
+
+                buttonPositions[0] = (int) button[0].getX();
+                buttonWidths[0] = button[0].getWidth();
+                buttonPositions[1] = (int) button[1].getX();
+                buttonWidths[1] = button[1].getWidth();
+                buttonPositions[2] = (int) button[2].getX();
+                buttonWidths[2] = button[2].getWidth();
+                buttonPositions[3] = (int) button[3].getX();
+                buttonWidths[3] = button[3].getWidth();
+            }
+        }); // 뷰 트리 옵저버를 통해 레이아웃이 구성 된 후에 값을 가지고옴.
+
+        laneLights[0] = findViewById(R.id.lane1_light);
+        laneLights[1] = findViewById(R.id.lane2_light);
+        laneLights[2] = findViewById(R.id.lane3_light);
+        laneLights[3] = findViewById(R.id.lane4_light);
 
         score = 0;
         judgmentTV = findViewById(R.id.judgmentTV); // 판정 텍스트뷰
@@ -126,31 +155,31 @@ public class GameActivity extends AppCompatActivity {
         setupJudgmentLine();    // 판정선 메소드
         healthBar = findViewById(R.id.health_Bar);
 
-        /*laneButtonListener(button1, 1, laneLight1);  // 판정처리 리스너 레인1
-        laneButtonListener(button2, 2, laneLight2);  // 판정처리 리스너 레인2
-        laneButtonListener(button3, 3, laneLight3);  // 판정처리 리스너 레인3
-        laneButtonListener(button4, 4, laneLight4);  // 판정처리 리스너 레인4*/
+        animationViews[0] = findViewById(R.id.animation_view1);
+        animationViews[0].setAnimation(R.raw.hit);
+        animationViews[0].setSpeed(3.0f);
 
-        animationView1 = findViewById(R.id.animation_view1); // 폭죽애니메이션 뷰
-        animationView1.setAnimation(R.raw.hit); // 애니메이션파일이 담긴 json을 세팅해줌
-        animationView1.setSpeed(3.0f);
+        animationViews[1] = findViewById(R.id.animation_view2);
+        animationViews[1].setAnimation(R.raw.hit);
+        animationViews[1].setSpeed(3.0f);
 
-        animationView2 = findViewById(R.id.animation_view2); // 폭죽애니메이션 뷰
-        animationView2.setAnimation(R.raw.hit); // 애니메이션파일이 담긴 json을 세팅해줌
-        animationView2.setSpeed(3.0f);
+        animationViews[2] = findViewById(R.id.animation_view3);
+        animationViews[2].setAnimation(R.raw.hit);
+        animationViews[2].setSpeed(3.0f);
 
-        animationView3 = findViewById(R.id.animation_view3); // 폭죽애니메이션 뷰
-        animationView3.setAnimation(R.raw.hit); // 애니메이션파일이 담긴 json을 세팅해줌
-        animationView3.setSpeed(3.0f);
+        animationViews[3] = findViewById(R.id.animation_view4);
+        animationViews[3].setAnimation(R.raw.hit);
+        animationViews[3].setSpeed(3.0f);
 
-        animationView4 = findViewById(R.id.animation_view4); // 폭죽애니메이션 뷰
-        animationView4.setAnimation(R.raw.hit); // 애니메이션파일이 담긴 json을 세팅해줌
-        animationView4.setSpeed(3.0f);
+        for (int i = 0; i < button.length; i++) {
+            final int index = i;  // Java에서는 lambda expression 내부에서 사용할 변수는 final 이어야 함
+            laneButtonTouchListener(button[i], index, laneLights[index], animationViews[index]);
+        } // 판정 터치 리스너 레인
 
-        laneButtonTouchListener(button1, 1, laneLight1, animationView1);  // 판정 터치 리스너 레인1
-        laneButtonTouchListener(button2, 2, laneLight2, animationView2);  // 판정 터치 리스너 레인2
-        laneButtonTouchListener(button3, 3, laneLight3, animationView3);  // 판정 터치 리스너 레인3
-        laneButtonTouchListener(button4, 4, laneLight4, animationView4);  // 판정 터치 리스너 레인4
+        /*laneButtonListener(button1, 1, laneLight1,animationView1);  // 판정처리 리스너 레인1
+        laneButtonListener(button2, 2, laneLight2, animationView2);  // 판정처리 리스너 레인2
+        laneButtonListener(button3, 3, laneLight3, animationView3);  // 판정처리 리스너 레인3
+        laneButtonListener(button4, 4, laneLight4, animationView4);  // 판정처리 리스너 레인4*/
 
         mediaPlayer = new MediaPlayer();
 
@@ -161,9 +190,9 @@ public class GameActivity extends AppCompatActivity {
         // gameHandler.post(gameUpdateRunnable); // 게임핸들러에 쓰레드를 입혀서 동작 - NoteView 의 Animator에서 판정시 리스트에서 삭제하게 바꿈 05/04 23:15분
     }
 
-     public void startGame() {
+    public void startGame() {
         try {
-            AssetFileDescriptor afd = getResources().openRawResourceFd(R.raw.xeon);
+            AssetFileDescriptor afd = getResources().openRawResourceFd(song_mp3);
             mediaPlayer.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
             mediaPlayer.prepareAsync();
             mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {  //노래준비 리스너 - 노래가 불러와지길 기다림
@@ -193,22 +222,22 @@ public class GameActivity extends AppCompatActivity {
                 public void onCompletion(MediaPlayer mp) {
                     //노래재생이 끝날때 수행할 코드
                     /*---------------------결과 창 엑티비티로 인턴트 전송 시작---------------------*/
-                    Intent intent = new Intent(GameActivity.this,ResultActivity.class);
-                    intent.putExtra("songImage",songImage);  // 곡이미지 인턴트전송
-                    intent.putExtra("songName",songName);  // 곡이름 인턴트전송
-                    intent.putExtra("songDifficulty",songDifficulty);  // 곡 난이도 인턴트전송
-                    intent.putExtra("songBpm",songBPM);  // 곡 bpm 인턴트전송
+                    Intent intent = new Intent(GameActivity.this, ResultActivity.class);
+                    intent.putExtra("songImage", songImage);  // 곡이미지 인턴트전송
+                    intent.putExtra("songName", songName);  // 곡이름 인턴트전송
+                    intent.putExtra("songDifficulty", songDifficulty);  // 곡 난이도 인턴트전송
+                    intent.putExtra("songBpm", songBPM);  // 곡 bpm 인턴트전송
 
-                    intent.putExtra("perfect",perfect); //퍼펙~ 미스까지 데이터를 인턴트로 전송
-                    intent.putExtra("great",great);
-                    intent.putExtra("good",good);
-                    intent.putExtra("bad",bad);
-                    intent.putExtra("miss",miss);
+                    intent.putExtra("perfect", perfect); //퍼펙~ 미스까지 데이터를 인턴트로 전송
+                    intent.putExtra("great", great);
+                    intent.putExtra("good", good);
+                    intent.putExtra("bad", bad);
+                    intent.putExtra("miss", miss);
 
-                    intent.putExtra("stackCombo",stackCombo); //스택콤보 인턴트전송
-                    intent.putExtra("maxCombo",maxCombo); //맥스콤보 인턴트 전송
-                    intent.putExtra("score",score); //점수 인턴트전송
-                    intent.putExtra("accuracy",accuracy_s); //정확도 인턴트전송
+                    intent.putExtra("stackCombo", stackCombo); //스택콤보 인턴트전송
+                    intent.putExtra("maxCombo", maxCombo); //맥스콤보 인턴트 전송
+                    intent.putExtra("score", score); //점수 인턴트전송
+                    intent.putExtra("accuracy", accuracy_s); //정확도 인턴트전송
 
 
                     startActivity(intent); //결과 화면으로 이동
@@ -330,24 +359,24 @@ public class GameActivity extends AppCompatActivity {
         switch (judgment) {
             case "PERFECT":
                 score += maxScore; //점수 증가
-                stackCombo ++; //누적노트 증가
-                perfect ++; //퍼펙트 수 증가
+                stackCombo++; //누적노트 증가
+                perfect++; //퍼펙트 수 증가
 
                 break;
             case "GREAT":
-                score += maxScore*0.75;
-                stackCombo ++;
-                great ++;
+                score += maxScore * 0.75;
+                stackCombo++;
+                great++;
                 break;
             case "GOOD":
-                score += maxScore*0.5;
-                stackCombo ++;
-                good ++;
+                score += maxScore * 0.5;
+                stackCombo++;
+                good++;
                 break;
             case "BAD":
-                score -= maxScore*0.25;
-                stackCombo ++;
-                bad ++;
+                score -= maxScore * 0.25;
+                stackCombo++;
+                bad++;
                 break;
             case "MISS":
                 break;
@@ -359,8 +388,8 @@ public class GameActivity extends AppCompatActivity {
 
     } // 노트에 판정따른 스코어 +- 메소드
 
-    public void increaseMaxCombo(int combo){
-        if(combo >= maxScore) {
+    public void increaseMaxCombo(int combo) {
+        if (combo >= maxScore) {
             maxScore = combo;
         }
     }  // 현재콤보가 맥스콤보보다 크거나 같을때 max콤보가 증가하는 메소드
@@ -390,16 +419,14 @@ public class GameActivity extends AppCompatActivity {
 
     public void touchEvent(int index, ImageView laneLightNum, LottieAnimationView animationView) {
         SoundManager.getInstance().playSound(); // 판정 종소리 효과음
-        laneLightNum.setVisibility(View.VISIBLE); // 해당라인 불빛기둥 생성
-        new Handler().postDelayed(() -> laneLightNum.setVisibility(View.INVISIBLE), 100); // 해당라인 불빛기둥 0.5초후 끔
+        laneLights[index].setVisibility(View.VISIBLE); // 해당라인 불빛기둥 생성
+        new Handler().postDelayed(() -> laneLights[index].setVisibility(View.INVISIBLE), 100); // 해당라인 불빛기둥 0.1초후 끔
         List<NoteView> laneNotes = noteManager.getLaneNotes(index); //NoteManager의 lane1Notes에서 노트1 데이터 받아오기
-        NoteView closetNote = findClosetNote(laneNotes);  //받아온 라인의 노트배열에서 판정선과 젤 가까운 노트를 찾는 메소드 실행.
+        NoteView closetNote = findClosetNote(laneNotes);
         if (closetNote != null) {
-            checkJudgment(closetNote, judgmentLineY, animationView); // 원래코드 - 리스트에서 데이터가 삭제 안되는 관계로 일단은 판정을 최대아랫범위보다 줄이고, 최대 아랫범위 내의 값만으로 판정을 처리하게 만듬. 05/02 새벽1시3분
-            //checkJudgment(laneNotes, judgmentLineY); // 판정체크
-            //updateScore(closetNote.getJudgment()); //점수 업데이트 - 이것또한 판정이후에 처리하는게 훨씬 깔끔해서 GameActivity - checkJudgment() 메소드 안에서 판정에따라 처리하게 변경.
+            checkJudgment(closetNote, judgmentLineY, animationViews[index]); // 원래코드 - 리스트에서 데이터가 삭제 안되는 관계로 일단은 판정을 최대아랫범위보다 줄이고, 최대 아랫범위 내의 값만으로 판정을 처리하게 만듬.
         }
-    }    // 버튼객체와, 인덱스로 판정리스너를 삽입해주는 메소드
+    }   // 버튼객체와, 인덱스로 판정리스너를 삽입해주는 메소드
 
     private NoteView findClosetNote(List<NoteView> notes) {
         NoteView closet = null;
@@ -422,7 +449,7 @@ public class GameActivity extends AppCompatActivity {
         if (currentHealth < 0) {
             currentHealth = 0; //체력이 0 이하로 내려가지않도록 처리
 
-            Intent intent = new Intent(GameActivity.this,MissionFail.class);
+            Intent intent = new Intent(GameActivity.this, MissionFail.class);
             startActivity(intent);  // 체력이 0이됐으니, 인턴트를 통해 게임오버 화면으로 이동
             finish();
         }
@@ -446,17 +473,48 @@ public class GameActivity extends AppCompatActivity {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    currentLane = index;
                     touchEvent(index, laneLightNum, animationView);
                     return true; // 이벤트를 여기서 종료
+                }
+                if (event.getAction() == MotionEvent.ACTION_MOVE) {
+                    if (!touched) {   // 최초 터치 1회만 인덱스를 바꾸기위해 touched boolean 변수를 추가.
+                        currentLane = index; // 현재라인을 인덱스값으로 변경
+                        touched = true;  // 터치상태를 유지
+                    }
+                    handleTouchMove(v, event);
+                    return true;
+                }  // 터치후 움직였을때
+                if (event.getAction() == MotionEvent.ACTION_UP) {
+                    currentLane = -1; //레인 인덱스 초기화
+                    touched = false;  // 터치를 뗏으니 터치상태를 초기화
+                    return true;
                 }
                 return false;
             }
         });
     } // onTouchListener을 각 버튼에 부여하고, 버튼을 눌렀을때 처리할 터치이벤트 메소드를 실행시킴
 
+    private void handleTouchMove(View v, MotionEvent event) {
+        float x = event.getX() + v.getLeft(); // 터치 좌표를 상대적 위치에서 절대적 위치로 변환
+        int touchedLane = calculateTouchLane(x);
+        if (touchedLane != currentLane) {
+            currentLane = touchedLane;
+            touchEvent(currentLane, laneLights[currentLane], animationViews[currentLane]); // 새 레인에서 터치 이벤트 처리
+        }
+    }  // 다른 레인으로 터치를 옮겼을때 현재 터치레인과 값을비교하여 다를시, 옮긴 레인의 터치메소드를 실행해주는 메소드
+
+    private int calculateTouchLane(float x) {
+        for (int i = 0; i < buttonPositions.length; i++) {
+            if (x >= buttonPositions[i] && x <= buttonPositions[i] + buttonWidths[i]) {
+                return i;
+            }
+        }
+        return -1; // 터치된 레인이 없는경우
+    } // 버튼들의 좌표값으로 현재 터치된 x위치와 비교하여 무슨버튼인지 식별하게해주는 메소드(int i 값을 반환)
+
     @Override
     protected void onDestroy() {
-        Log.d("STOP", "STOP");
         super.onDestroy();
         if (noteThread != null) {
             noteThread.interrupt(); // 쓰레드 멈추기
@@ -491,12 +549,12 @@ public class GameActivity extends AppCompatActivity {
 
     } // 뷰가 꺼질때 노래,종소리도 같이 null로 초기화
 
-        /*
-    public void laneButtonListener(Button btn, int index, ImageView laneLightNum) {
+
+    /*public void laneButtonListener(Button btn, int index, ImageView laneLightNum, LottieAnimationView animationView) {
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                touchEvent(index, laneLightNum);  // 터치했을때 작동할 모든 메소드들
+                touchEvent(index, laneLightNum, animationView);  // 터치했을때 작동할 모든 메소드들
             }
         });
     }     // 컴퓨터 시뮬레이팅용 onCLickListener
@@ -517,9 +575,9 @@ public class GameActivity extends AppCompatActivity {
                 return true;
         }
         return super.onKeyDown(keyCode, event);
-    } //키보드 지원을 위한 키보드 A,S,;,' 키를 1,2,3,4번 버튼을 눌러주게하는 메소드
+    } //키보드 지원을 위한 키보드 A,S,;,' 키를 1,2,3,4번 버튼을 눌러주게하는 메소드*/
 
-    */
+
 
     /*
     private Runnable gameUpdateRunnable = new Runnable() {
