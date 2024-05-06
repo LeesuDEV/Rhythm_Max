@@ -95,7 +95,6 @@
                 />
 
         </LinearLayout>
-<<<<<<< HEAD
         <LinearLayout
             android:id="@+id/Limbo"
             android:layout_marginTop="5dp"
@@ -137,9 +136,6 @@
                 />
 
         </LinearLayout>
-=======
-
->>>>>>> origin/main
     </LinearLayout>
     <Switch
         android:layout_marginBottom="110dp"
@@ -159,7 +155,6 @@
         android:text="1배속"
         android:id="@+id/speedSetBtn"/>
 
-<<<<<<< HEAD
     <Button
         android:layout_marginBottom="50dp"
         android:layout_marginRight="140dp"
@@ -169,6 +164,4 @@
         android:text="PlayMod"
         android:id="@+id/autoModBtn"/>
 
-=======
->>>>>>> origin/main
 </FrameLayout>

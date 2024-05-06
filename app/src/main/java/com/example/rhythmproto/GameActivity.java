@@ -492,11 +492,7 @@ public class GameActivity extends AppCompatActivity {
 
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
                     currentLane[index] = index;
-<<<<<<< HEAD
                     touchEvent(index); //인덱스값으로 터치 로직 시작(모든 계산을 실행)
-=======
-                    touchEvent(index, laneLightNum, animationView);
->>>>>>> origin/main
                     return true; // 이벤트를 여기서 종료
                 }
 
@@ -529,11 +525,7 @@ public class GameActivity extends AppCompatActivity {
         if (touchedLane != currentLane[index] && touchedLane >= 0 && touchedLane < animationViews.length) {
             currentLane[index] = touchedLane;
             if (currentLane[index] >= 0 && currentLane[index] < laneLights.length) {
-<<<<<<< HEAD
                 touchEvent(currentLane[index]); // 새 레인에서 터치 이벤트 처리
-=======
-                touchEvent(currentLane[index], laneLights[currentLane[index]], animationViews[currentLane[index]]); // 새 레인에서 터치 이벤트 처리
->>>>>>> origin/main
             }
         }
     }
@@ -611,13 +603,9 @@ public class GameActivity extends AppCompatActivity {
                 return true;
         }
         return super.onKeyDown(keyCode, event);
-    } //키보드 지원을 위한 키보드 A,S,;,' 키를 1,2,3,4번 버튼을 눌러주게하는 메소드*/
+    } //키보드 지원을 위한 키보드 A,S,;,' 키를 1,2,3,4번 버튼을 눌러주게하는 메소드
 
 
-<<<<<<< HEAD
-
-=======
->>>>>>> origin/main
 
     /*
     private Runnable gameUpdateRunnable = new Runnable() {
