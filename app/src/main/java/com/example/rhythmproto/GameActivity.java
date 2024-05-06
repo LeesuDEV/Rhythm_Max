@@ -51,7 +51,7 @@ public class GameActivity extends AppCompatActivity {
     int[] currentLane = new int[4]; //초기 레인 인덱스  -- 5월6일 10시30분 슬라이딩 구현으로 동시터치시 currentLane의 값 공유로인해 쿼드터치 현상이 발생함, CurrentLane을 배열로 만들어 각 레인별로 CurrentLane을 따로 할당하여 독립적인 currentLane을 사용하도록함.(문제해결완료)
     boolean[] touched = new boolean[4]; // 터치상태를 인식하는 변수
 
-    int score; // 총 점수
+    long score; // 총 점수
     int combo; // 콤보 수
     int perfect; // 퍼펙트 수
     int great;
@@ -204,8 +204,8 @@ public class GameActivity extends AppCompatActivity {
     }
 
     private void setdelayStartTime(){
-        dalay_StartTime = (setSpeed * judgmentLineY_Rate) - 60;
-    }
+        dalay_StartTime = ((setSpeed * judgmentLineY_Rate) - 60 ) + MainActivity.syncValue; //-60은 개발자가 설정한 디폴트 싱크값(데이터로딩등) / SyncValue는 사용자설정 싱크값
+    } // 배속 * 판정선높이 - 60(기본 싱크값) + (사용자설정 싱크값) 을 설정해주는 시작딜레이타임 ---- 게임 싱크설정 로직 메소드
 
     public void startGame() {
         try {
@@ -406,19 +406,20 @@ public class GameActivity extends AppCompatActivity {
     } // 노트에 판정따른 스코어 +- 메소드
 
     public void increaseMaxCombo(int combo) {
-        if (combo >= maxScore) {
-            maxScore = combo;
+        if (combo >= maxCombo) {
+            maxCombo = combo;
         }
     }  // 현재콤보가 맥스콤보보다 크거나 같을때 max콤보가 증가하는 메소드
 
     //       스코어 관련 메소드묶음     +++
-    private void displayScore(int score) {
+    private void displayScore(long score) {
         scoreTV.setText("" + score);
     } // 점수를 ScoreTv에 표시해주는 메소드
 
-    private void displayAccuracy(int score) {
+    private void displayAccuracy(long score) {
         if (stackCombo != 0) {
             accuracy = (double) score / (stackCombo * maxScore);
+
             accuracy_s = String.format("%.1f%%", accuracy * 100);
             accuracyTV.setText(accuracy_s);
         }
@@ -468,11 +469,24 @@ public class GameActivity extends AppCompatActivity {
 
             Intent intent = new Intent(GameActivity.this, MissionFail.class);
             startActivity(intent);  // 체력이 0이됐으니, 인턴트를 통해 게임오버 화면으로 이동
-            finish();
+
+            gameOver();  // 게임오버시 애니메이터를 전부 취소하고 정리한뒤, finish()액티비티 종료를 선언함.
         }
 
         healthBar.setProgress(currentHealth);
     }  // 체력이 줄어드는 메소드  ++ 체력이 0이하가 되면 게임오버 화면으로 이동
+
+    private void gameOver() {
+        for (ValueAnimator animator : animators) {
+            if (animator != null) {
+                animator.removeAllUpdateListeners();  // 모든 업데이트 리스너 제거
+                animator.removeAllListeners();  // 모든 리스너 제거
+                animator.cancel();  // 애니메이터 작업 취소(쓰레드는 꺼져도 애니메이터는 계속 돌아가고있으므로 멈춰줘야 없어진객체에 Miss처리를 하지않음)
+            }
+        }
+        animators.clear();
+        finish();
+    }  // 게임오버시 애니메이터를 전부 취소하고 정리한뒤, finish()액티비티 종료를 선언함.
 
     public void increaseHealth(int heal) {
         int currentHealth = healthBar.getProgress();
@@ -542,15 +556,17 @@ public class GameActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        for (ValueAnimator animator : animators) {
+            if (animator != null) {
+                animator.removeAllUpdateListeners();  // 모든 업데이트 리스너 제거
+                animator.removeAllListeners();  // 모든 리스너 제거
+                animator.cancel();  // 애니메이터 작업 취소(쓰레드는 꺼져도 애니메이터는 계속 돌아가고있으므로 멈춰줘야 없어진객체에 Miss처리를 하지않음)
+            }
+        }
+
         if (noteThread != null) {
             noteThread.interrupt(); // 쓰레드 멈추기
             noteThread = null;  // 쓰레드 참조를 해제하여 가비지 컬렉션을 도울 수 있도록 함
-        }
-
-        for (ValueAnimator animator : animators) {
-            if (animator != null) {
-                animator.cancel();  // 애니메이터 작업 취소(쓰레드는 꺼져도 애니메이터는 계속 돌아가고있으므로 멈춰줘야 없어진객체에 Miss처리를 하지않음)
-            }
         }
 
         if (noteManager.handler != null) {

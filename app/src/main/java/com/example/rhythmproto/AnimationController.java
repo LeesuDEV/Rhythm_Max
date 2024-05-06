@@ -24,13 +24,13 @@ public class AnimationController {
         judgmentTV.setVisibility(View.VISIBLE);  // 판정텍스트뷰를 활성화
 
         ObjectAnimator fadeIn = ObjectAnimator.ofFloat(judgmentTV, "alpha", 0f, 1f);
-        fadeIn.setDuration(500); // 0.5초 동안 페이드인
+        fadeIn.setDuration(200); // 0.5초 동안 페이드인
 
         ObjectAnimator stay = ObjectAnimator.ofFloat(judgmentTV, "alpha", 1f, 1f);
-        stay.setDuration(1000); // 1초간 유지
+        stay.setDuration(300); // 1초간 유지
 
         ObjectAnimator fadeOut = ObjectAnimator.ofFloat(judgmentTV, "alpha", 1f, 0f);
-        fadeOut.setDuration(500); // 0.5초 동안 페이드아웃
+        fadeOut.setDuration(200); // 0.5초 동안 페이드아웃
 
         AnimatorSet animatorSet = new AnimatorSet();
         animatorSet.playSequentially(fadeIn, stay, fadeOut);

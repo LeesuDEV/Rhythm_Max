@@ -8,6 +8,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.LinearInterpolator;
@@ -129,6 +130,7 @@ public class NoteView extends View {
                     } else if (noteView.isJudged()) {  // -- 노래가 판정 됐을시
                         activity.noteManager.removeNoteFromLane(noteView); // lanes 배열에서 이 객체의 노트뷰를 삭제.
                     }
+                    Log.d("cc","cC");
                 }
             });
             animator.start();

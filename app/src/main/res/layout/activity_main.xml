@@ -164,4 +164,42 @@
         android:text="PlayMod"
         android:id="@+id/autoModBtn"/>
 
+    <EditText
+        android:layout_marginBottom="5dp"
+        android:layout_marginRight="140dp"
+        android:layout_width="75dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center"
+        android:textAlignment="center"
+        android:text=""
+        android:hint="sync"
+        android:id="@+id/syncET"
+        />
+    <Button
+        android:layout_marginBottom="5dp"
+        android:layout_marginRight="70dp"
+        android:layout_width="60dp"
+        android:layout_height="50dp"
+        android:layout_gravity="bottom|center"
+        android:text="set"
+        android:id="@+id/syncBtn"/>
+    <TextView
+        android:layout_marginBottom="15dp"
+        android:layout_marginRight="10dp"
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center"
+        android:textSize="20dp"
+        android:text="0"
+        android:id="@+id/syncTV"/>
+
+    <Button
+        android:layout_marginBottom="5dp"
+        android:layout_marginRight="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:layout_gravity="bottom|right"
+        android:text="블루투스SET"
+        android:id="@+id/bluetoothBtn"/>
+
 </FrameLayout>

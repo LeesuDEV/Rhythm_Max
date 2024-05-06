@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Switch;
@@ -32,11 +33,17 @@ public class MainActivity extends AppCompatActivity {
     int difficultySet = 1;  //  1은 easy 2는 hard
     String selectSong = ""; // 선택된 곡
     Switch clapSoundSwitch; // 타격음 소리 스위치
+    static boolean clapSoundIndex; //타격음 소리 인덱스값
     Button setSpeedBtn; //배속설정 버튼
     Button autoModBtn; // 오토모드 버튼
-    static float setSpeed = 3000; // 배속설정
-    static int speedIndex = 1; // 배속모드 식별값
-    static float setSpeedJudgment = 1; // 배속모드에 따른 판정 배율값
+    Button syncSetBtn; // 싱크조절 버튼
+    Button bluetoothBtn; // 블루투스 이어폰 자동세팅버튼
+    EditText syncSetText; // 싱크조절 에딧텍스트
+    TextView syncCurrentText; // 싱크현재값 텍스트
+    static int syncValue=0; // 싱크값
+    static float setSpeed = 1500; // 배속설정
+    static int speedIndex = 3; // 배속모드 식별값
+    static float setSpeedJudgment = 3; // 배속모드에 따른 판정 배율값
     static boolean autoModIndex = false; // 0ff 기본값 오토모드 인덱스
 
     //1배속 = 3000ms , 1.5배속 = 2000ms , 2배속 = 1500ms , 2.5배속 = 1200ms, 3배속 = 1000ms, 3.5배속 = 857ms
@@ -51,8 +58,37 @@ public class MainActivity extends AppCompatActivity {
         clapSoundSwitch = findViewById(R.id.ClapSoundSwitch);
         setSpeedBtn = findViewById(R.id.speedSetBtn);
         autoModBtn = findViewById(R.id.autoModBtn);
+        syncCurrentText = findViewById(R.id.syncTV);
+        syncSetBtn = findViewById(R.id.syncBtn);
+        syncSetText = findViewById(R.id.syncET);
+        bluetoothBtn = findViewById(R.id.bluetoothBtn);
 
         setDefaultSpeed(speedIndex); //화면 구성시 초기 인덱스값(혹은 db에서 받아온 유저의 배속값)을 버튼+배속에 설정
+
+        setDefaultMode(autoModIndex); //화면 구성시 오토모드 인덱스값을 텍스트에 부여
+
+        setDefeaultSync(syncValue); //싱크값을 현재 화면에 표시해줌
+
+        setDefaultClapSound(clapSoundIndex); //화면 구성시 초기 타격음 설정
+
+        bluetoothBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                syncValue = -250;
+                setDefeaultSync(syncValue); //싱크값을 현재 화면에 표시해줌
+            }
+        }); // 블루투스이어폰 싱크값 -250 세팅
+
+        syncSetBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String s = syncSetText.getText().toString().trim();
+                if (!s.isEmpty()){
+                    syncValue = Integer.parseInt(s);
+                    syncCurrentText.setText(String.valueOf(syncValue));
+                }
+            }
+        }); //싱크텍스트를 받아서 값을 적용해주는 싱크조절버튼
 
         autoModBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -110,12 +146,15 @@ public class MainActivity extends AppCompatActivity {
             }
         });  // 배속설정버튼
 
+
         clapSoundSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
+                    clapSoundIndex = true;  // 타격음 인덱스값 변경
                     SoundManager.getInstance().loadSound(MainActivity.this); // 판정타격음 스위치를 켰다면 타격소리를 로딩
                 } else {
+                    clapSoundIndex = false;
                     SoundManager.instance = null;
                 }
             }
@@ -178,6 +217,18 @@ public class MainActivity extends AppCompatActivity {
        }
     } //화면 구성시 초기 인덱스값(혹은 db에서 받아온 유저의 배속값)을 버튼+배속에 설정
 
+    public void setDefaultClapSound(boolean clapSoundIndex){
+        if (clapSoundIndex){
+            clapSoundSwitch.setChecked(true);
+            SoundManager.getInstance().loadSound(MainActivity.this); // 판정타격음 스위치를 켰다면 타격소리를 로딩
+        } else {
+            clapSoundSwitch.setChecked(false);
+            SoundManager.instance = null;
+        }
+    }  // 화면구성시 타격음 설정
+    public void setDefeaultSync(int syncValue){
+        syncCurrentText.setText(String.valueOf(syncValue));
+    } //현재 싱크값을 표시해줌
     public void selectSong(LinearLayout song) {
         switch (song.getId()){
             case R.id.odysseus :
@@ -310,7 +361,7 @@ public class MainActivity extends AppCompatActivity {
             songBPM = "191.9";
             songName = "Limbo[EASY]";
             songDifficulty = "★★★★★★";
-            noteData = R.raw.limbo_hard;
+            noteData = R.raw.limbo_easy;
             song_mp3 = R.raw.limbo;
         }
         if (difficultySet == 2) {
@@ -345,6 +396,14 @@ public class MainActivity extends AppCompatActivity {
                 limbo();
                 changeDialogInfo(songImageView,songNameTV,difficultyTV,bpmTV); // 다이어로그 정보 변경
                 break;
+        }
+    }
+
+    public void setDefaultMode(boolean automode){
+        if (automode){
+            autoModBtn.setText("AutoMode");
+        } else {
+            autoModBtn.setText("PlayMode");
         }
     }
 
