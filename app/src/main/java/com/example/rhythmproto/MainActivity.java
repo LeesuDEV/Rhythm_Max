@@ -33,9 +33,11 @@ public class MainActivity extends AppCompatActivity {
     String selectSong = ""; // 선택된 곡
     Switch clapSoundSwitch; // 타격음 소리 스위치
     Button setSpeedBtn; //배속설정 버튼
+    Button autoModBtn; // 오토모드 버튼
     static float setSpeed = 3000; // 배속설정
     static int speedIndex = 1; // 배속모드 식별값
     static float setSpeedJudgment = 1; // 배속모드에 따른 판정 배율값
+    static boolean autoModIndex = false; // 0ff 기본값 오토모드 인덱스
 
     //1배속 = 3000ms , 1.5배속 = 2000ms , 2배속 = 1500ms , 2.5배속 = 1200ms, 3배속 = 1000ms, 3.5배속 = 857ms
     @Override
@@ -48,9 +50,22 @@ public class MainActivity extends AppCompatActivity {
         Limbo = findViewById(R.id.Limbo);
         clapSoundSwitch = findViewById(R.id.ClapSoundSwitch);
         setSpeedBtn = findViewById(R.id.speedSetBtn);
+        autoModBtn = findViewById(R.id.autoModBtn);
 
         setDefaultSpeed(speedIndex); //화면 구성시 초기 인덱스값(혹은 db에서 받아온 유저의 배속값)을 버튼+배속에 설정
 
+        autoModBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(!autoModIndex){
+                    autoModBtn.setText("AutoMod"); //버튼 텍스트를 오토모드로 변경
+                    autoModIndex=true; //오토모드를 ON
+                } else {
+                    autoModBtn.setText("PlayMod"); //플레이 모드로 텍스트 변경
+                    autoModIndex=false; //오토모드를 OFF
+                }
+            }
+        });
         setSpeedBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

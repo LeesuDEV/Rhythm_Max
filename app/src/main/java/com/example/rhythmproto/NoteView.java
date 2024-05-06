@@ -99,6 +99,15 @@ public class NoteView extends View {
 
                     // 화면 범위를 벗어나면 노트 제거 및 미스 판정 처리
                     if (!noteView.isJudged()) {  // -- 판정되지 않은 객체만 검사
+
+                        /*------------------------오토모드 설정 시작---------------------------*/
+                        if (MainActivity.autoModIndex){  // 오토모드가 켜져있을때 자동 퍼펙트모드가 동작함.
+                            if (value > activity.judgmentLineY - 10) { // 노트의 y 위치가 퍼펙트판정선을 넘어가면
+                                activity.touchEvent(index); //인덱스값으로 터치 로직 시작(모든 계산을 실행)
+                            }
+                        }
+                        /*------------------------오토모드 설정 끝---------------------------*/
+
                         if (value > screenHeight - 100) {  // -- 스크린높이 - 100 위치만큼 온 노트객체에 대해 MISS판정 처리
                             damage = 10; //받을 데미지
                             judgment = "Miss";  // 판정 텍스트
