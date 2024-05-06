@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/gameOverTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="GAME OVER"
+        android:layout_gravity="center"
+        android:layout_marginTop="250dp"
+        android:textSize="60sp"
+        android:textStyle="italic"
+        android:textColor="#BFBFBF"/>
+
+    <TextView
+        android:id="@+id/gotoMainTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="50dp"
+        android:background="#ff000000"
+        android:text="go to main"
+        android:textColor="#A8A00A"
+        android:textStyle="bold"
+        android:textSize="30dp"/>
+</androidx.constraintlayout.widget.ConstraintLayout>
