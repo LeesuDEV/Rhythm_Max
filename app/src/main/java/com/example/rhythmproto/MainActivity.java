@@ -31,7 +31,12 @@ public class MainActivity extends AppCompatActivity {
     int difficultySet = 1;  //  1은 easy 2는 hard
     String selectSong = ""; // 선택된 곡
     Switch clapSoundSwitch; // 타격음 소리 스위치
+    Button setSpeedBtn; //배속설정 버튼
+    float setSpeed = 1000; // 배속설정
+    int speedIndex = 1; // 배속모드 식별값
+    float setSpeedJudgment = 1; // 배속모드에 따른 판정 배율값
 
+    //1배속 = 3000ms , 1.5배속 = 2000ms , 2배속 = 1500ms , 2.5배속 = 1200ms, 3배속 = 1000ms, 3.5배속 = 857ms
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,6 +45,53 @@ public class MainActivity extends AppCompatActivity {
         odysseus = findViewById(R.id.odysseus);
         Xeus = findViewById(R.id.Xeus);
         clapSoundSwitch = findViewById(R.id.ClapSoundSwitch);
+        setSpeedBtn = findViewById(R.id.speedSetBtn);
+
+        setDefaultSpeed(speedIndex); //화면 구성시 초기 인덱스값(혹은 db에서 받아온 유저의 배속값)을 버튼+배속에 설정
+
+        setSpeedBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                switch (speedIndex) {
+                    case 1 :
+                        speedIndex = 2; // 배속 식별값을 2로변경 (1.5배 식별값)
+                        setSpeed = 2000; // 1.5배속 값을 세팅
+                        setSpeedJudgment = 1.5f; // 1.5배율을 세팅
+                        setSpeedBtn.setText("1.5X"); //버튼 텍스트를 1.5배속으로 변경
+                        break;
+                    case 2 :
+                        speedIndex = 3;
+                        setSpeed = 1500;
+                        setSpeedJudgment = 2f;
+                        setSpeedBtn.setText("2X");
+                        break;
+                    case 3 :
+                        speedIndex = 4;
+                        setSpeed = 1200;
+                        setSpeedJudgment = 2.5f;
+                        setSpeedBtn.setText("2.5X");
+                        break;
+                    case 4 :
+                        speedIndex = 5;
+                        setSpeed = 1000;
+                        setSpeedJudgment = 3;
+                        setSpeedBtn.setText("3X");
+                        break;
+                    case 5 :
+                        speedIndex = 6;
+                        setSpeed = 857;
+                        setSpeedJudgment = 3.5f;
+                        setSpeedBtn.setText("3.5X");
+                        break;
+                    case 6 :
+                        speedIndex = 1;
+                        setSpeed = 3000;
+                        setSpeedJudgment = 1;
+                        setSpeedBtn.setText("1X"); // 배속으로 다시 변경
+                        break;
+                }
+            }
+        });  // 배속설정버튼
 
         clapSoundSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -66,6 +118,41 @@ public class MainActivity extends AppCompatActivity {
             }
         }); //제우스 레이아웃 클릭시
     }
+
+    public void setDefaultSpeed(int speedIndex) {
+       switch (speedIndex){
+           case 1 :
+               setSpeed = 3000; // 1배속 값을 세팅
+               setSpeedJudgment = 1; // 1배율을 세팅
+               setSpeedBtn.setText("1X"); //버튼 텍스트를 1배속으로 변경
+               break;
+           case 2 :
+               setSpeed = 2000;
+               setSpeedJudgment = 1.5f;
+               setSpeedBtn.setText("1.5X");
+               break;
+           case 3 :
+               setSpeed = 1500;
+               setSpeedJudgment = 2f;
+               setSpeedBtn.setText("2X");
+               break;
+           case 4 :
+               setSpeed = 1200;
+               setSpeedJudgment = 2.5f;
+               setSpeedBtn.setText("2.5X");
+               break;
+           case 5 :
+               setSpeed = 1000;
+               setSpeedJudgment = 3f;
+               setSpeedBtn.setText("3X");
+               break;
+           case 6 :
+               setSpeed = 857;
+               setSpeedJudgment = 3.5f;
+               setSpeedBtn.setText("3.5X");
+               break;
+       }
+    } //화면 구성시 초기 인덱스값(혹은 db에서 받아온 유저의 배속값)을 버튼+배속에 설정
 
     public void selectSong(LinearLayout song) {
         switch (song.getId()){
@@ -125,7 +212,7 @@ public class MainActivity extends AppCompatActivity {
         startBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                /*----------------------------보낼 인턴트 값 모음 시작------------------------*/
                 List<NoteData> notes = OsuFileParser.parseOsuFile(MainActivity.this, noteData);  // 선택된곡 노트데이터를 리스트에 삽입
                 Intent intent = new Intent(MainActivity.this, GameActivity.class); // 인턴트생성
                 intent.putParcelableArrayListExtra("notes", new ArrayList<>(notes)); // 채보리스트를 인턴트에 담아서 전송
@@ -134,8 +221,11 @@ public class MainActivity extends AppCompatActivity {
                 intent.putExtra("songDifficulty",songDifficulty);  // 곡 난이도 인턴트전송
                 intent.putExtra("songBpm",songBPM);  // 곡 bpm 인턴트전송
                 intent.putExtra("song_mp3",song_mp3);  // 곡 노래mp3 인턴트 전송
+                intent.putExtra("setSpeed",setSpeed);  // 배속설정 인턴트 전송
+                intent.putExtra("setSpeedJudgment",setSpeedJudgment); // 배율을 인턴트로 전송
                 startActivity(intent);
                 dialog.dismiss();
+                /*----------------------------보낼 인턴트 값 모음 끝------------------------*/
             }
         });
         cancelBtn.setOnClickListener(new View.OnClickListener() {

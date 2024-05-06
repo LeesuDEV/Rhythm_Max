@@ -9,6 +9,7 @@ import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -46,8 +47,8 @@ public class GameActivity extends AppCompatActivity {
     private JudgmentLineView judgmentLineView;
     int[] buttonPositions = new int[4]; //각 버튼의 위치
     int[] buttonWidths = new int[4]; //각 버튼의 크기정보
-    int currentLane = -1; //초기 레인 인덱스
-    boolean touched = false; // 터치상태를 인식하는 변수
+    int[] currentLane = new int[4]; //초기 레인 인덱스  -- 5월6일 10시30분 슬라이딩 구현으로 동시터치시 currentLane의 값 공유로인해 쿼드터치 현상이 발생함, CurrentLane을 배열로 만들어 각 레인별로 CurrentLane을 따로 할당하여 독립적인 currentLane을 사용하도록함.(문제해결완료)
+    boolean[] touched = new boolean[4]; // 터치상태를 인식하는 변수
 
     int score; // 총 점수
     int combo; // 콤보 수
@@ -71,7 +72,9 @@ public class GameActivity extends AppCompatActivity {
     AnimationController animationController;
 
     MediaPlayer mediaPlayer; // 노래 플레이어 객체
-    int dalay_StartTime = 1140; // 노래 시작 시간 +시간은 더 빠르게, -시간은 더 느리게 (통상적으로 배속 * 판정선배율 - 170하면 맞음) // 컴퓨터 1110 / 휴대폰 1140
+    float dalay_StartTime; // 노래 시작 시간 +시간은 더 빠르게, -시간은 더 느리게 (2배속 - 1500ms기준 1140)
+    static float setSpeed; //받아올 배속세팅값
+    float setSpeedJudgment; // 받아올 배율 값
     String color; // 판정 색깔코드
 
     LottieAnimationView[] animationViews = new LottieAnimationView[4];  // 판정시 폭죽 이펙트효과
@@ -79,7 +82,6 @@ public class GameActivity extends AppCompatActivity {
     ProgressBar healthBar; // 체력 바
 
     public List<ValueAnimator> animators = new ArrayList<>();
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,6 +92,10 @@ public class GameActivity extends AppCompatActivity {
             NoteManager.lanes[i] = new ArrayList<>();
         }  // 노트매니저의 lanes를 초기화해줌
 
+        for (int i = 0 ; i < currentLane.length; i++) {
+            currentLane[i] = -1;
+        } // 각 currentLane을 -1로 초기화
+
         /*---------------------인턴트로 받아올 자료 시작----------------------*/
         Intent intent = getIntent();
         notes = intent.getParcelableArrayListExtra("notes"); // 인턴트로 받아온 노트정보 어레이리스트 notes에 담기
@@ -98,8 +104,12 @@ public class GameActivity extends AppCompatActivity {
         songBPM = intent.getStringExtra("songBPM");
         songImage = intent.getIntExtra("songImage", 1); //곡 정보들을 게임액티비티에 전달.
         song_mp3 = intent.getIntExtra("song_mp3", 1); // 곡 노래mp3를 게임액티비티에 전달.
+        setSpeed = intent.getFloatExtra("setSpeed",1.0f); // 배속세팅값을 받아옴
+        setSpeedJudgment = intent.getFloatExtra("setSpeedJudgment",1.0f); // 배율값을 받아옴
 
         /*---------------------인턴트로 받아올 자료 끝----------------------*/
+
+        setdelayStartTime(); // 받아온 배속값 * 판정선비율 -60값을 곡 시작시간으로 설정하는 메소드
 
         exitbutton = findViewById(R.id.quitGameBtn);
         exitbutton.setOnClickListener(new View.OnClickListener() {
@@ -188,6 +198,12 @@ public class GameActivity extends AppCompatActivity {
         animationController = new AnimationController();  // 애니메이션 컨트롤러 (판정텍스트가 연속실행시 버벅여서 컨트롤러로 실행중이면 끄고 초기화하게 처리)
 
         // gameHandler.post(gameUpdateRunnable); // 게임핸들러에 쓰레드를 입혀서 동작 - NoteView 의 Animator에서 판정시 리스트에서 삭제하게 바꿈 05/04 23:15분
+
+
+    }
+
+    private void setdelayStartTime(){
+        dalay_StartTime = (setSpeed * judgmentLineY_Rate) - 60;
     }
 
     public void startGame() {
@@ -200,7 +216,7 @@ public class GameActivity extends AppCompatActivity {
                 public void onPrepared(MediaPlayer mp) {
                     new Handler().postDelayed(() -> {
                         mp.start();
-                    }, dalay_StartTime); // 2초후에 노래를 시작하게 하는 메소드 - delay_StartTime은 int 형식의 시작시간 MS 밀리세컨드 단위
+                    }, (int) dalay_StartTime); // 2초후에 노래를 시작하게 하는 메소드 - delay_StartTime은 int 형식의 시작시간 MS 밀리세컨드 단위
                     // 노트 스케줄링 로직
                     ViewGroup layout = findViewById(R.id.noteView); // 노트를 포함할 레이아웃
 
@@ -273,7 +289,7 @@ public class GameActivity extends AppCompatActivity {
             String judgment;  //판정 문자
             int damage;  //데미지 값
             int heal;  //회복 값
-            if (distance < JudgmentWindow.BAD) {
+            if (distance < JudgmentWindow.BAD * setSpeedJudgment) {
                 if (distance <= JudgmentWindow.PERFECT) {
                     heal = 5;
                     judgment = "PERFECT";
@@ -287,7 +303,7 @@ public class GameActivity extends AppCompatActivity {
                     increaseMaxCombo(combo); // 맥스콤보 로직
                     animationController.startAnimation(judgmentTV, judgment, color);  // 화면중앙에 노트판정 텍스트를 애니메이션 효과로 출력하는 메소드(매개변수는 String 형태)
                     noteManager.removeNoteFromLane(note); // lanes 배열에서 이 객체의 노트뷰를 삭제.
-                } else if (distance <= JudgmentWindow.GREAT) {
+                } else if (distance <= JudgmentWindow.GREAT * setSpeedJudgment) {
                     heal = 3;
                     judgment = "GREAT";
                     color = "#8BC34A";  // 초록색 코드
@@ -300,7 +316,7 @@ public class GameActivity extends AppCompatActivity {
                     increaseMaxCombo(combo);
                     animationController.startAnimation(judgmentTV, judgment, color);
                     noteManager.removeNoteFromLane(note); // lanes 배열에서 이 객체의 노트뷰를 삭제.
-                } else if (distance <= JudgmentWindow.GOOD) {
+                } else if (distance <= JudgmentWindow.GOOD * setSpeedJudgment) {
                     heal = 2;
                     judgment = "GOOD";
                     color = "#FF9800";  // 주황색 코드
@@ -313,7 +329,7 @@ public class GameActivity extends AppCompatActivity {
                     increaseMaxCombo(combo);
                     animationController.startAnimation(judgmentTV, judgment, color);
                     noteManager.removeNoteFromLane(note); // lanes 배열에서 이 객체의 노트뷰를 삭제.
-                } else if (distance <= JudgmentWindow.BAD) {
+                } else if (distance <= JudgmentWindow.BAD * setSpeedJudgment) {
                     damage = 5;
                     judgment = "BAD";
                     color = "#606060";  // 회색 코드
@@ -472,37 +488,46 @@ public class GameActivity extends AppCompatActivity {
         btn.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
+
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    currentLane = index;
+                    currentLane[index] = index;
                     touchEvent(index, laneLightNum, animationView);
                     return true; // 이벤트를 여기서 종료
                 }
+
                 if (event.getAction() == MotionEvent.ACTION_MOVE) {
-                    if (!touched) {   // 최초 터치 1회만 인덱스를 바꾸기위해 touched boolean 변수를 추가.
-                        currentLane = index; // 현재라인을 인덱스값으로 변경
-                        touched = true;  // 터치상태를 유지
+                    if (!touched[index]) {   // 최초 터치 1회만 인덱스를 바꾸기위해 touched boolean 변수를 추가.
+                        currentLane[index] = index; // 현재라인을 인덱스값으로 변경
+                        touched[index] = true;  // 터치상태를 유지
+                        Log.d("CHECK","CHECK");
                     }
-                    handleTouchMove(v, event);
+                    handleTouchMove(index,v, event);
                     return true;
                 }  // 터치후 움직였을때
+
                 if (event.getAction() == MotionEvent.ACTION_UP) {
-                    currentLane = -1; //레인 인덱스 초기화
-                    touched = false;  // 터치를 뗏으니 터치상태를 초기화
+                    currentLane[index] = -1; //레인 인덱스 초기화
+                    touched[index] = false;  // 터치를 뗏으니 터치상태를 초기화
                     return true;
                 }
+
                 return false;
             }
         });
     } // onTouchListener을 각 버튼에 부여하고, 버튼을 눌렀을때 처리할 터치이벤트 메소드를 실행시킴
 
-    private void handleTouchMove(View v, MotionEvent event) {
+
+
+    private void handleTouchMove(int index,View v, MotionEvent event) {
         float x = event.getX() + v.getLeft(); // 터치 좌표를 상대적 위치에서 절대적 위치로 변환
         int touchedLane = calculateTouchLane(x);
-        if (touchedLane != currentLane) {
-            currentLane = touchedLane;
-            touchEvent(currentLane, laneLights[currentLane], animationViews[currentLane]); // 새 레인에서 터치 이벤트 처리
+        if (touchedLane != currentLane[index] && touchedLane >= 0 && touchedLane < animationViews.length) {
+            currentLane[index] = touchedLane;
+            if (currentLane[index] >= 0 && currentLane[index] < laneLights.length) {
+                touchEvent(currentLane[index], laneLights[currentLane[index]], animationViews[currentLane[index]]); // 새 레인에서 터치 이벤트 처리
+            }
         }
-    }  // 다른 레인으로 터치를 옮겼을때 현재 터치레인과 값을비교하여 다를시, 옮긴 레인의 터치메소드를 실행해주는 메소드
+    }
 
     private int calculateTouchLane(float x) {
         for (int i = 0; i < buttonPositions.length; i++) {

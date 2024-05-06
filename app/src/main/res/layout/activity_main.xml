@@ -98,11 +98,21 @@
 
     </LinearLayout>
     <Switch
+        android:layout_marginBottom="110dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
+        android:layout_gravity="bottom|center"
         android:text="타격음ON/OFF"
         android:checked="true"
         android:id="@+id/ClapSoundSwitch"/>
+
+    <Button
+        android:layout_marginBottom="95dp"
+        android:layout_marginRight="140dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center"
+        android:text="1배속"
+        android:id="@+id/speedSetBtn"/>
 
 </FrameLayout>
