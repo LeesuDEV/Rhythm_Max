@@ -21,7 +21,10 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
     LinearLayout odysseus;
     LinearLayout Xeus;
+<<<<<<< HEAD
     LinearLayout Limbo;
+=======
+>>>>>>> origin/main
 
     String songName;
     String songDifficulty;
@@ -33,11 +36,17 @@ public class MainActivity extends AppCompatActivity {
     String selectSong = ""; // 선택된 곡
     Switch clapSoundSwitch; // 타격음 소리 스위치
     Button setSpeedBtn; //배속설정 버튼
+<<<<<<< HEAD
     Button autoModBtn; // 오토모드 버튼
     static float setSpeed = 3000; // 배속설정
     static int speedIndex = 1; // 배속모드 식별값
     static float setSpeedJudgment = 1; // 배속모드에 따른 판정 배율값
     static boolean autoModIndex = false; // 0ff 기본값 오토모드 인덱스
+=======
+    float setSpeed = 1000; // 배속설정
+    int speedIndex = 1; // 배속모드 식별값
+    float setSpeedJudgment = 1; // 배속모드에 따른 판정 배율값
+>>>>>>> origin/main
 
     //1배속 = 3000ms , 1.5배속 = 2000ms , 2배속 = 1500ms , 2.5배속 = 1200ms, 3배속 = 1000ms, 3.5배속 = 857ms
     @Override
@@ -47,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
 
         odysseus = findViewById(R.id.odysseus);
         Xeus = findViewById(R.id.Xeus);
+<<<<<<< HEAD
         Limbo = findViewById(R.id.Limbo);
         clapSoundSwitch = findViewById(R.id.ClapSoundSwitch);
         setSpeedBtn = findViewById(R.id.speedSetBtn);
@@ -66,6 +76,13 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+=======
+        clapSoundSwitch = findViewById(R.id.ClapSoundSwitch);
+        setSpeedBtn = findViewById(R.id.speedSetBtn);
+
+        setDefaultSpeed(speedIndex); //화면 구성시 초기 인덱스값(혹은 db에서 받아온 유저의 배속값)을 버튼+배속에 설정
+
+>>>>>>> origin/main
         setSpeedBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -134,6 +151,7 @@ public class MainActivity extends AppCompatActivity {
                 selectSong(Xeus);  // 곡선택 로직 동작후 커스텀다이어로그 생성
             }
         }); //제우스 레이아웃 클릭시
+<<<<<<< HEAD
 
         Limbo.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -141,6 +159,8 @@ public class MainActivity extends AppCompatActivity {
                 selectSong(Limbo);  // 곡선택 로직 동작후 커스텀다이어로그 생성
             }
         });
+=======
+>>>>>>> origin/main
     }
 
     public void setDefaultSpeed(int speedIndex) {
@@ -190,11 +210,14 @@ public class MainActivity extends AppCompatActivity {
                 xeus(); // 곡정보를 xeus로  설정
                 showCustomDialog();
                 break;
+<<<<<<< HEAD
             case R.id.Limbo :
                 selectSong = "limbo";  // 선택된곡 String으로 난이도 조절 메소드에서 곡정보를 인식
                 limbo(); // 곡정보를 xeus로  설정
                 showCustomDialog();
                 break;
+=======
+>>>>>>> origin/main
         }
     } //레이아웃 이름을 가지고와서 곡정보를 세팅하고 다이어로그를 띄움
 
@@ -282,6 +305,28 @@ public class MainActivity extends AppCompatActivity {
             songDifficulty = "★★★★★★★★";
             noteData = R.raw.odysseus_hard;
             song_mp3 = R.raw.xeon;
+<<<<<<< HEAD
+=======
+        }
+    }  // 오디세우스 곡 정보 설정 메소드
+
+    public void xeus(){
+        if (difficultySet == 1) {
+            songImage = R.drawable.xeus_img;
+            songBPM = "148";
+            songName = "Xeus[EASY]";
+            songDifficulty = "★★★★★★";
+            noteData = R.raw.xeus_easy;
+            song_mp3 = R.raw.xeus;
+        }
+        if (difficultySet == 2) {
+            songImage = R.drawable.xeus_img;
+            songBPM = "148";
+            songName = "Xeus[HARD]";
+            songDifficulty = "★★★★★★★★★";
+            noteData = R.raw.xeus_hard ;
+            song_mp3 = R.raw.xeus;
+>>>>>>> origin/main
         }
     }  // 오디세우스 곡 정보 설정 메소드
 
@@ -341,10 +386,13 @@ public class MainActivity extends AppCompatActivity {
                 xeus();
                 changeDialogInfo(songImageView,songNameTV,difficultyTV,bpmTV); // 다이어로그 정보 변경
                 break;
+<<<<<<< HEAD
             case "limbo" :
                 limbo();
                 changeDialogInfo(songImageView,songNameTV,difficultyTV,bpmTV); // 다이어로그 정보 변경
                 break;
+=======
+>>>>>>> origin/main
         }
     }
 
