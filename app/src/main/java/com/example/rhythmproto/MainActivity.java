@@ -34,6 +34,7 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
     LinearLayout odysseus;
     LinearLayout Xeus;
     LinearLayout Limbo;
+    CarouselRecyclerview carouselRecyclerview; //캐러셀뷰(3d갤러리)
 
     String songName;
     String songDifficulty;
@@ -85,83 +86,8 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
         syncSetText = findViewById(R.id.syncET);
         bluetoothBtn = findViewById(R.id.bluetoothBtn);
 
-        setDefeaultSync(syncValue); //싱크값을 현재 화면에 표시해줌
-
-        setDefaultClapSound(clapSoundIndex); //화면 구성시 초기 타격음 설정
-
-        bluetoothBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                syncValue = -250;
-                setDefeaultSync(syncValue); //싱크값을 현재 화면에 표시해줌
-            }
-        }); // 블루투스이어폰 싱크값 -250 세팅
-        syncSetBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String s = syncSetText.getText().toString().trim();
-                if (!s.isEmpty()) {
-                    syncValue = Integer.parseInt(s);
-                    syncCurrentText.setText(String.valueOf(syncValue));
-                }
-            }
-        }); //싱크텍스트를 받아서 값을 적용해주는 싱크조절버튼
-        autoModBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!autoModIndex) {
-                    autoModBtn.setText("AutoMod"); //버튼 텍스트를 오토모드로 변경
-                    autoModIndex = true; //오토모드를 ON
-                } else {
-                    autoModBtn.setText("PlayMod"); //플레이 모드로 텍스트 변경
-                    autoModIndex = false; //오토모드를 OFF
-                }
-            }
-        });
-        setSpeedBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });  // 배속설정버튼
-
-
-        clapSoundSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    clapSoundIndex = true;  // 타격음 인덱스값 변경
-                    SoundManager.getInstance().loadSound(MainActivity.this); // 판정타격음 스위치를 켰다면 타격소리를 로딩
-                } else {
-                    clapSoundIndex = false;
-                    SoundManager.instance = null;
-                }
-            }
-        });
-
-        /*odysseus.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                selectSong(odysseus);  // 곡선택 로직 동작후 커스텀다이어로그 생성
-            }
-        }); //오디세우스 레이아웃 클릭시
-
-        Xeus.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                selectSong(Xeus);  // 곡선택 로직 동작후 커스텀다이어로그 생성
-            }
-        }); //제우스 레이아웃 클릭시
-
-        Limbo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                selectSong(Limbo);  // 곡선택 로직 동작후 커스텀다이어로그 생성
-            }
-        });*/
-
         /*---------------------------------캐러셀 레이아웃 -----------------------------------*/
-        CarouselRecyclerview carouselRecyclerview = findViewById(R.id.recyclerView); //캐러셀 뷰
+        carouselRecyclerview = findViewById(R.id.recyclerView); //캐러셀 뷰
         song_name_Main = findViewById(R.id.songNameMainTV); //곡이름 메인타이틀
         song_difficulty_Main = findViewById(R.id.songDifficultyMainTV); //곡난이도 메인타이틀
 
@@ -175,13 +101,7 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
                 LinearLayoutManager.HORIZONTAL);
         carouselRecyclerview.setLayoutManager(layoutManager);
 
-        items = new ArrayList<>(); // 곡 이미지 어레이리스트
-        items.add(new ImageItem(R.drawable.limbo_main_image, "Limbo", "★★★★★★★★★"));
-        items.add(new ImageItem(R.drawable.odysseus_main_image, "Odysseus", "★★★★★"));
-        items.add(new ImageItem(R.drawable.xeus_main_image, "Xeus", "★★★★★★"));
-
-        MyAdapter adapter = new MyAdapter(items, this); //어댑터에 이미지 리스트를 매개변수로 생성
-        carouselRecyclerview.setAdapter(adapter);
+        setEasyModAdapter(); //이지모드 어댑터 초기설정
 
         carouselRecyclerview.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
@@ -189,14 +109,14 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
                 super.onScrolled(recyclerView, dx, dy);
                 updateCenterItem_Descripttion(recyclerView, items); // 리사이클뷰와 아이템리스트를 넘겨 -> 중간위치에 걸친 자손뷰를 탐색
             }
-        });
+        }); //캐러셀리사이클뷰를 슬라이드할때마다 아이템을 찾는 리스너
 
         carouselRecyclerview.setItemSelectListener(new CarouselLayoutManager.OnSelected() {
             @Override
             public void onItemSelected(int i) {
                 Log.d("selected", String.valueOf(i));
             }
-        });
+        }); //캐러셀리사이클뷰 화면중앙에 아이템이 선택된게 확정됐을때 작업을 수행하는 리스너
 
         if (!items.isEmpty()) { // 아이템리스트가 비지않았다면
             song_name_Main.setText(items.get(0).getDescription()); //0번째 곡리스트 설명을 텍스트뷰에 설정
@@ -204,7 +124,6 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
         /*---------------------------------캐러셀 레이아웃 -----------------------------------*/
 
         startDifficultySet(); //화면구성시 난이도 설정 (이지)
-
         easyBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -215,18 +134,10 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
                     hardBtn.setTextColor(Color.parseColor("#780F80"));
                     difficulty = 1; //난이도 이지로 설정
 
-                    items = null; // 곡메인화면 리스트초기화
-                    items = new ArrayList<>(); // 곡 메인화면 어레이리스트 재생성
-                    items.add(new ImageItem(R.drawable.limbo_main_image, "Limbo", "★★★★★★★★★"));
-                    items.add(new ImageItem(R.drawable.odysseus_main_image, "Odysseus", "★★★★★"));
-                    items.add(new ImageItem(R.drawable.xeus_main_image, "Xeus", "★★★★★★"));
-
-                    MyAdapter adapter = new MyAdapter(items, MainActivity.this); //어댑터에 이미지 리스트를 매개변수로 생성
-                    carouselRecyclerview.setAdapter(adapter);
+                    setEasyModAdapter(); //이지모드 어댑터 설정
                 }
             }
-        });
-
+        }); //이지버튼 클릭시 버튼크기와 색상조절후 아이템리스트를 교체하고 어댑터를 다시 끼우는 리스너
         hardBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -237,18 +148,68 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
                     easyBtn.setTextColor(Color.parseColor("#A69439"));
                     difficulty = 2;
 
-                    items = null; // 곡메인화면 리스트초기화
-                    items = new ArrayList<>(); // 곡 이미지 어레이리스트 재생성
-                    items.add(new ImageItem(R.drawable.limbo_main_image, "Limbo", "★★★★★★★★★"));
-                    items.add(new ImageItem(R.drawable.odysseus_main_image, "Odysseus", "★★★★★★★★★"));
-                    items.add(new ImageItem(R.drawable.xeus_main_image, "Xeus", "★★★★★★★"));
-
-                    MyAdapter adapter = new MyAdapter(items, MainActivity.this); //어댑터에 이미지 리스트를 매개변수로 생성
-                    carouselRecyclerview.setAdapter(adapter);
+                    setHardModAdapter(); //하드모드 어댑터 설정
                 }
             }
-        });
+        }); //하드버튼 클릭시 버튼크기와 색상조절후 아이템리스트를 교체하고 어댑터를 다시 끼우는 리스너
+
+        //setDefeaultSync(syncValue); //싱크값을 현재 화면에 표시해줌
+
+        //setDefaultClapSound(clapSoundIndex); //화면 구성시 초기 타격음 설정
+
+        /*bluetoothBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                syncValue = -250;
+                setDefeaultSync(syncValue); //싱크값을 현재 화면에 표시해줌
+            }
+        }); // 블루투스이어폰 싱크값 -250 세팅*/
+
+        /*syncSetBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String s = syncSetText.getText().toString().trim();
+                if (!s.isEmpty()) {
+                    syncValue = Integer.parseInt(s);
+                    syncCurrentText.setText(String.valueOf(syncValue));
+                }
+            }
+        }); //싱크텍스트를 받아서 값을 적용해주는 싱크조절버튼 */
+
+        /*clapSoundSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    clapSoundIndex = true;  // 타격음 인덱스값 변경
+                    SoundManager.getInstance().loadSound(MainActivity.this); // 판정타격음 스위치를 켰다면 타격소리를 로딩
+                } else {
+                    clapSoundIndex = false;
+                    SoundManager.instance = null;
+                }
+            }
+        });*/
     }
+    public void setEasyModAdapter(){
+        items = null; // 곡메인화면 리스트초기화
+        items = new ArrayList<>(); // 곡 메인화면 어레이리스트 재생성
+        items.add(new ImageItem(R.drawable.limbo_main_image, "Limbo", "★★★★★★★★★"));
+        items.add(new ImageItem(R.drawable.odysseus_main_image, "Odysseus", "★★★★★"));
+        items.add(new ImageItem(R.drawable.xeus_main_image, "Xeus", "★★★★★★"));
+
+        MyAdapter adapter = new MyAdapter(items, MainActivity.this); //어댑터에 이미지 리스트를 매개변수로 생성
+        carouselRecyclerview.setAdapter(adapter);
+    } //이지모드 캐러셀뷰어댑터
+
+    public void setHardModAdapter(){
+        items = null; // 곡메인화면 리스트초기화
+        items = new ArrayList<>(); // 곡 이미지 어레이리스트 재생성
+        items.add(new ImageItem(R.drawable.limbo_main_image, "Limbo", "★★★★★★★★★"));
+        items.add(new ImageItem(R.drawable.odysseus_main_image, "Odysseus", "★★★★★★★★★"));
+        items.add(new ImageItem(R.drawable.xeus_main_image, "Xeus", "★★★★★★★"));
+
+        MyAdapter adapter = new MyAdapter(items, MainActivity.this); //어댑터에 이미지 리스트를 매개변수로 생성
+        carouselRecyclerview.setAdapter(adapter);
+    } //하드모드 캐러셀뷰어댑터
 
     public void startDifficultySet() {
         difficulty = 1; //기본값 이지로 설정
@@ -410,25 +371,13 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
         syncCurrentText.setText(String.valueOf(syncValue));
     } //현재 싱크값을 표시해줌
 
-    /*public void selectSong(LinearLayout song) {
-        switch (song.getId()){
-            case R.id.odysseus :
-                selectSong = "odysseus";  // 선택된곡 String으로 난이도 조절 메소드에서 곡정보를 인식
-                odysseus(); // 곡정보를 odysseus로 설정
-                showCustomDialog();
-                break;
-            case R.id.Xeus :
-                selectSong = "xeus";  // 선택된곡 String으로 난이도 조절 메소드에서 곡정보를 인식
-                xeus(); // 곡정보를 xeus로  설정
-                showCustomDialog();
-                break;
-            case R.id.Limbo :
-                selectSong = "limbo";  // 선택된곡 String으로 난이도 조절 메소드에서 곡정보를 인식
-                limbo(); // 곡정보를 xeus로  설정
-                showCustomDialog();
-                break;
+    public void setDefaultAutoMode(boolean automode,Button autoModBtn) {
+        if (automode) {
+            autoModBtn.setText("AUTO");
+        } else {
+            autoModBtn.setText("NONE");
         }
-    } //레이아웃 이름을 가지고와서 곡정보를 세팅하고 다이어로그를 띄움 */
+    } // 화면구성시 오토모드를 현재값으로 바꿔주는 초기화메소드
 
     public void showCustomDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
@@ -563,12 +512,7 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
 
 
         dialog.show();
-    }
-
-    @Override
-    public void onItemSelected() {
-        showCustomDialog();
-    } //다이어로그 인터페이스 오버라이드 메소드
+    } // 곡을 클릭했을때 곡정보,내 최고기록,플레이모드설정,플레이버튼을 띄우는 다이어로그를 생성하는 메소드
 
     public void odysseus() {
         if (difficulty == 1) {
@@ -626,33 +570,10 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
             song_mp3 = R.raw.limbo;
         }
     }  // 제우스 곡 정보 설정 메소드
-
-    /*public void setDifficulty(int difficulty, ImageView songImageView, TextView songNameTV, TextView difficultyTV, TextView bpmTV) {
-        difficultySet = difficulty;
-        switch (selectSong) {
-            case "odysseus":
-                odysseus();
-                changeDialogInfo(songImageView, songNameTV, difficultyTV, bpmTV); // 다이어로그 정보 변경
-                break;
-            case "xeus":
-                xeus();
-                changeDialogInfo(songImageView, songNameTV, difficultyTV, bpmTV); // 다이어로그 정보 변경
-                break;
-            case "limbo":
-                limbo();
-                changeDialogInfo(songImageView, songNameTV, difficultyTV, bpmTV); // 다이어로그 정보 변경
-                break;
-        }
-    }*/
-
-    public void setDefaultAutoMode(boolean automode,Button autoModBtn) {
-        if (automode) {
-            autoModBtn.setText("AUTO");
-        } else {
-            autoModBtn.setText("NONE");
-        }
-    }
-
+    @Override
+    public void onItemSelected() {
+        showCustomDialog();
+    } //다이어로그 인터페이스 오버라이드 메소드
     @Override
     protected void onDestroy() {
         super.onDestroy();
