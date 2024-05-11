@@ -9,7 +9,6 @@ import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -187,11 +186,6 @@ public class GameActivity extends AppCompatActivity {
             laneButtonTouchListener(button[i], index, laneLights[index], animationViews[index]);
         } // 판정 터치 리스너 레인
 
-        /*laneButtonListener(button1, 1, laneLight1,animationView1);  // 판정처리 리스너 레인1
-        laneButtonListener(button2, 2, laneLight2, animationView2);  // 판정처리 리스너 레인2
-        laneButtonListener(button3, 3, laneLight3, animationView3);  // 판정처리 리스너 레인3
-        laneButtonListener(button4, 4, laneLight4, animationView4);  // 판정처리 리스너 레인4*/
-
         mediaPlayer = new MediaPlayer();
 
         startGame(); // 노래를 준비하고, 노래가 준비가 되면 노트를 생성하는 메소드. OnPreParedListener이 사용됨.
@@ -209,7 +203,7 @@ public class GameActivity extends AppCompatActivity {
 
     public void startGame() {
         try {
-            AssetFileDescriptor afd = getResources().openRawResourceFd(song_mp3);
+            AssetFileDescriptor afd = getResources().openRawResourceFd(song_mp3); //메인 엑티비티에서 받아온 노래_mp3 리소스인자값으로 노래를 준비
             mediaPlayer.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
             mediaPlayer.prepareAsync();
             mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {  //노래준비 리스너 - 노래가 불러와지길 기다림
@@ -217,6 +211,7 @@ public class GameActivity extends AppCompatActivity {
                 public void onPrepared(MediaPlayer mp) {
                     new Handler().postDelayed(() -> {
                         mp.start();
+                        mp.setVolume(MainActivity.ingameSoundAmountIndex,MainActivity.ingameSoundAmountIndex); // 인게임음악볼륨 설정값으로 노래 출력
                     }, (int) dalay_StartTime); // 2초후에 노래를 시작하게 하는 메소드 - delay_StartTime은 int 형식의 시작시간 MS 밀리세컨드 단위
                     // 노트 스케줄링 로직
                     ViewGroup layout = findViewById(R.id.noteView); // 노트를 포함할 레이아웃
@@ -438,7 +433,7 @@ public class GameActivity extends AppCompatActivity {
     public void touchEvent(int index) {
         SoundManager.getInstance().playSound(); // 판정 종소리 효과음
         laneLights[index].setVisibility(View.VISIBLE); // 해당라인 불빛기둥 생성
-        new Handler().postDelayed(() -> laneLights[index].setVisibility(View.INVISIBLE), 100); // 해당라인 불빛기둥 0.1초후 끔
+        new Handler().postDelayed(() -> laneLights[index].setVisibility(View.INVISIBLE), 60); // 해당라인 불빛기둥 0.1초후 끔
         List<NoteView> laneNotes = noteManager.getLaneNotes(index); //NoteManager의 lane1Notes에서 노트1 데이터 받아오기
         NoteView closetNote = findClosetNote(laneNotes);
         if (closetNote != null) {
@@ -514,7 +509,6 @@ public class GameActivity extends AppCompatActivity {
                     if (!touched[index]) {   // 최초 터치 1회만 인덱스를 바꾸기위해 touched boolean 변수를 추가.
                         currentLane[index] = index; // 현재라인을 인덱스값으로 변경
                         touched[index] = true;  // 터치상태를 유지
-                        Log.d("CHECK","CHECK");
                     }
                     handleTouchMove(index,v, event);
                     return true;
@@ -584,24 +578,9 @@ public class GameActivity extends AppCompatActivity {
         }
 
         stackCombo = 0;
-
-        /*if (gameHandler != null) {
-            gameHandler.removeCallbacksAndMessages(null); // NoteView 의 Animator에서 판정시 리스트에서 삭제하게 바꿈 05/04 23:15분 판정노트 검사후 삭제하는 핸들러
-        }*/
-
     } // 뷰가 꺼질때 노래,종소리도 같이 null로 초기화
 
 
-    /*public void laneButtonListener(Button btn, int index, ImageView laneLightNum, LottieAnimationView animationView) {
-        btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                touchEvent(index, laneLightNum, animationView);  // 터치했을때 작동할 모든 메소드들
-            }
-        });
-    }     // 컴퓨터 시뮬레이팅용 onCLickListener
-
-     */
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         switch (keyCode) {

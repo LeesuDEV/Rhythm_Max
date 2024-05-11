@@ -5,24 +5,39 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".LoginActivity">
+    tools:context=".LoginActivity"
+    android:background="#ffffff">
+
+    <ImageView
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:src="@drawable/rhythm_max"
+        android:layout_gravity="center"
+        android:layout_marginTop="20dp"/>
+
+
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_height="450dp"
         android:gravity="center"
         android:orientation="vertical">
-
-        <ImageView
-            android:id="@+id/profile"
+        <TextView
             android:layout_width="200dp"
-            android:layout_height="200dp" />
+            android:layout_height="50dp"
+            android:text="환영합니다"
+            android:textAlignment="center"
+            android:textSize="30dp"
+            android:textStyle="bold"
+            android:fontFamily="@font/netmarble_m"/>
 
         <TextView
             android:id="@+id/nickname"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingBottom="50dp"/>
+            android:text="NickName 님"
+            android:textSize="25dp"
+            android:paddingBottom="50dp"
+            android:fontFamily="@font/netmarble_m"/>
 
         <ImageView
             android:id="@+id/login"
@@ -30,35 +45,39 @@
             android:layout_height="wrap_content"
             app:srcCompat="@drawable/kakao_login_medium_wide"
             android:visibility="gone"/>
-        <Button
-            android:id="@+id/skiplogin"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="로그인 스킵"
-            android:visibility="gone"/>
 
         <Button
             android:id="@+id/startup"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="해당 계정으로 시작하기"
-            android:visibility="gone"/>
-
-        <Button
-            android:id="@+id/logout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="로그아웃"
-            android:visibility="gone"/>
-
-        <Button
-            android:layout_marginTop="150dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom|center"
-            android:text="main"
-            android:id="@+id/gotoMain"/>
+            android:text="해당 계정으로 시작하기"
+            android:visibility="visible"
+            android:fontFamily="@font/netmarble_m"/>
 
     </LinearLayout>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center">
+        <TextView
+            android:id="@+id/simpleAccountLogin"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:text="간편계정으로 시작하기"
+            android:textSize="18dp"
+            android:textStyle="bold"
+            android:textAlignment="center"
+            android:layout_marginTop="10dp"/>
+        <TextView
+            android:id="@+id/simpleAccountRegister"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:text="간편계정 가입"
+            android:textSize="16dp"
+            android:textStyle="bold"
+            android:textAlignment="center"
+            android:layout_marginTop="10dp"/>
+    </LinearLayout>
 </LinearLayout>

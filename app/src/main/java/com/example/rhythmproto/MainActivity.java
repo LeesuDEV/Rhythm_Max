@@ -1,20 +1,32 @@
 package com.example.rhythmproto;
 
 import android.animation.ObjectAnimator;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.ColorDrawable;
+import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.os.Handler;
+import android.renderscript.Allocation;
+import android.renderscript.Element;
+import android.renderscript.RenderScript;
+import android.renderscript.ScriptIntrinsicBlur;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.SeekBar;
 import android.widget.Switch;
 import android.widget.TextView;
 
@@ -24,17 +36,19 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.jackandphantom.carouselrecyclerview.CarouselLayoutManager;
 import com.jackandphantom.carouselrecyclerview.CarouselRecyclerview;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements OnItemClickListener {
-    LinearLayout odysseus;
-    LinearLayout Xeus;
-    LinearLayout Limbo;
     CarouselRecyclerview carouselRecyclerview; //캐러셀뷰(3d갤러리)
+    static String userId ; //유저 식별값
+    static String userName ; //유저 닉네임
 
     String songName;
     String songDifficulty;
@@ -45,27 +59,37 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
     String selectSong = ""; // 선택된 곡
     Switch clapSoundSwitch; // 타격음 소리 스위치
     static boolean clapSoundIndex; //타격음 소리 인덱스값
-    Button setSpeedBtn; //배속설정 버튼
-    Button autoModBtn; // 오토모드 버튼
     Button syncSetBtn; // 싱크조절 버튼
     Button bluetoothBtn; // 블루투스 이어폰 자동세팅버튼
+
+    ImageView settingBtn; //세팅 다이어로그 버튼
 
     TextView easyBtn;  //이지모드 버튼
     TextView hardBtn;  //하드모드 버튼
     EditText syncSetText; // 싱크조절 에딧텍스트
     TextView syncCurrentText; // 싱크현재값 텍스트
+    TextView uesrNameTV; //유저이름 텍스트뷰
     TextView song_name_Main; // 현재 선택된노래 이름 텍스트
     TextView song_difficulty_Main; // 현재 선택된노래 난이도 텍스트
     static int syncValue = 0; // 싱크값
-    static float setSpeed = 1500; // 배속설정
-    static int speedIndex = 3; // 배속모드 식별값
-    static float setSpeedJudgment = 3; // 배속모드에 따른 판정 배율값
     static boolean autoModIndex = false; // 0ff 기본값 오토모드 인덱스
     static int modIndex = 0; // 모드인덱스값 0은 NORMAL , 1은 MIRROR , 2는 RANDOM
 
     List<ImageItem> items; // 곡메인화면 어레이리스트
 
     int difficulty; //메인화면 난이도 인자값
+    int current_song = -1; //현재 선택된 캐러셀노래 인자값
+
+    MediaPlayer mediaPlayer; // 미리보기노래 미디어플레이어
+
+    static float setSpeed = 1500; // 배속설정
+    static int speedIndex = 3; // 배속모드 식별값
+    static float setSpeedJudgment = 3; // 배속모드에 따른 판정 배율값
+
+    static float previewSoundAmountIndex = 1.0f; // 배경음악 크기 인덱스값
+    static float ingameSoundAmountIndex = 1.0f; // 인게임음악 크기 인덱스값
+
+    LottieAnimationView musicController;
 
     //1배속 = 3000ms , 1.5배속 = 2000ms , 2배속 = 1500ms , 2.5배속 = 1200ms, 3배속 = 1000ms, 3.5배속 = 857ms
     @Override
@@ -73,23 +97,33 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        odysseus = findViewById(R.id.odysseus);
         easyBtn = findViewById(R.id.setEasyBtn);
         hardBtn = findViewById(R.id.setHardBtn);
-        Xeus = findViewById(R.id.Xeus);
-        Limbo = findViewById(R.id.Limbo);
         clapSoundSwitch = findViewById(R.id.ClapSoundSwitch);
-        setSpeedBtn = findViewById(R.id.speedSetBtn);
-        autoModBtn = findViewById(R.id.autoModBtn);
         syncCurrentText = findViewById(R.id.syncTV);
         syncSetBtn = findViewById(R.id.syncBtn);
         syncSetText = findViewById(R.id.syncET);
         bluetoothBtn = findViewById(R.id.bluetoothBtn);
+        settingBtn = findViewById(R.id.settingIcon);
+        uesrNameTV = findViewById(R.id.userNameTV);
 
         /*---------------------------------캐러셀 레이아웃 -----------------------------------*/
         carouselRecyclerview = findViewById(R.id.recyclerView); //캐러셀 뷰
         song_name_Main = findViewById(R.id.songNameMainTV); //곡이름 메인타이틀
         song_difficulty_Main = findViewById(R.id.songDifficultyMainTV); //곡난이도 메인타이틀
+
+        Intent intent = getIntent(); //로그인액티비티의 인턴트 받아오기
+
+        if (intent != null) {
+            userId = intent.getStringExtra("userId"); //유저 닉네임
+            userName = intent.getStringExtra("userName"); //유저 식별값 세팅
+        }
+
+        if (userName == null) { //예외사항으로 유저네임을 받아오지 못했을경우
+            userName = "Empty";
+        }
+
+        uesrNameTV.setText(userName + " 님"); //유저네임 텍스트뷰에 닉네임 표시
 
         CarouselLayoutManager layoutManager = new CarouselLayoutManager(
                 false,
@@ -103,6 +137,28 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
 
         setEasyModAdapter(); //이지모드 어댑터 초기설정
 
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                playPreview(0); //메인화면 limbo 초기 플레이
+            }
+        }, 1000);
+
+        musicController = findViewById(R.id.musicController);
+        musicController.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mediaPlayer != null) {
+                    if (mediaPlayer.isPlaying()) {
+                        mediaPlayer.pause();
+                        musicController.pauseAnimation();
+                    } else {
+                        mediaPlayer.start();
+                        musicController.resumeAnimation();
+                    }
+                }
+            }
+        });
         carouselRecyclerview.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
@@ -114,7 +170,6 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
         carouselRecyclerview.setItemSelectListener(new CarouselLayoutManager.OnSelected() {
             @Override
             public void onItemSelected(int i) {
-                Log.d("selected", String.valueOf(i));
             }
         }); //캐러셀리사이클뷰 화면중앙에 아이템이 선택된게 확정됐을때 작업을 수행하는 리스너
 
@@ -128,10 +183,10 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
             @Override
             public void onClick(View v) {
                 if (difficulty != 1) { //난이도가 어려움일때만 메소드실행
-                    difficultyChangeText(easyBtn, 1.0f, 1.6f);
-                    easyBtn.setTextColor(Color.parseColor("#FFD500"));
-                    difficultyChangeText(hardBtn, 1.6f, 1.0f);
-                    hardBtn.setTextColor(Color.parseColor("#780F80"));
+                    difficultyChangeText(easyBtn, 1.0f, 1.3f);
+                    easyBtn.setTextColor(Color.parseColor("#FFFFFF"));
+                    difficultyChangeText(hardBtn, 1.3f, 1.0f);
+                    hardBtn.setTextColor(Color.parseColor("#787878"));
                     difficulty = 1; //난이도 이지로 설정
 
                     setEasyModAdapter(); //이지모드 어댑터 설정
@@ -142,10 +197,10 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
             @Override
             public void onClick(View v) {
                 if (difficulty != 2) {
-                    difficultyChangeText(hardBtn, 1.0f, 1.6f);
-                    hardBtn.setTextColor(Color.parseColor("#C504E2"));
-                    difficultyChangeText(easyBtn, 1.6f, 1.0f);
-                    easyBtn.setTextColor(Color.parseColor("#A69439"));
+                    difficultyChangeText(hardBtn, 1.0f, 1.3f);
+                    hardBtn.setTextColor(Color.parseColor("#FFFFFF"));
+                    difficultyChangeText(easyBtn, 1.3f, 1.0f);
+                    easyBtn.setTextColor(Color.parseColor("#787878"));
                     difficulty = 2;
 
                     setHardModAdapter(); //하드모드 어댑터 설정
@@ -153,6 +208,12 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
             }
         }); //하드버튼 클릭시 버튼크기와 색상조절후 아이템리스트를 교체하고 어댑터를 다시 끼우는 리스너
 
+        settingBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                settingCustomDialog(); //세팅 다이어로그 호출
+            }
+        });
         //setDefeaultSync(syncValue); //싱크값을 현재 화면에 표시해줌
 
         //setDefaultClapSound(clapSoundIndex); //화면 구성시 초기 타격음 설정
@@ -189,7 +250,44 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
             }
         });*/
     }
-    public void setEasyModAdapter(){
+
+    public void playPreview(int index) {
+        if (index != current_song) { // 인자값이 현재 선택된곡 인자값과 똑같지 않을때만 실행
+            if (mediaPlayer != null) { //미디어플레이어 객체가 비지않고
+                if (mediaPlayer.isPlaying()) { // 플레이중이라면
+                    mediaPlayer.stop(); // 플레이어를 멈춤
+                }
+                mediaPlayer.release(); // 재생중이던곡 제거
+                mediaPlayer = null; //널값을 삽입해 안전하게 비우기
+            }
+
+            switch (index) {
+                case 0:
+                    mediaPlayer = MediaPlayer.create(MainActivity.this, R.raw.limbo_main); //1번 인덱스라면 림보플레이
+                    break;
+                case 1:
+                    mediaPlayer = MediaPlayer.create(MainActivity.this, R.raw.odysseus_main);
+                    break;
+                case 2:
+                    mediaPlayer = MediaPlayer.create(MainActivity.this, R.raw.xeus_main);
+                    break;
+            }
+
+            if (mediaPlayer != null) {
+                mediaPlayer.setLooping(true); // 반복재생
+                mediaPlayer.start(); // 미디어플레이어 스타트
+                mediaPlayer.setVolume(previewSoundAmountIndex, previewSoundAmountIndex); // 전역변수 프리뷰음악볼륨을 설정
+            }
+
+            current_song = index; // 현재선택된곡 인자값을 i인자값으로 설정 ( 중복확인 )
+
+            if (!musicController.isAnimating()) {
+                musicController.resumeAnimation();
+            } // 프리뷰 뮤직컨트롤러가 멈춰져있는 상태라면 노래를 다시킬떄 뮤직컨트롤러도 다시 킴. (Lottie Animation)
+        }
+    } // 인덱스값을 토대로 미디어플레이어를 미리보기 재생시켜주는 메소드
+
+    public void setEasyModAdapter() {
         items = null; // 곡메인화면 리스트초기화
         items = new ArrayList<>(); // 곡 메인화면 어레이리스트 재생성
         items.add(new ImageItem(R.drawable.limbo_main_image, "Limbo", "★★★★★★★★★"));
@@ -200,7 +298,7 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
         carouselRecyclerview.setAdapter(adapter);
     } //이지모드 캐러셀뷰어댑터
 
-    public void setHardModAdapter(){
+    public void setHardModAdapter() {
         items = null; // 곡메인화면 리스트초기화
         items = new ArrayList<>(); // 곡 이미지 어레이리스트 재생성
         items.add(new ImageItem(R.drawable.limbo_main_image, "Limbo", "★★★★★★★★★"));
@@ -228,7 +326,8 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
         scaleYAnimator.start();
     }
 
-    private void updateCenterItem_Descripttion(RecyclerView recyclerView, List<ImageItem> items) {
+    private void updateCenterItem_Descripttion(RecyclerView
+                                                       recyclerView, List<ImageItem> items) {
         int recyclerViewCenterX = (recyclerView.getLeft() + recyclerView.getRight()) / 2; //중앙위치
         int minDistance = Integer.MAX_VALUE; //최소거리
         View closetChild = null; //센터값 기본값
@@ -262,6 +361,8 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
                         break;
                 } //위치를 받아 곡정보를 실시간으로 삽입
 
+                playPreview(position); //인자값을 토대로 노래플레이어 시작.
+
                 if (difficulty == 1) {
                     easyModDifficultyColor(
                             items.get(position).getDifficulty(),
@@ -278,7 +379,7 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
         }
     }
 
-    public void easyModDifficultyColor(String difficulty,TextView textView) {
+    public void easyModDifficultyColor(String difficulty, TextView textView) {
         SpannableString spannableString = new SpannableString(difficulty); //난이도텍스트를 spannable String으로 받음
 
         int maxLength = difficulty.length();// 받은 난이도(별)의 글자 길이
@@ -300,7 +401,7 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
         textView.setText(spannableString); //선택된 자손의 난이도값을 텍스트로설정
     } // 이지모드 선택시 난이도 별색깔 SpannableString + 곡명 세팅
 
-    public void hardModDifficultyColor(String difficulty,TextView textView) {
+    public void hardModDifficultyColor(String difficulty, TextView textView) {
         SpannableString spannableString = new SpannableString(difficulty); // 난이도텍스트를 spannable String으로 받음
 
         int maxLength = difficulty.length(); // 받은 난이도(별)의 글자 길이
@@ -322,7 +423,7 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
         textView.setText(spannableString); //선택된 자손의 난이도값을 텍스트로설정
     } // 하드모드 선택시 난이도 별색깔 SpannableString + 곡명 세팅
 
-    public void setDefaultSpeed(int speedIndex,Button speedBtn) {
+    public void setDefaultSpeed(int speedIndex, Button speedBtn) {
         switch (speedIndex) {
             case 1:
                 setSpeed = 3000; // 1배속 값을 세팅
@@ -367,17 +468,89 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
         }
     }  // 화면구성시 타격음 설정
 
-    public void setDefeaultSync(int syncValue) {
-        syncCurrentText.setText(String.valueOf(syncValue));
-    } //현재 싱크값을 표시해줌
-
-    public void setDefaultAutoMode(boolean automode,Button autoModBtn) {
+    public void setDefaultAutoMode(boolean automode, Button autoModBtn) {
         if (automode) {
             autoModBtn.setText("AUTO");
         } else {
             autoModBtn.setText("NONE");
         }
     } // 화면구성시 오토모드를 현재값으로 바꿔주는 초기화메소드
+
+    public void settingCustomDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+        LayoutInflater inflater = getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.setting_dialog, null);
+        builder.setView(dialogView);
+
+        AlertDialog dialog = builder.create();
+
+        SeekBar previewSoundBar = dialogView.findViewById(R.id.previewSoundBar);
+        SeekBar ingameSoundBar = dialogView.findViewById(R.id.ingameSoundBar);
+        TextView fastSync = dialogView.findViewById(R.id.syncFastBtn);
+        TextView slowSync = dialogView.findViewById(R.id.syncSlowBtn);
+        TextView currentSyncTV = dialogView.findViewById(R.id.currentSyncTV);
+
+        previewSoundBar.setProgress((int) previewSoundAmountIndex * 10); // 현재 프리뷰볼륨으로 setting progress값 설정
+        previewSoundBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                previewSoundAmountIndex = (float) progress / 10; // 설정값을 배경음악 프로그래스에 설정
+                mediaPlayer.setVolume(previewSoundAmountIndex, previewSoundAmountIndex);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+            }
+        }); // 프리뷰볼륨 조절
+
+        ingameSoundBar.setProgress((int) ingameSoundAmountIndex * 10); // 현재 인게임볼륨으로 setting progress값 설정
+        ingameSoundBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                ingameSoundAmountIndex = (float) progress / 10; // 설정값을 배경음악 프로그래스에 설정
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+            }
+        }); // 인게임볼륨 조절ㅁ
+
+        currentSyncTV.setText(""+syncValue);
+        fastSync.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                syncValue -= 10;
+                currentSyncTV.setText(""+syncValue);
+            }
+        });
+
+        slowSync.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                syncValue += 10;
+                currentSyncTV.setText(""+syncValue);
+            }
+        });
+
+        dialog.show();
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT)); //다이어로그 배경 투명처리
+
+        //다이어로그의 크기조절
+        Window window = dialog.getWindow();
+        if (window != null) {
+            WindowManager.LayoutParams params = window.getAttributes();
+            params.width = WindowManager.LayoutParams.WRAP_CONTENT;
+            params.height = WindowManager.LayoutParams.WRAP_CONTENT;
+            window.setAttributes(params);
+        }
+    } //세팅 다이어로그 생성메소드
 
     public void showCustomDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
@@ -402,15 +575,14 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
         songImageView.setImageResource(songImage);  // 선택된곡의 이미지 세팅
         songNameTV.setText(songName);  // 선택된곡의 이름 세팅
         bpmTV.setText("bpm : " + songBPM);  // 선택된곡의 bpm 세팅
-        if (difficulty == 1){
-            easyModDifficultyColor(songDifficulty,difficultyTV);
-        }
-        else {
-            hardModDifficultyColor(songDifficulty,difficultyTV);
+        if (difficulty == 1) {
+            easyModDifficultyColor(songDifficulty, difficultyTV);
+        } else {
+            hardModDifficultyColor(songDifficulty, difficultyTV);
         } //이지모드는 이지모드색깔로 텍스트뷰 설정, 하드모드는 하드모드 색깔로 텍스트뷰 설정
 
-        setDefaultSpeed(speedIndex,setSpeedBtn); //다이어로그 구성시 초기 인덱스값(혹은 db에서 받아온 유저의 배속값)을 버튼+배속에 설정
-        setDefaultAutoMode(autoModIndex,autoModBtn); //화면 구성시 오토모드 인덱스값을 텍스트에 부여
+        setDefaultSpeed(speedIndex, setSpeedBtn); //다이어로그 구성시 초기 인덱스값(혹은 db에서 받아온 유저의 배속값)을 버튼+배속에 설정
+        setDefaultAutoMode(autoModIndex, autoModBtn); //화면 구성시 오토모드 인덱스값을 텍스트에 부여
 
 
         setSpeedBtn.setOnClickListener(new View.OnClickListener() {
@@ -460,7 +632,7 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
             @Override
             public void onClick(View v) {
 
-                switch (modIndex){
+                switch (modIndex) {
                     case 0:
                         setModBtn.setText("MIRR");
                         modIndex = 1;
@@ -477,7 +649,7 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
         autoModBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (autoModIndex){
+                if (autoModIndex) {
                     autoModBtn.setText("NONE");
                     autoModIndex = false;
                 } else {
@@ -501,6 +673,7 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
                 intent.putExtra("setSpeedJudgment", setSpeedJudgment); // 배율을 인턴트로 전송
                 startActivity(intent);
                 dialog.dismiss();
+                finish();
             }
         }); // 게임정보를 넘기고 게임스타트를 해주는 스타트버튼 리스너
         cancelBtn.setOnClickListener(new View.OnClickListener() {
@@ -509,9 +682,8 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
                 dialog.dismiss();
             }
         }); // 다이어로그를 닫는 취소버튼 리스너
-
-
         dialog.show();
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
     } // 곡을 클릭했을때 곡정보,내 최고기록,플레이모드설정,플레이버튼을 띄우는 다이어로그를 생성하는 메소드
 
     public void odysseus() {
@@ -570,14 +742,22 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
             song_mp3 = R.raw.limbo;
         }
     }  // 제우스 곡 정보 설정 메소드
+
     @Override
     public void onItemSelected() {
         showCustomDialog();
     } //다이어로그 인터페이스 오버라이드 메소드
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
         SoundManager.getInstance().release();
+
+        if (mediaPlayer != null) {
+            mediaPlayer.stop();
+            mediaPlayer.release();
+            mediaPlayer = null;
+        }
     }
 }
 

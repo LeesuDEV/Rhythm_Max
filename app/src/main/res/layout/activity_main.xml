@@ -6,139 +6,27 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".MainActivity"
-    android:background="#474747">
+    android:background="@drawable/background">
 
-    <LinearLayout
-        android:layout_marginTop="90dp"
-        android:layout_width="match_parent"
-        android:layout_height="500dp"
-        android:orientation="vertical"
-        android:background="#dfdfdf"
-        android:visibility="gone">
-        <LinearLayout
-            android:id="@+id/odysseus"
-            android:layout_marginTop="5dp"
-            android:layout_width="match_parent"
-            android:layout_height="80dp"
-            android:orientation="horizontal"
-            android:weightSum="10"
-            android:background="#1EFF0000">
-            <ImageView
-                android:id="@+id/firstImageView"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="2"
-                android:layout_margin="5dp"
-                android:src="@drawable/odysseus_img"/>
-            <TextView
-                android:id="@+id/firstNameTV"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="4"
-                android:text="Odysseus"
-                android:textColor="#00AEFF"
-                android:textSize="30dp"
-                android:gravity="center|left"
-                android:layout_marginLeft="10dp"
-                android:textStyle="bold"
-                />
-            <TextView
-                android:id="@+id/firstDifficultyTV"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="4"
-                android:text="★★★★★★"
-                android:textSize="20dp"
-                android:textColor="#ff0000"
-                android:gravity="center|left"
-                android:layout_marginLeft="40dp"
-                android:textStyle="bold"
-                />
+    <TextView
+        android:id="@+id/userNameTV"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:text="tngus97531 님"
+        android:textColor="@color/white"
+        android:fontFamily="@font/netmarble_b"
+       android:layout_gravity="center|top"
+        android:textAlignment="center"
+        android:layout_marginTop="20dp"
+        android:textSize="25dp"/>
 
-        </LinearLayout>
-        <LinearLayout
-            android:id="@+id/Xeus"
-            android:layout_marginTop="5dp"
-            android:layout_width="match_parent"
-            android:layout_height="80dp"
-            android:orientation="horizontal"
-            android:weightSum="10"
-            android:background="#1EFF0000">
-            <ImageView
-                android:id="@+id/twoImageView"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="2"
-                android:layout_margin="5dp"
-                android:src="@drawable/xeus_img"/>
-            <TextView
-                android:id="@+id/twoNameTV"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="4"
-                android:text="Xeus"
-                android:textColor="#00AEFF"
-                android:textSize="30dp"
-                android:gravity="center|left"
-                android:layout_marginLeft="10dp"
-                android:textStyle="bold"
-                />
-            <TextView
-                android:id="@+id/twoDifficultyTV"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="4"
-                android:text="★★★★★★"
-                android:textSize="20dp"
-                android:textColor="#ff0000"
-                android:gravity="center|left"
-                android:layout_marginLeft="40dp"
-                android:textStyle="bold"
-                />
-
-        </LinearLayout>
-        <LinearLayout
-            android:id="@+id/Limbo"
-            android:layout_marginTop="5dp"
-            android:layout_width="match_parent"
-            android:layout_height="80dp"
-            android:orientation="horizontal"
-            android:weightSum="10"
-            android:background="#1EFF0000">
-            <ImageView
-                android:id="@+id/threeImageView"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="2"
-                android:layout_margin="5dp"
-                android:src="@drawable/limbo_img"/>
-            <TextView
-                android:id="@+id/threeNameTV"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="4"
-                android:text="Limbo"
-                android:textColor="#00AEFF"
-                android:textSize="30dp"
-                android:gravity="center|left"
-                android:layout_marginLeft="10dp"
-                android:textStyle="bold"
-                />
-            <TextView
-                android:id="@+id/threeDifficultyTV"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="4"
-                android:text="★★★★★★"
-                android:textSize="20dp"
-                android:textColor="#ff0000"
-                android:gravity="center|left"
-                android:layout_marginLeft="40dp"
-                android:textStyle="bold"
-                />
-
-        </LinearLayout>
-    </LinearLayout>
+    <ImageView
+        android:id="@+id/settingIcon"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_gravity="top|right"
+        android:src="@drawable/setting_icon"
+        android:layout_margin="10dp"/>
 
     <LinearLayout
         android:layout_marginTop="100dp"
@@ -154,14 +42,15 @@
             android:layout_gravity="center"
             android:text="EASY"
             android:gravity="center"
-            android:textSize="20dp"
-            android:textColor="#FFD500"
+            android:textSize="22dp"
+            android:textColor="#FFFFFF"
             android:elevation="40dp"
             android:shadowDx="5"
             android:shadowDy="5"
             android:shadowColor="#000000"
             android:shadowRadius="10"
             android:layout_marginRight="40dp"
+            android:fontFamily="@font/netmarble_b"
             />
         <TextView
             android:id="@+id/setHardBtn"
@@ -170,15 +59,35 @@
             android:layout_gravity="center"
             android:text="HARD"
             android:gravity="center"
-            android:textSize="20dp"
-            android:textColor="#780F80"
+            android:textSize="22dp"
+            android:textColor="#787878"
             android:elevation="40dp"
-            android:shadowDx="10"
-            android:shadowDy="10"
+            android:shadowDx="5"
+            android:shadowDy="5"
             android:shadowColor="#000000"
             android:shadowRadius="10"
+            android:fontFamily="@font/netmarble_b"
             />
-    </LinearLayout>
+    </LinearLayout> <!-- 이지 하드 버튼 -->
+
+    <FrameLayout
+        android:layout_marginTop="100dp"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:orientation="horizontal"
+        android:gravity="center">
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/musicController"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            app:lottie_rawRes="@raw/song_ani"
+            android:layout_gravity="right|center"
+            android:layout_marginRight="20dp"
+            app:lottie_loop="true"
+            app:lottie_autoPlay="true"/>
+
+    </FrameLayout> <!-- 이지 하드 버튼 -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="500dp"
@@ -200,9 +109,9 @@
             android:text="Odysseus"
             android:gravity="center"
             android:textSize="45dp"
-            android:textColor="#03AFFF"
-            android:shadowDx="10"
-            android:shadowDy="10"
+            android:textColor="#ffffff"
+            android:shadowDx="2"
+            android:shadowDy="2"
             android:shadowColor="#000000"
             android:shadowRadius="10"
             android:background="@drawable/main_title_background"
@@ -224,7 +133,7 @@
             android:textSize="25dp"
             android:textColor="#ff0000"/>
 
-    </LinearLayout>
+    </LinearLayout> <!-- 곡정보 표시 -->
 
 
     <Switch
@@ -235,26 +144,6 @@
         android:text="타격음ON/OFF"
         android:checked="true"
         android:id="@+id/ClapSoundSwitch"
-        android:visibility="gone"/>
-
-    <Button
-        android:layout_marginBottom="95dp"
-        android:layout_marginRight="140dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|center"
-        android:text="1배속"
-        android:id="@+id/speedSetBtn"
-        android:visibility="gone"/>
-
-    <Button
-        android:layout_marginBottom="50dp"
-        android:layout_marginRight="140dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|center"
-        android:text="PlayMod"
-        android:id="@+id/autoModBtn"
         android:visibility="gone"/>
 
     <EditText

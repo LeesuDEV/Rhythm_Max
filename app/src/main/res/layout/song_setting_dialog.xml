@@ -283,8 +283,9 @@
             android:shadowDy="5"
             android:shadowRadius="5"
             android:text=" START "
-            android:textColor="#D5FFFFFF"
+            android:textColor="#59FFD500"
             android:textSize="65dp"
+            android:fontFamily="@font/netmarble_b"
 
             />
     </LinearLayout> <!-- 게임스타트 버튼 -->
