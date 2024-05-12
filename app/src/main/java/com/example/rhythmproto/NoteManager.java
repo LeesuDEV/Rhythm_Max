@@ -35,7 +35,7 @@ public class NoteManager {
             }
             handler.postDelayed(() -> {
                 createNoteView(data);
-            }, delay);
+            }, delay + (long) GameActivity.songDelayTime);
         }
     }  // 레인별 노트 데이터를 지연시간을 계산하여 대기 큐에 올린후, 차례가되면 해당 데이터를 가지고 노트출력을 시작하는 메소드
 

@@ -1,5 +1,6 @@
 package com.example.rhythmproto;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
@@ -40,6 +41,7 @@ public class LoginDialog extends Dialog {
                             .addOnSuccessListener(documentSnapshot -> {
                                 if (documentSnapshot.exists()){
                                     startIntent(getId,documentSnapshot.getString("userName")); //인턴트 시작 메소드
+                                    LoginActivity.loadSettingDB(getId); //DB값을 설정값으로 설정
                                     Toast.makeText(context,"환영합니다,"+documentSnapshot.getString("userName")+"님",Toast.LENGTH_SHORT).show(); //환영문구 출력
                                 } else {
                                     Toast.makeText(context,"존재하지 않는 아이디입니다.",Toast.LENGTH_SHORT).show();
@@ -48,7 +50,6 @@ public class LoginDialog extends Dialog {
                             .addOnFailureListener(e -> {
                                 Toast.makeText(context,"데이터를 불러오는데 실패했습니다.",Toast.LENGTH_SHORT).show();
                             });
-
                 } else {
                     Toast.makeText(context,"ID입력란이 비어있습니다.",Toast.LENGTH_SHORT).show();
                 }
@@ -57,8 +58,12 @@ public class LoginDialog extends Dialog {
     }
     public void startIntent(String userId,String userName){
         Intent intent = new Intent(context,MainActivity.class);
-        intent.putExtra("userId",userId); //유저식별값 인턴트전송
-        intent.putExtra("userName",userName); //유저네임 인턴트전송
+        LoginActivity.userId = userId;
+        LoginActivity.userName = userName;
+
+        Activity activity = (Activity) context;
+        activity.finish();  // 현재 액티비티 종료
+
         context.startActivity(intent); //인턴트 시작
         dismiss(); //다이어로그 닫기
     } // 인턴트 시작하는 메소드

@@ -1,64 +1,45 @@
 package com.example.rhythmproto;
 
 import android.animation.ObjectAnimator;
-import android.content.Context;
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
-import android.renderscript.Allocation;
-import android.renderscript.Element;
-import android.renderscript.RenderScript;
-import android.renderscript.ScriptIntrinsicBlur;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.SeekBar;
 import android.widget.Switch;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.airbnb.lottie.LottieAnimationView;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.jackandphantom.carouselrecyclerview.CarouselLayoutManager;
 import com.jackandphantom.carouselrecyclerview.CarouselRecyclerview;
-
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements OnItemClickListener {
     CarouselRecyclerview carouselRecyclerview; //캐러셀뷰(3d갤러리)
-    static String userId ; //유저 식별값
-    static String userName ; //유저 닉네임
 
-    String songName;
-    String songDifficulty;
-    String songBPM;
-    int songImage; //곡 이미지
-    int song_mp3; //노래 파일
-    int noteData; //채보데이터
+    static String songName;
+    static String songDifficulty;
+    static String songBPM;
+    static int songImage; //곡 이미지
+    static int song_mp3; //노래 파일
+    static int noteData; //채보데이터
     String selectSong = ""; // 선택된 곡
-    Switch clapSoundSwitch; // 타격음 소리 스위치
-    static boolean clapSoundIndex; //타격음 소리 인덱스값
     Button syncSetBtn; // 싱크조절 버튼
     Button bluetoothBtn; // 블루투스 이어폰 자동세팅버튼
 
@@ -77,10 +58,12 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
 
     List<ImageItem> items; // 곡메인화면 어레이리스트
 
-    int difficulty; //메인화면 난이도 인자값
+    static List<NoteData> notes; //노트배열(파싱데이터 기반)
+
+    static int difficulty; //메인화면 난이도 인자값
     int current_song = -1; //현재 선택된 캐러셀노래 인자값
 
-    MediaPlayer mediaPlayer; // 미리보기노래 미디어플레이어
+    static MediaPlayer mediaPlayer; // 미리보기노래 미디어플레이어
 
     static float setSpeed = 1500; // 배속설정
     static int speedIndex = 3; // 배속모드 식별값
@@ -90,6 +73,7 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
     static float ingameSoundAmountIndex = 1.0f; // 인게임음악 크기 인덱스값
 
     LottieAnimationView musicController;
+    FirebaseFirestore firestore = FirebaseFirestore.getInstance();
 
     //1배속 = 3000ms , 1.5배속 = 2000ms , 2배속 = 1500ms , 2.5배속 = 1200ms, 3배속 = 1000ms, 3.5배속 = 857ms
     @Override
@@ -99,7 +83,6 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
 
         easyBtn = findViewById(R.id.setEasyBtn);
         hardBtn = findViewById(R.id.setHardBtn);
-        clapSoundSwitch = findViewById(R.id.ClapSoundSwitch);
         syncCurrentText = findViewById(R.id.syncTV);
         syncSetBtn = findViewById(R.id.syncBtn);
         syncSetText = findViewById(R.id.syncET);
@@ -112,18 +95,11 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
         song_name_Main = findViewById(R.id.songNameMainTV); //곡이름 메인타이틀
         song_difficulty_Main = findViewById(R.id.songDifficultyMainTV); //곡난이도 메인타이틀
 
-        Intent intent = getIntent(); //로그인액티비티의 인턴트 받아오기
-
-        if (intent != null) {
-            userId = intent.getStringExtra("userId"); //유저 닉네임
-            userName = intent.getStringExtra("userName"); //유저 식별값 세팅
-        }
-
-        if (userName == null) { //예외사항으로 유저네임을 받아오지 못했을경우
-            userName = "Empty";
-        }
-
-        uesrNameTV.setText(userName + " 님"); //유저네임 텍스트뷰에 닉네임 표시
+        if (LoginActivity.userName != null) {
+            uesrNameTV.setText(LoginActivity.userName + " 님"); //유저네임 텍스트뷰에 닉네임 표시
+        } else {
+            uesrNameTV.setText("Empt 님"); //예기치못한 닉네임관련 이슈시 Empty로 설정
+        } // 닉네임 상단 텍스트뷰 설정
 
         CarouselLayoutManager layoutManager = new CarouselLayoutManager(
                 false,
@@ -214,41 +190,7 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
                 settingCustomDialog(); //세팅 다이어로그 호출
             }
         });
-        //setDefeaultSync(syncValue); //싱크값을 현재 화면에 표시해줌
 
-        //setDefaultClapSound(clapSoundIndex); //화면 구성시 초기 타격음 설정
-
-        /*bluetoothBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                syncValue = -250;
-                setDefeaultSync(syncValue); //싱크값을 현재 화면에 표시해줌
-            }
-        }); // 블루투스이어폰 싱크값 -250 세팅*/
-
-        /*syncSetBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String s = syncSetText.getText().toString().trim();
-                if (!s.isEmpty()) {
-                    syncValue = Integer.parseInt(s);
-                    syncCurrentText.setText(String.valueOf(syncValue));
-                }
-            }
-        }); //싱크텍스트를 받아서 값을 적용해주는 싱크조절버튼 */
-
-        /*clapSoundSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    clapSoundIndex = true;  // 타격음 인덱스값 변경
-                    SoundManager.getInstance().loadSound(MainActivity.this); // 판정타격음 스위치를 켰다면 타격소리를 로딩
-                } else {
-                    clapSoundIndex = false;
-                    SoundManager.instance = null;
-                }
-            }
-        });*/
     }
 
     public void playPreview(int index) {
@@ -379,7 +321,7 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
         }
     }
 
-    public void easyModDifficultyColor(String difficulty, TextView textView) {
+    public static void easyModDifficultyColor(String difficulty, TextView textView) {
         SpannableString spannableString = new SpannableString(difficulty); //난이도텍스트를 spannable String으로 받음
 
         int maxLength = difficulty.length();// 받은 난이도(별)의 글자 길이
@@ -401,7 +343,7 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
         textView.setText(spannableString); //선택된 자손의 난이도값을 텍스트로설정
     } // 이지모드 선택시 난이도 별색깔 SpannableString + 곡명 세팅
 
-    public void hardModDifficultyColor(String difficulty, TextView textView) {
+    public static void hardModDifficultyColor(String difficulty, TextView textView) {
         SpannableString spannableString = new SpannableString(difficulty); // 난이도텍스트를 spannable String으로 받음
 
         int maxLength = difficulty.length(); // 받은 난이도(별)의 글자 길이
@@ -423,7 +365,7 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
         textView.setText(spannableString); //선택된 자손의 난이도값을 텍스트로설정
     } // 하드모드 선택시 난이도 별색깔 SpannableString + 곡명 세팅
 
-    public void setDefaultSpeed(int speedIndex, Button speedBtn) {
+    public static void setDefaultSpeed(int speedIndex, Button speedBtn) {
         switch (speedIndex) {
             case 1:
                 setSpeed = 3000; // 1배속 값을 세팅
@@ -458,17 +400,7 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
         }
     } //화면 구성시 초기 인덱스값(혹은 db에서 받아온 유저의 배속값)을 버튼+배속에 설정
 
-    public void setDefaultClapSound(boolean clapSoundIndex) {
-        if (clapSoundIndex) {
-            clapSoundSwitch.setChecked(true);
-            SoundManager.getInstance().loadSound(MainActivity.this); // 판정타격음 스위치를 켰다면 타격소리를 로딩
-        } else {
-            clapSoundSwitch.setChecked(false);
-            SoundManager.instance = null;
-        }
-    }  // 화면구성시 타격음 설정
-
-    public void setDefaultAutoMode(boolean automode, Button autoModBtn) {
+    public static void setDefaultAutoMode(boolean automode, Button autoModBtn) {
         if (automode) {
             autoModBtn.setText("AUTO");
         } else {
@@ -477,211 +409,13 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
     } // 화면구성시 오토모드를 현재값으로 바꿔주는 초기화메소드
 
     public void settingCustomDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-        LayoutInflater inflater = getLayoutInflater();
-        View dialogView = inflater.inflate(R.layout.setting_dialog, null);
-        builder.setView(dialogView);
-
-        AlertDialog dialog = builder.create();
-
-        SeekBar previewSoundBar = dialogView.findViewById(R.id.previewSoundBar);
-        SeekBar ingameSoundBar = dialogView.findViewById(R.id.ingameSoundBar);
-        TextView fastSync = dialogView.findViewById(R.id.syncFastBtn);
-        TextView slowSync = dialogView.findViewById(R.id.syncSlowBtn);
-        TextView currentSyncTV = dialogView.findViewById(R.id.currentSyncTV);
-
-        previewSoundBar.setProgress((int) previewSoundAmountIndex * 10); // 현재 프리뷰볼륨으로 setting progress값 설정
-        previewSoundBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                previewSoundAmountIndex = (float) progress / 10; // 설정값을 배경음악 프로그래스에 설정
-                mediaPlayer.setVolume(previewSoundAmountIndex, previewSoundAmountIndex);
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-            }
-        }); // 프리뷰볼륨 조절
-
-        ingameSoundBar.setProgress((int) ingameSoundAmountIndex * 10); // 현재 인게임볼륨으로 setting progress값 설정
-        ingameSoundBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                ingameSoundAmountIndex = (float) progress / 10; // 설정값을 배경음악 프로그래스에 설정
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-            }
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-            }
-        }); // 인게임볼륨 조절ㅁ
-
-        currentSyncTV.setText(""+syncValue);
-        fastSync.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                syncValue -= 10;
-                currentSyncTV.setText(""+syncValue);
-            }
-        });
-
-        slowSync.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                syncValue += 10;
-                currentSyncTV.setText(""+syncValue);
-            }
-        });
-
+        SettingDialog dialog = new SettingDialog(MainActivity.this);
         dialog.show();
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT)); //다이어로그 배경 투명처리
-
-        //다이어로그의 크기조절
-        Window window = dialog.getWindow();
-        if (window != null) {
-            WindowManager.LayoutParams params = window.getAttributes();
-            params.width = WindowManager.LayoutParams.WRAP_CONTENT;
-            params.height = WindowManager.LayoutParams.WRAP_CONTENT;
-            window.setAttributes(params);
-        }
     } //세팅 다이어로그 생성메소드
 
     public void showCustomDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-        LayoutInflater inflater = getLayoutInflater();
-        View dialogView = inflater.inflate(R.layout.song_setting_dialog, null);
-        builder.setView(dialogView);
-
-        AlertDialog dialog = builder.create();
-
-        ImageView songImageView = dialogView.findViewById(R.id.selectSongImageView);
-        TextView songNameTV = dialogView.findViewById(R.id.songNameTV);
-        TextView difficultyTV = dialogView.findViewById(R.id.difficultyTV);
-        TextView bpmTV = dialogView.findViewById(R.id.bpmTV);
-
-        TextView startBtn = dialogView.findViewById(R.id.startBtn);
-        TextView cancelBtn = dialogView.findViewById(R.id.cencelBtn);
-
-        Button setSpeedBtn = dialogView.findViewById(R.id.setSpeedBtn);
-        Button setModBtn = dialogView.findViewById(R.id.setModeBtn);
-        Button autoModBtn = dialogView.findViewById(R.id.autoModBtn);
-
-        songImageView.setImageResource(songImage);  // 선택된곡의 이미지 세팅
-        songNameTV.setText(songName);  // 선택된곡의 이름 세팅
-        bpmTV.setText("bpm : " + songBPM);  // 선택된곡의 bpm 세팅
-        if (difficulty == 1) {
-            easyModDifficultyColor(songDifficulty, difficultyTV);
-        } else {
-            hardModDifficultyColor(songDifficulty, difficultyTV);
-        } //이지모드는 이지모드색깔로 텍스트뷰 설정, 하드모드는 하드모드 색깔로 텍스트뷰 설정
-
-        setDefaultSpeed(speedIndex, setSpeedBtn); //다이어로그 구성시 초기 인덱스값(혹은 db에서 받아온 유저의 배속값)을 버튼+배속에 설정
-        setDefaultAutoMode(autoModIndex, autoModBtn); //화면 구성시 오토모드 인덱스값을 텍스트에 부여
-
-
-        setSpeedBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                switch (speedIndex) {
-                    case 1:
-                        speedIndex = 2; // 배속 식별값을 2로변경 (1.5배 식별값)
-                        setSpeed = 2000; // 1.5배속 값을 세팅
-                        setSpeedJudgment = 1.5f; // 1.5배율을 세팅
-                        setSpeedBtn.setText("1.5"); //버튼 텍스트를 1.5배속으로 변경
-                        break;
-                    case 2:
-                        speedIndex = 3;
-                        setSpeed = 1500;
-                        setSpeedJudgment = 2f;
-                        setSpeedBtn.setText("2.0");
-                        break;
-                    case 3:
-                        speedIndex = 4;
-                        setSpeed = 1200;
-                        setSpeedJudgment = 2.5f;
-                        setSpeedBtn.setText("2.5");
-                        break;
-                    case 4:
-                        speedIndex = 5;
-                        setSpeed = 1000;
-                        setSpeedJudgment = 3;
-                        setSpeedBtn.setText("3.0");
-                        break;
-                    case 5:
-                        speedIndex = 6;
-                        setSpeed = 857;
-                        setSpeedJudgment = 3.5f;
-                        setSpeedBtn.setText("3.5");
-                        break;
-                    case 6:
-                        speedIndex = 1;
-                        setSpeed = 3000;
-                        setSpeedJudgment = 1;
-                        setSpeedBtn.setText("1.0"); // 배속으로 다시 변경
-                        break;
-                }
-            }
-        }); // 버튼클릭시 배속설정을 바꾸는 리스너
-        setModBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                switch (modIndex) {
-                    case 0:
-                        setModBtn.setText("MIRR");
-                        modIndex = 1;
-                        break;
-                    case 1:
-                        setModBtn.setText("RAND");
-                        modIndex = 2;
-                    case 2:
-                        setModBtn.setText("NORM");
-                        modIndex = 0;
-                }
-            }
-        }); // 버튼클릭시 모드를 바꾸는 리스너
-        autoModBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (autoModIndex) {
-                    autoModBtn.setText("NONE");
-                    autoModIndex = false;
-                } else {
-                    autoModBtn.setText("AUTO");
-                    autoModIndex = true;
-                }
-            }
-        }); //버튼 클릭시 오토모드를 바꿔주는 리스너
-        startBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                List<NoteData> notes = OsuFileParser.parseOsuFile(MainActivity.this, noteData);  // 선택된곡 노트데이터를 리스트에 삽입
-                Intent intent = new Intent(MainActivity.this, GameActivity.class); // 인턴트생성
-                intent.putParcelableArrayListExtra("notes", new ArrayList<>(notes)); // 채보리스트를 인턴트에 담아서 전송
-                intent.putExtra("songImage", songImage);  // 곡이미지 인턴트전송
-                intent.putExtra("songName", songName);  // 곡이름 인턴트전송
-                intent.putExtra("songDifficulty", songDifficulty);  // 곡 난이도 인턴트전송
-                intent.putExtra("songBpm", songBPM);  // 곡 bpm 인턴트전송
-                intent.putExtra("song_mp3", song_mp3);  // 곡 노래mp3 인턴트 전송
-                intent.putExtra("setSpeed", setSpeed);  // 배속설정 인턴트 전송
-                intent.putExtra("setSpeedJudgment", setSpeedJudgment); // 배율을 인턴트로 전송
-                startActivity(intent);
-                dialog.dismiss();
-                finish();
-            }
-        }); // 게임정보를 넘기고 게임스타트를 해주는 스타트버튼 리스너
-        cancelBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-            }
-        }); // 다이어로그를 닫는 취소버튼 리스너
+        SelectSongDialog dialog = new SelectSongDialog(MainActivity.this);
         dialog.show();
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
     } // 곡을 클릭했을때 곡정보,내 최고기록,플레이모드설정,플레이버튼을 띄우는 다이어로그를 생성하는 메소드
@@ -751,7 +485,6 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        SoundManager.getInstance().release();
 
         if (mediaPlayer != null) {
             mediaPlayer.stop();

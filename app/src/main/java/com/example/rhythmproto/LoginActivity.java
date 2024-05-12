@@ -1,10 +1,6 @@
 package com.example.rhythmproto;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.content.pm.Signature;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -16,12 +12,11 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.SetOptions;
 import com.kakao.sdk.auth.model.OAuthToken;
 import com.kakao.sdk.user.UserApiClient;
 import com.kakao.sdk.user.model.User;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -31,10 +26,12 @@ import kotlin.jvm.functions.Function2;
 
 public class LoginActivity extends AppCompatActivity {
     private static final String TAG = "LoginActivity";
-    private View loginButton,startup;
+    private View loginButton, startup;
     private TextView nickName;
+    static String userId; //유저 아이디 전역변수
+    static String userName; //유저 닉네임 전역변수
 
-    private TextView loginTV,registerTV;
+    private TextView loginTV, registerTV;
 
     FirebaseFirestore firestore = FirebaseFirestore.getInstance(); // 파이어스토어 인스턴스 참조
 
@@ -109,7 +106,7 @@ public class LoginActivity extends AppCompatActivity {
                         @Override
                         public void onClick(View v) {
                             saveUserDataIfNotExists(String.valueOf(
-                                    user.getId()), //유저 식별아이디
+                                            user.getId()), //유저 식별아이디
                                     user.getKakaoAccount().getProfile().getNickname() //유저닉네임
                             ); //유저id를 토대로 데이터베이스 생성 - 이미 있다면 로그인만 진행함.
                         }
@@ -118,6 +115,7 @@ public class LoginActivity extends AppCompatActivity {
                     // 로그인이 되어 있지 않다면 위와 반대로
                     nickName.setText(null);
                     loginButton.setVisibility(View.VISIBLE);
+                    startup.setVisibility(View.GONE);
                 }
                 return null;
             }
@@ -125,28 +123,57 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
-    public void saveUserDataIfNotExists(String userId,String userName) {
+    public void saveUserDataIfNotExists(String userId, String userName) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         // 'users' 컬렉션에서 userId에 해당하는 문서 참조
         db.collection("users").document(userId).get()
                 .addOnSuccessListener(documentSnapshot -> {
                     if (documentSnapshot.exists()) {
-                        startIntent(userId,userName); //인턴트 시작 메소드
-                        Toast.makeText(LoginActivity.this,"환영합니다,"+documentSnapshot.getString("userName")+"님",Toast.LENGTH_SHORT).show(); //환영문구 출력
+                        startIntent(userId, userName); //인턴트 시작 메소드
+                        Toast.makeText(LoginActivity.this, "환영합니다," + documentSnapshot.getString("userName") + "님", Toast.LENGTH_SHORT).show(); //환영문구 출력
                     } else {
                         // 문서가 존재하지 않을 때만 새 데이터 저장
                         Map<String, Object> user = new HashMap<>();
                         user.put("registerDate", new Date());  // 첫 가입일자 입력
-                        user.put("userName",userName); //유저이름 삽입
+                        user.put("userName", userName); //유저이름 삽입
 
-                        db.collection("users").document(userId).set(user)
-                                .addOnSuccessListener(aVoid -> {
-                                    Log.d("Firebase", "사용자 데이터 저장 성공");
-                                })
-                                .addOnFailureListener(e -> {
-                                    Log.e("Firebase", "사용자 데이터 저장 실패", e);
-                                });
+                        firestore.collection("users").document(userId).set(user); //유저데이터 베이스 생성
+
+                        HashMap<String, Object> setting = new HashMap<>();
+                        setting.put("ingame", 1.0);
+                        setting.put("preview", 1.0); // 초기 인자값들
+
+                        firestore.collection("users")
+                                .document(userId)
+                                .collection("setting")
+                                .document("sound")
+                                .set(setting, SetOptions.merge()); // 유저세팅값을 업로드
+
+                        HashMap<String, Object> sync = new HashMap<>();
+                        sync.put("value", 0); // 싱크값도 넣을준비를 함
+
+                        firestore.collection("users")
+                                .document(userId)
+                                .collection("setting")
+                                .document("sync")
+                                .set(sync, SetOptions.merge()); // 유저싱크값을 업로드
+
+                        HashMap<String, Object> mode = new HashMap<>();
+                        mode.put("automode", false);
+                        mode.put("gamemode", 0);
+                        mode.put("speed", 3);
+
+                        firestore.collection("users")
+                                .document(userId)
+                                .collection("setting")
+                                .document("mode")
+                                .set(mode, SetOptions.merge()); // 유저모드값을 업로드
+
+                        loadSettingDB(userId); //DB값을 설정값으로 설정
+
+                        Toast.makeText(LoginActivity.this, "회원가입 성공. 환영합니다, " + userName + "님", Toast.LENGTH_SHORT).show(); //환영 문구 출력
+                        startIntent(userId, userName);
                     }
                 })
                 .addOnFailureListener(e -> {
@@ -154,35 +181,49 @@ public class LoginActivity extends AppCompatActivity {
                 });
     }
 
-    public void startIntent(String userId,String userName){
-        Intent intent = new Intent(LoginActivity.this,MainActivity.class);
-        intent.putExtra("userId",userId); //유저식별값 인턴트전송
-        intent.putExtra("userName",userName); //유저네임 인턴트전송
+    public void startIntent(String userId, String userName) {
+        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+        this.userId = userId;
+        this.userName = userName;
+
         startActivity(intent); //인턴트 시작
         finish();
     } // 인턴트 시작하는 메소드
 
-    public static String getKeyHash(final Context context) {
-        PackageManager pm = context.getPackageManager();
-        try {
-            PackageInfo packageInfo = pm.getPackageInfo(context.getPackageName(), PackageManager.GET_SIGNATURES);
-            if (packageInfo == null)
-                return null;
+    public static void loadSettingDB(String userId) {
+        FirebaseFirestore firestore = FirebaseFirestore.getInstance();
 
-            for (Signature signature : packageInfo.signatures) {
-                try {
-                    MessageDigest md = MessageDigest.getInstance("SHA");
-                    md.update(signature.toByteArray());
-                    return android.util.Base64.encodeToString(md.digest(), android.util.Base64.NO_WRAP);
-                } catch (NoSuchAlgorithmException e) {
-                    e.printStackTrace();
-                }
-            }
-        } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
+        firestore.collection("users")
+                .document(LoginActivity.userId)
+                .collection("setting")
+                .document("sound")
+                .get().addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        MainActivity.previewSoundAmountIndex = documentSnapshot.getDouble("preview").floatValue();
+                        MainActivity.ingameSoundAmountIndex = documentSnapshot.getDouble("ingame").floatValue();
+                    }
+                }); // 서버에서 프리뷰와 인게임볼륨을 받아옴
 
+        firestore.collection("users")
+                .document(LoginActivity.userId)
+                .collection("setting")
+                .document("sync")
+                .get().addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        MainActivity.syncValue = documentSnapshot.getLong("value").intValue();
+                    }
+                }); // 서버에서 싱크값을 받아옴
 
+        firestore.collection("users")
+                .document(LoginActivity.userId)
+                .collection("setting")
+                .document("mode")
+                .get().addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        MainActivity.autoModIndex = documentSnapshot.getBoolean("automode").booleanValue();
+                        MainActivity.modIndex = documentSnapshot.getLong("gamemode").intValue();
+                        MainActivity.speedIndex = documentSnapshot.getLong("speed").intValue();
+                    }
+                }); // 서버에서 오토모드,모드,스피드 인덱스값 받아옴
+    } //DB에서 설정값을 불러오는 메소드
 }

@@ -1,5 +1,6 @@
 package com.example.rhythmproto;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
@@ -52,14 +53,42 @@ public class RegisterDialog extends Dialog {
                                     user.put("registerDate", new Date());  // 첫 가입일자 입력
                                     user.put("userName", registerNickName); //유저이름 삽입
 
-                                    firestore.collection("users").document(getId).set(user)
-                                            .addOnSuccessListener(aVoid -> {
-                                                Toast.makeText(context, "회원가입 성공. 환영합니다, " + registerNickName + "님", Toast.LENGTH_SHORT).show(); //환영 문구 출력
-                                                startIntent(getId, registerNickName);
-                                            })
-                                            .addOnFailureListener(e -> {
-                                                Toast.makeText(context, "회원가입 실패", Toast.LENGTH_SHORT).show(); //회원가입 실패
-                                            });
+                                    firestore.collection("users").document(getId).set(user); //유저데이터 베이스 생성
+
+                                    HashMap<String,Object>setting = new HashMap<>();
+                                    setting.put("ingame",1.0);
+                                    setting.put("preview",1.0); // 초기 인자값들
+
+                                    firestore.collection("users")
+                                            .document(getId)
+                                            .collection("setting")
+                                            .document("sound")
+                                            .set(setting); // 유저세팅값을 업로드
+
+                                    HashMap<String,Object>sync = new HashMap<>();
+                                    sync.put("value",0); // 싱크값도 넣을준비를 함
+
+                                    firestore.collection("users")
+                                            .document(getId)
+                                            .collection("setting")
+                                            .document("sync")
+                                            .set(sync); // 유저싱크값을 업로드
+
+                                    HashMap<String,Object>mode = new HashMap<>();
+                                    mode.put("automode",false);
+                                    mode.put("gamemode",0);
+                                    mode.put("speed",3);
+
+                                    firestore.collection("users")
+                                            .document(getId)
+                                            .collection("setting")
+                                            .document("mode")
+                                            .set(mode); // 유저모드값을 업로드
+
+                                    LoginActivity.loadSettingDB(getId); //DB값을 설정값으로 설정
+
+                                    Toast.makeText(context, "회원가입 성공. 환영합니다, " + registerNickName + "님", Toast.LENGTH_SHORT).show(); //환영 문구 출력
+                                    startIntent(getId, registerNickName);
                                 }
                             })
                             .addOnFailureListener(e -> {
@@ -74,8 +103,12 @@ public class RegisterDialog extends Dialog {
 
     public void startIntent(String userId, String userName) {
         Intent intent = new Intent(context, MainActivity.class);
-        intent.putExtra("userId", userId); //유저식별값 인턴트전송
-        intent.putExtra("userName", userName); //유저네임 인턴트전송
+        LoginActivity.userId = userId;
+        LoginActivity.userName = userName;
+
+        Activity activity = (Activity) context;
+        activity.finish();  // 현재 액티비티 종료
+
         context.startActivity(intent); //인턴트 시작
         dismiss(); //다이어로그 닫기
     } // 인턴트 시작하는 메소드

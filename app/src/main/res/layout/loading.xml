@@ -9,13 +9,12 @@
     tools:context=".MissionFail">
 
     <TextView
-        android:id="@+id/gameOverTV"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="GAME OVER"
+        android:text="NOW LOADING"
         android:layout_gravity="center"
         android:layout_marginTop="250dp"
-        android:textSize="60sp"
+        android:textSize="50sp"
         android:textStyle="italic"
         android:textColor="#BFBFBF"
         android:visibility="visible"
@@ -23,15 +22,15 @@
         android:textAlignment="center"/>
 
     <TextView
-        android:id="@+id/gotoMainTV"
+        android:id="@+id/loadingText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginTop="50dp"
-        android:text="go to main"
-        android:textColor="#B2E8DD0D"
+        android:text="..."
+        android:textColor="#BFBFBF"
         android:textStyle="bold"
-        android:textSize="30dp"
+        android:textSize="50sp"
         android:visibility="visible"
         android:fontFamily="@font/netmarble_b"/>
 

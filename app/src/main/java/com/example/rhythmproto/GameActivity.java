@@ -49,6 +49,7 @@ public class GameActivity extends AppCompatActivity {
     int[] buttonWidths = new int[4]; //각 버튼의 크기정보
     int[] currentLane = new int[4]; //초기 레인 인덱스  -- 5월6일 10시30분 슬라이딩 구현으로 동시터치시 currentLane의 값 공유로인해 쿼드터치 현상이 발생함, CurrentLane을 배열로 만들어 각 레인별로 CurrentLane을 따로 할당하여 독립적인 currentLane을 사용하도록함.(문제해결완료)
     boolean[] touched = new boolean[4]; // 터치상태를 인식하는 변수
+    static float songDelayTime = 2000; // 곡 시작딜레이타임
 
     long score; // 총 점수
     int combo; // 콤보 수
@@ -80,8 +81,8 @@ public class GameActivity extends AppCompatActivity {
     LottieAnimationView[] animationViews = new LottieAnimationView[4];  // 판정시 폭죽 이펙트효과
 
     ProgressBar healthBar; // 체력 바
-
     public List<ValueAnimator> animators = new ArrayList<>();
+    Handler songDelayHandler = new Handler(); //곡싱크 핸들러
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,18 +97,18 @@ public class GameActivity extends AppCompatActivity {
             currentLane[i] = -1;
         } // 각 currentLane을 -1로 초기화
 
-        /*---------------------인턴트로 받아올 자료 시작----------------------*/
-        Intent intent = getIntent();
-        notes = intent.getParcelableArrayListExtra("notes"); // 인턴트로 받아온 노트정보 어레이리스트 notes에 담기
-        songName = intent.getStringExtra("songName");
-        songDifficulty = intent.getStringExtra("songDifficulty");
-        songBPM = intent.getStringExtra("songBPM");
-        songImage = intent.getIntExtra("songImage", 1); //곡 정보들을 게임액티비티에 전달.
-        song_mp3 = intent.getIntExtra("song_mp3", 1); // 곡 노래mp3를 게임액티비티에 전달.
-        setSpeed = intent.getFloatExtra("setSpeed",1.0f); // 배속세팅값을 받아옴
-        setSpeedJudgment = intent.getFloatExtra("setSpeedJudgment",1.0f); // 배율값을 받아옴
+        /*---------------------곡 관련 자료 받아옴 시작----------------------*/
 
-        /*---------------------인턴트로 받아올 자료 끝----------------------*/
+        notes = new ArrayList<>(MainActivity.notes);
+        songName = MainActivity.songName;
+        songDifficulty = MainActivity.songDifficulty;
+        songBPM = MainActivity.songBPM;
+        songImage = MainActivity.songImage;
+        song_mp3 = MainActivity.song_mp3;
+        setSpeed = MainActivity.setSpeed;
+        setSpeedJudgment = MainActivity.setSpeedJudgment;
+
+        /*---------------------곡 관련 자료 받아옴 끝----------------------*/
 
         setdelayStartTime(); // 받아온 배속값 * 판정선비율 -60값을 곡 시작시간으로 설정하는 메소드
 
@@ -115,9 +116,13 @@ public class GameActivity extends AppCompatActivity {
         exitbutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(GameActivity.this, MainActivity.class);
-                startActivity(intent);
                 finish();
+                Intent intent = new Intent(GameActivity.this, QuitActivity.class);
+                startActivity(intent);
+
+                overridePendingTransition(R.anim.fade_in, R.anim.fade_out); // 2초동안 페이드인아웃
+                destroyThread(); // Thread 종료관련 메소드
+                animators.clear();
             }
         });
 
@@ -198,7 +203,7 @@ public class GameActivity extends AppCompatActivity {
     }
 
     private void setdelayStartTime(){
-        dalay_StartTime = ((setSpeed * judgmentLineY_Rate) - 60 ) + MainActivity.syncValue; //-60은 개발자가 설정한 디폴트 싱크값(데이터로딩등) / SyncValue는 사용자설정 싱크값
+        dalay_StartTime = (((setSpeed * judgmentLineY_Rate) - 60 ) + MainActivity.syncValue) + songDelayTime; //-60은 개발자가 설정한 디폴트 싱크값(데이터로딩등) / SyncValue는 사용자설정 싱크값
     } // 배속 * 판정선높이 - 60(기본 싱크값) + (사용자설정 싱크값) 을 설정해주는 시작딜레이타임 ---- 게임 싱크설정 로직 메소드
 
     public void startGame() {
@@ -209,10 +214,10 @@ public class GameActivity extends AppCompatActivity {
             mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {  //노래준비 리스너 - 노래가 불러와지길 기다림
                 @Override
                 public void onPrepared(MediaPlayer mp) {
-                    new Handler().postDelayed(() -> {
+                    songDelayHandler.postDelayed(() -> {
                         mp.start();
                         mp.setVolume(MainActivity.ingameSoundAmountIndex,MainActivity.ingameSoundAmountIndex); // 인게임음악볼륨 설정값으로 노래 출력
-                    }, (int) dalay_StartTime); // 2초후에 노래를 시작하게 하는 메소드 - delay_StartTime은 int 형식의 시작시간 MS 밀리세컨드 단위
+                    }, (int) dalay_StartTime); // 싱크값에 맞게 노래를 시작하는 메소드
                     // 노트 스케줄링 로직
                     ViewGroup layout = findViewById(R.id.noteView); // 노트를 포함할 레이아웃
 
@@ -254,6 +259,7 @@ public class GameActivity extends AppCompatActivity {
 
                     startActivity(intent); //결과 화면으로 이동
                     finish();
+                    overridePendingTransition(R.anim.fade_in, R.anim.fade_out); // 2초동안 페이드인아웃
                     /*---------------------결과 창 엑티비티로 인턴트 전송 끝---------------------*/
                 }
             });
@@ -472,15 +478,10 @@ public class GameActivity extends AppCompatActivity {
     }  // 체력이 줄어드는 메소드  ++ 체력이 0이하가 되면 게임오버 화면으로 이동
 
     private void gameOver() {
-        for (ValueAnimator animator : animators) {
-            if (animator != null) {
-                animator.removeAllUpdateListeners();  // 모든 업데이트 리스너 제거
-                animator.removeAllListeners();  // 모든 리스너 제거
-                animator.cancel();  // 애니메이터 작업 취소(쓰레드는 꺼져도 애니메이터는 계속 돌아가고있으므로 멈춰줘야 없어진객체에 Miss처리를 하지않음)
-            }
-        }
-        animators.clear();
         finish();
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out); // 2초동안 페이드인아웃
+        destroyThread(); // Thread 종료관련 메소드
+        animators.clear();
     }  // 게임오버시 애니메이터를 전부 취소하고 정리한뒤, finish()액티비티 종료를 선언함.
 
     public void increaseHealth(int heal) {
@@ -555,6 +556,7 @@ public class GameActivity extends AppCompatActivity {
                 animator.removeAllUpdateListeners();  // 모든 업데이트 리스너 제거
                 animator.removeAllListeners();  // 모든 리스너 제거
                 animator.cancel();  // 애니메이터 작업 취소(쓰레드는 꺼져도 애니메이터는 계속 돌아가고있으므로 멈춰줘야 없어진객체에 Miss처리를 하지않음)
+                animators = new ArrayList<ValueAnimator>();
             }
         }
 
@@ -567,19 +569,48 @@ public class GameActivity extends AppCompatActivity {
             noteManager.shutdownHandler(); //노트매니저의 노트생성 스케줄과 콜백 제거메소드
         }
 
+        if (mediaPlayer != null) {
+            mediaPlayer.release();
+            mediaPlayer = null;  //노래 끄기
+        }
+
         if (NoteManager.lanes != null) {
-            NoteManager.lanes = null;   //노트매니저의 노트리스트 배열을 초기화
             NoteManager.lanes = new List[5];  //그대로두면 NullPointException이 뜨니 배열크기를 다시 지정해줌 (onCreate에서 초기화해도 됨)
+        }
+
+        stackCombo = 0;
+    } // 뷰가 꺼질때 노래,종소리도 같이 null로 초기화
+
+
+    private void destroyThread(){
+        if (songDelayHandler != null){
+            songDelayHandler.removeCallbacksAndMessages(null);
+        } // 곡준비 이전에 게임을 취소할시 곡준비 핸들러 작업스케줄 삭제
+
+        for (ValueAnimator animator : animators) {
+            if (animator != null) {
+                animator.removeAllUpdateListeners();  // 모든 업데이트 리스너 제거
+                animator.removeAllListeners();  // 모든 리스너 제거
+                animator.cancel();  // 애니메이터 작업 취소(쓰레드는 꺼져도 애니메이터는 계속 돌아가고있으므로 멈춰줘야 없어진객체에 Miss처리를 하지않음)
+                animators = new ArrayList<ValueAnimator>();
+            }
+        }
+
+        if (noteThread != null) {
+            noteThread.interrupt(); // 쓰레드 멈추기
+            noteThread = null;  // 쓰레드 참조를 해제하여 가비지 컬렉션을 도울 수 있도록 함
+        }
+
+
+        if (noteManager.handler != null) {
+            noteManager.shutdownHandler(); //노트매니저의 노트생성 스케줄과 콜백 제거메소드
         }
 
         if (mediaPlayer != null) {
             mediaPlayer.release();
             mediaPlayer = null;  //노래 끄기
         }
-
-        stackCombo = 0;
-    } // 뷰가 꺼질때 노래,종소리도 같이 null로 초기화
-
+    } //destroy관련 모든 메소드
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {

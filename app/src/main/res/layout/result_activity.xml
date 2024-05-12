@@ -1,299 +1,471 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="30dp"
-        android:text="결과창"
-        android:textSize="30dp"
-        android:textStyle="bold" />
-
+    android:layout_height="match_parent">
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:layout_height="match_parent"
+        android:background="@drawable/result_menu_background"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="30dp"
+            android:layout_marginBottom="20dp"
+            android:fontFamily="@font/netmarble_b"
+            android:text="RESULT"
+            android:textColor="#973E3C3C"
+            android:textSize="40dp"
+            android:textStyle="bold" />
+
         <LinearLayout
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:orientation="vertical">
-            <ImageView
-                android:id="@+id/sondImage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:background="#25252525"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:id="@+id/sondImage"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_margin="10dp"
+                    android:background="@drawable/select_image_corner"
+                    android:elevation="10dp"
+                    android:padding="2dp"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/odysseus_img" />
+                />
+            </LinearLayout>  <!-- 이미지 -->
+            <LinearLayout
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/songNameTV"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:shadowColor="#000000"
+                    android:shadowDx="8"
+                    android:shadowDy="8"
+                    android:shadowRadius="10"
+                    android:text="Odysseus"
+                    android:textColor="#D1FCFD"
+                    android:textSize="22dp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/bpmTV"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:shadowColor="#000000"
+                    android:shadowDx="3"
+                    android:shadowDy="3"
+                    android:shadowRadius="5"
+                    android:text="bpm : 185"
+                    android:textColor="#FFFFFF"
+                    android:textSize="15dp" />
+
+                <TextView
+                    android:id="@+id/difficultyTV"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="3dp"
+                    android:shadowColor="#000000"
+                    android:shadowDx="3"
+                    android:shadowDy="3"
+                    android:shadowRadius="5"
+                    android:text="★★★★★★★★"
+                    android:textColor="#ff0000"
+                    android:textSize="20dp" />
+            </LinearLayout>  <!-- 제목+난이도 -->
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_margin="10dp"
-                android:scaleType="fitXY"
-                />
-        </LinearLayout>  <!-- 이미지 -->
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/resultRankTV"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:shadowColor="#000000"
+                    android:shadowDx="10"
+                    android:shadowDy="10"
+                    android:shadowRadius="15"
+                    android:text="D"
+                    android:textAlignment="center"
+                    android:textColor="#919191"
+                    android:textSize="50dp"
+                    android:visibility="visible" />
+
+            </LinearLayout>  <!-- 랭크 -->
+        </LinearLayout> <!-- 곡정보+랭크 -->
         <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="220dp"
+            android:layout_marginLeft="50dp"
+            android:layout_marginTop="30dp"
+            android:layout_marginRight="50dp"
+            android:background="@drawable/result_judgment_background"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="150dp"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_margin="5dp"
+                    android:fontFamily="@font/netmarble_b"
+                    android:shadowColor="#000000"
+                    android:shadowDx="3"
+                    android:shadowDy="3"
+                    android:shadowRadius="5"
+                    android:text="PERFECT"
+                    android:textAlignment="center"
+                    android:textColor="#FFE710"
+                    android:textSize="18dp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_margin="5dp"
+                    android:fontFamily="@font/netmarble_b"
+                    android:shadowColor="#000000"
+                    android:shadowDx="3"
+                    android:shadowDy="3"
+                    android:shadowRadius="5"
+                    android:text="GREAT"
+                    android:textAlignment="center"
+                    android:textColor="#8BE141"
+                    android:textSize="18dp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_margin="5dp"
+                    android:fontFamily="@font/netmarble_b"
+                    android:shadowColor="#000000"
+                    android:shadowDx="3"
+                    android:shadowDy="3"
+                    android:shadowRadius="5"
+
+                    android:text="GOOD"
+                    android:textAlignment="center"
+                    android:textColor="#FF9A41"
+                    android:textSize="18dp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_margin="5dp"
+                    android:fontFamily="@font/netmarble_b"
+                    android:shadowColor="#000000"
+                    android:shadowDx="3"
+                    android:shadowDy="3"
+                    android:shadowRadius="5"
+
+                    android:text="BAD"
+                    android:textAlignment="center"
+                    android:textColor="#CB6AFF"
+                    android:textSize="18dp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_margin="5dp"
+                    android:fontFamily="@font/netmarble_b"
+                    android:shadowColor="#000000"
+                    android:shadowDx="3"
+                    android:shadowDy="3"
+                    android:shadowRadius="5"
+
+                    android:text="MISS"
+                    android:textAlignment="center"
+                    android:textColor="#B5B5B5"
+                    android:textSize="18dp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="20dp"
+                    android:fontFamily="@font/netmarble_b"
+                    android:shadowColor="#000000"
+                    android:shadowDx="8"
+                    android:shadowDy="8"
+                    android:shadowRadius="10"
+                    android:text="TOTAL"
+                    android:textAlignment="center"
+                    android:textColor="#41BCFF"
+                    android:textSize="22dp"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="150dp"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/perfectTV"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_margin="5dp"
+                    android:fontFamily="@font/netmarble_b"
+                    android:shadowColor="#000000"
+                    android:shadowDx="2"
+                    android:shadowDy="2"
+                    android:shadowRadius="3"
+                    android:text="1325"
+                    android:textAlignment="center"
+                    android:textColor="#FFE710"
+                    android:textSize="18dp" />
+
+                <TextView
+                    android:id="@+id/greatTV"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_margin="5dp"
+                    android:fontFamily="@font/netmarble_b"
+                    android:shadowColor="#000000"
+                    android:shadowDx="2"
+                    android:shadowDy="2"
+                    android:shadowRadius="3"
+
+                    android:text="0"
+                    android:textAlignment="center"
+                    android:textColor="#8BE141"
+                    android:textSize="18dp" />
+
+                <TextView
+                    android:id="@+id/goodTV"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_margin="5dp"
+                    android:fontFamily="@font/netmarble_b"
+                    android:shadowColor="#000000"
+                    android:shadowDx="2"
+                    android:shadowDy="2"
+                    android:shadowRadius="3"
+                    android:text="0"
+                    android:textAlignment="center"
+                    android:textColor="#FF9A41"
+                    android:textSize="18dp" />
+
+                <TextView
+                    android:id="@+id/badTV"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_margin="5dp"
+                    android:shadowColor="#000000"
+                    android:shadowDx="2"
+                    android:shadowDy="2"
+                    android:shadowRadius="3"
+                    android:text="0"
+                    android:textAlignment="center"
+                    android:textColor="#CB6AFF"
+                    android:textSize="18dp" />
+
+                <TextView
+                    android:id="@+id/missTV"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_margin="5dp"
+                    android:fontFamily="@font/netmarble_b"
+                    android:shadowColor="#000000"
+                    android:shadowDx="2"
+                    android:shadowDy="2"
+                    android:shadowRadius="3"
+                    android:text="0"
+                    android:textAlignment="center"
+                    android:textColor="#B5B5B5"
+                    android:textSize="18dp" />
+
+                <TextView
+                    android:id="@+id/totalTV"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="19dp"
+                    android:fontFamily="@font/netmarble_b"
+                    android:shadowColor="#000000"
+                    android:shadowDx="6"
+                    android:shadowDy="6"
+                    android:shadowRadius="7"
+                    android:text="314"
+                    android:textAlignment="center"
+                    android:textColor="#41BCFF"
+                    android:textSize="22dp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+        </LinearLayout> <!-- 판정총합+토탈 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="50dp"
+            android:layout_marginTop="30dp"
+            android:layout_marginRight="50dp"
+            android:background="@drawable/result_total_background"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="150dp"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_margin="5dp"
+                    android:fontFamily="@font/netmarble_b"
+                    android:shadowColor="#000000"
+                    android:shadowDx="4"
+                    android:shadowDy="4"
+                    android:shadowRadius="5"
+                    android:text="SCORE"
+                    android:textAlignment="center"
+                    android:textColor="#C5C5C5"
+                    android:textSize="18dp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_margin="5dp"
+                    android:fontFamily="@font/netmarble_b"
+                    android:shadowColor="#000000"
+                    android:shadowDx="4"
+                    android:shadowDy="4"
+                    android:shadowRadius="5"
+
+                    android:text="MAX COMBO"
+                    android:textAlignment="center"
+                    android:textColor="#C5C5C5"
+                    android:textSize="18dp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_margin="5dp"
+                    android:fontFamily="@font/netmarble_b"
+                    android:shadowColor="#000000"
+                    android:shadowDx="4"
+                    android:shadowDy="4"
+                    android:shadowRadius="5"
+
+                    android:text="RATE"
+                    android:textAlignment="center"
+                    android:textColor="#C5C5C5"
+                    android:textSize="18dp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="150dp"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/scoreTV"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_margin="5dp"
+                    android:shadowColor="#000000"
+                    android:shadowDx="4"
+                    android:shadowDy="4"
+                    android:shadowRadius="5"
+                    android:text="0"
+                    android:textAlignment="center"
+                    android:textColor="#C5C5C5"
+                    android:textSize="18dp" />
+
+                <TextView
+                    android:id="@+id/maxcomboTV"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_margin="5dp"
+                    android:shadowColor="#000000"
+                    android:shadowDx="4"
+                    android:shadowDy="4"
+                    android:shadowRadius="5"
+                    android:text="0"
+                    android:textAlignment="center"
+                    android:textColor="#C5C5C5"
+                    android:textSize="18dp" />
+
+                <TextView
+                    android:id="@+id/accuracyTV"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_margin="5dp"
+                    android:shadowColor="#000000"
+                    android:shadowDx="4"
+                    android:shadowDy="4"
+                    android:shadowRadius="5"
+                    android:text="0"
+                    android:textAlignment="center"
+                    android:textColor="#C5C5C5"
+                    android:textSize="18dp" />
+
+            </LinearLayout>
+        </LinearLayout> <!-- 스코어+맥스콤보 -->
+
+        <TextView
+            android:id="@+id/gotoMainBtn"
             android:layout_width="200dp"
-            android:layout_height="100dp"
-            android:orientation="vertical">
-            <TextView
-                android:id="@+id/songNameTV"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="40dp"
-                android:layout_marginTop="20dp"
-                android:text="노래제목"
-                android:textColor="#00B7FF"
-                android:textSize="15dp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/difficultyTV"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="40dp"
-                android:layout_marginTop="10dp"
-                android:text="★★★★★"
-                android:textColor="#FF0000"
-                android:textSize="15dp" />
-        </LinearLayout>  <!-- 제목+난이도 -->
-        <LinearLayout
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:orientation="vertical">
-            <TextView
-                android:id="@+id/rankTV"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_margin="20dp"
-                android:textSize="50dp"
-                android:text="A"
-                android:textAlignment="center"
-                />
-
-        </LinearLayout>  <!-- 랭크 -->
-    </LinearLayout> <!-- 곡정보+랭크 -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="220dp"
-        android:layout_marginLeft="50dp"
-        android:layout_marginTop="30dp"
-        android:layout_marginRight="50dp"
-        android:background="#328A8A8A"
-        android:orientation="horizontal">
-
-        <LinearLayout
-            android:layout_width="150dp"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_margin="5dp"
-                android:text="PERFECT"
-                android:textColor="#0568E4"
-                android:textSize="18dp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_margin="5dp"
-                android:text="GREAT"
-                android:textColor="#2BBC11"
-                android:textSize="18dp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_margin="5dp"
-                android:text="GOOD"
-                android:textColor="#D88B04"
-                android:textSize="18dp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_margin="5dp"
-                android:text="BAD"
-                android:textColor="#530498"
-                android:textSize="18dp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_margin="5dp"
-                android:text="MISS"
-                android:textColor="#989898"
-                android:textSize="18dp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginTop="10dp"
-                android:text="TOTAL"
-                android:textColor="#000000"
-                android:textSize="22dp"
-                android:textStyle="bold" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="150dp"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/perfectTV"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_margin="5dp"
-                android:text="0"
-                android:textColor="#0568E4"
-                android:textSize="18dp" />
-
-            <TextView
-                android:id="@+id/greatTV"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_margin="5dp"
-                android:text="0"
-                android:textColor="#2BBC11"
-                android:textSize="18dp" />
-
-            <TextView
-                android:id="@+id/goodTV"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_margin="5dp"
-                android:text="0"
-                android:textColor="#D88B04"
-                android:textSize="18dp" />
-
-            <TextView
-                android:id="@+id/badTV"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_margin="5dp"
-                android:text="0"
-                android:textColor="#530498"
-                android:textSize="18dp" />
-
-            <TextView
-                android:id="@+id/missTV"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_margin="5dp"
-                android:text="0"
-                android:textColor="#989898"
-                android:textSize="18dp" />
-
-            <TextView
-                android:id="@+id/totalTV"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginTop="10dp"
-                android:text="0"
-                android:textColor="#000000"
-                android:textSize="22dp"
-                android:textStyle="bold" />
-        </LinearLayout>
-    </LinearLayout> <!-- 판정총합+토탈 -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="110dp"
-        android:layout_marginLeft="50dp"
-        android:layout_marginTop="30dp"
-        android:layout_marginRight="50dp"
-        android:background="#320081F1"
-        android:orientation="horizontal">
-
-        <LinearLayout
-            android:layout_width="150dp"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_margin="5dp"
-                android:text="SCORE"
-                android:textColor="#0568E4"
-                android:textSize="18dp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_margin="5dp"
-                android:text="MAX COMBO"
-                android:textColor="#5C0FE6"
-                android:textSize="18dp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_margin="5dp"
-                android:text="정확도"
-                android:textColor="#505050"
-                android:textSize="18dp" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="150dp"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/scoreTV"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_margin="5dp"
-                android:text="0"
-                android:textColor="#0568E4"
-                android:textSize="18dp" />
-
-            <TextView
-                android:id="@+id/maxcomboTV"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_margin="5dp"
-                android:text="0"
-                android:textColor="#6007DD"
-                android:textSize="18dp" />
-
-            <TextView
-                android:id="@+id/accuracyTV"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_margin="5dp"
-                android:text="0"
-                android:textColor="#505050"
-                android:textSize="18dp" />
-
-        </LinearLayout>
-    </LinearLayout> <!-- 스코어+맥스콤보 -->
-
-    <Button
-        android:id="@+id/gotoMainBtn"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="30dp"
+            android:fontFamily="@font/netmarble_b"
+            android:shadowColor="#000000"
+            android:shadowDx="5"
+            android:shadowDy="5"
+            android:shadowRadius="5"
+            android:text="GO TO MAIN"
+            android:textAlignment="center"
+            android:textColor="#9EFFE600"
+            android:textSize="30dp" />
+    </LinearLayout>
+    <TextView
+        android:id="@+id/automodeTV"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="20dp"
-        android:text="메인으로" />
-
-</LinearLayout>
+        android:text="automode"
+        android:layout_gravity="right|top"
+        android:textColor="#ff0000"
+        android:textSize="18dp"
+        android:fontFamily="@font/netmarble_m"
+        android:layout_marginTop="75dp"
+        android:layout_marginRight="20dp"
+        android:visibility="gone"/>
+</FrameLayout>

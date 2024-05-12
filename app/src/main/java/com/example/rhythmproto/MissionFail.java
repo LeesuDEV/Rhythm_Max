@@ -6,7 +6,6 @@ import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -33,6 +32,7 @@ public class MissionFail extends AppCompatActivity {
                 Intent intent = new Intent(MissionFail.this,MainActivity.class);
                 startActivity(intent);  // 인턴트로 메인으로 이동
                 finish();
+                overridePendingTransition(R.anim.fade_in, R.anim.fade_out); // 2초동안 페이드인아웃
             }
         });
     }
@@ -50,12 +50,10 @@ public class MissionFail extends AppCompatActivity {
             @Override
             public void onAnimationStart(Animator animation) {
                 gameoverTV.setVisibility(View.VISIBLE);   // 애니메이터가 시작할때 게임오버가 1초동안 진행
-                Log.d("check","check");
             }
             @Override
             public void onAnimationEnd(Animator animation) {
                 gotomainTV.setVisibility(View.VISIBLE);  // 게임오버 애니메이터가 끝나고나면 메인으로가 1초동안 진행
-                Log.d("check","check");
             }
         });
         animatorSet.start();
