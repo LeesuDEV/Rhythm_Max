@@ -194,7 +194,7 @@ public class LoginActivity extends AppCompatActivity {
         FirebaseFirestore firestore = FirebaseFirestore.getInstance();
 
         firestore.collection("users")
-                .document(LoginActivity.userId)
+                .document(userId)
                 .collection("setting")
                 .document("sound")
                 .get().addOnSuccessListener(documentSnapshot -> {
@@ -205,7 +205,7 @@ public class LoginActivity extends AppCompatActivity {
                 }); // 서버에서 프리뷰와 인게임볼륨을 받아옴
 
         firestore.collection("users")
-                .document(LoginActivity.userId)
+                .document(userId)
                 .collection("setting")
                 .document("sync")
                 .get().addOnSuccessListener(documentSnapshot -> {
@@ -215,7 +215,7 @@ public class LoginActivity extends AppCompatActivity {
                 }); // 서버에서 싱크값을 받아옴
 
         firestore.collection("users")
-                .document(LoginActivity.userId)
+                .document(userId)
                 .collection("setting")
                 .document("mode")
                 .get().addOnSuccessListener(documentSnapshot -> {

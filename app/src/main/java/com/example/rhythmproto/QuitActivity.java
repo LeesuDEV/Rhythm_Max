@@ -14,7 +14,7 @@ public class QuitActivity extends AppCompatActivity {
     int i = 1;
     Runnable run = new Runnable() {
         @Override
-        public void run() {`
+        public void run() {
             updateLoadingText(); // . ~ ...을 반복
             handler.postDelayed(this, 300); //0.3초 간격으로 반복
         }
