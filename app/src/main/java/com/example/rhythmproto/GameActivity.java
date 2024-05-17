@@ -126,7 +126,6 @@ public class GameActivity extends AppCompatActivity {
             }
         });
 
-
         button = new Button[]{
                 findViewById(R.id.button1),
                 findViewById(R.id.button2),
@@ -437,14 +436,14 @@ public class GameActivity extends AppCompatActivity {
     }  // 화면높이의 judgmentLineY_Rate 비율에 판정선 위치를 설정하는 메소드
 
     public void touchEvent(int index) {
-        SoundManager.getInstance().playSound(); // 판정 종소리 효과음
+        List<NoteView> laneNotes = noteManager.getLaneNotes(index); //NoteManager의 lane1Notes에서 노트1 데이터 받아오기
+        NoteView closetNote = findClosetNote(laneNotes); // 찾은 제일 가까운 노트
+        if (closetNote != null) {
+            checkJudgment(closetNote, judgmentLineY, animationViews[index]); // 누른 라인의 제일가까운노트를 판정후, 리스트에서 삭제해주는 메소드
+        }
+
         laneLights[index].setVisibility(View.VISIBLE); // 해당라인 불빛기둥 생성
         new Handler().postDelayed(() -> laneLights[index].setVisibility(View.INVISIBLE), 60); // 해당라인 불빛기둥 0.1초후 끔
-        List<NoteView> laneNotes = noteManager.getLaneNotes(index); //NoteManager의 lane1Notes에서 노트1 데이터 받아오기
-        NoteView closetNote = findClosetNote(laneNotes);
-        if (closetNote != null) {
-            checkJudgment(closetNote, judgmentLineY, animationViews[index]); // 원래코드 - 리스트에서 데이터가 삭제 안되는 관계로 일단은 판정을 최대아랫범위보다 줄이고, 최대 아랫범위 내의 값만으로 판정을 처리하게 만듬.
-        }
     }   // 버튼객체와, 인덱스로 판정리스너를 삽입해주는 메소드
 
     private NoteView findClosetNote(List<NoteView> notes) {

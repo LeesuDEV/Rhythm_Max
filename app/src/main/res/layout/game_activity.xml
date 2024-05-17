@@ -33,14 +33,16 @@
                     android:scaleType="fitXY"
                     android:id="@+id/lane1_light"
                     android:visibility="invisible"/>
+
                 <ImageView
+                    android:id="@+id/lane2_light"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:src="@drawable/line_light"
                     android:scaleType="fitXY"
-                    android:id="@+id/lane2_light"
-                    android:visibility="invisible"/>
+                    android:src="@drawable/line_light"
+                    android:visibility="invisible" />
+
                 <ImageView
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
@@ -200,11 +202,15 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text=""
-            android:textColor="#ffffff"
+            android:text="GREAT"
+            android:textColor="#12B300"
             android:textSize="35sp"
             android:textStyle="bold"
-            android:visibility="visible"/>
+            android:visibility="visible"
+            android:shadowDx="5"
+            android:shadowDy="5"
+            android:shadowColor="#80CACACA"
+            android:shadowRadius="5"/>
 
         <TextView
             android:layout_marginTop="120dp"
@@ -216,7 +222,11 @@
             android:textColor="#979797"
             android:textSize="70sp"
             android:textStyle="bold"
-            android:visibility="visible"/>
+            android:visibility="visible"
+            android:shadowDx="5"
+            android:shadowDy="5"
+            android:shadowColor="#80CACACA"
+            android:shadowRadius="5"/>
 
         <TextView
             android:id="@+id/scoreTV"

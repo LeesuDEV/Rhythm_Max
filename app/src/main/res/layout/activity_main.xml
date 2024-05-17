@@ -108,13 +108,14 @@
             android:layout_gravity="center"
             android:text="Odysseus"
             android:gravity="center"
-            android:textSize="45dp"
+            android:textSize="30dp"
             android:textColor="#ffffff"
             android:shadowDx="2"
             android:shadowDy="2"
             android:shadowColor="#000000"
             android:shadowRadius="10"
             android:background="@drawable/main_title_background"
+            android:fontFamily="@font/netmarble_b"
             />
 
 

@@ -23,6 +23,7 @@ public class NoteView extends View {
     private ViewGroup noteLayout;
     private String judgment = "BAD"; // 판정 문자
     private Bitmap noteWhite, noteBlue;
+    private Bitmap anitNoteWhite,antiNoteBlue;
 
     int index; // 노트블럭의 인덱스값
     boolean judged; // 노트가 판정을 받았는지의 여부 /추가지식/ java의 boolean은 기본값이 false이기떄문에 초기화를 안해줘도 된다.
@@ -34,6 +35,8 @@ public class NoteView extends View {
     public void loadNoteImage() {
         noteWhite = BitmapFactory.decodeResource(getResources(), R.drawable.white_note);
         noteBlue = BitmapFactory.decodeResource(getResources(), R.drawable.blue_note);
+        anitNoteWhite = Bitmap.createScaledBitmap(noteWhite,width,height,true);
+        antiNoteBlue = Bitmap.createScaledBitmap(noteBlue,width,height,true);
     }
 
     public NoteView(Context context, float x, float y, int color, int screen_Height, ViewGroup note_Layout, int index) {
@@ -62,11 +65,11 @@ public class NoteView extends View {
         super.onDraw(canvas);
         if (index == 0 || index == 2 || index == 4) {
             if (noteWhite != null) {
-                canvas.drawBitmap(noteWhite, null, new Rect(0, 0, width, height), null);
+                canvas.drawBitmap(anitNoteWhite, null, new Rect(0, 0, width, height), null);
             }
         } else if (index == 1 || index == 3) {
             if (noteBlue != null) {
-                canvas.drawBitmap(noteBlue, null, new Rect(0, 0, width, height), null);
+                canvas.drawBitmap(antiNoteBlue, null, new Rect(0, 0, width, height), null);
             }
         }
     }  // 그리기 메소드 165,50크기의 노트블럭을 canvas에 그림

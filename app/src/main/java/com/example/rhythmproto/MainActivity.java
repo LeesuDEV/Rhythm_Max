@@ -205,13 +205,20 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
 
             switch (index) {
                 case 0:
-                    mediaPlayer = MediaPlayer.create(MainActivity.this, R.raw.limbo_main); //1번 인덱스라면 림보플레이
+                    mediaPlayer = MediaPlayer.create(MainActivity.this, R.raw.cannon_main);
+                    //캐러셀뷰가 선택한 인덱스가 1번 인덱스라면 림보 미리듣기 플레이
                     break;
                 case 1:
-                    mediaPlayer = MediaPlayer.create(MainActivity.this, R.raw.odysseus_main);
+                    mediaPlayer = MediaPlayer.create(MainActivity.this, R.raw.shining_light_main);
                     break;
                 case 2:
                     mediaPlayer = MediaPlayer.create(MainActivity.this, R.raw.xeus_main);
+                    break;
+                case 3:
+                    mediaPlayer = MediaPlayer.create(MainActivity.this, R.raw.odysseus_main);
+                    break;
+                case 4:
+                    mediaPlayer = MediaPlayer.create(MainActivity.this, R.raw.limbo_main);
                     break;
             }
 
@@ -232,9 +239,11 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
     public void setEasyModAdapter() {
         items = null; // 곡메인화면 리스트초기화
         items = new ArrayList<>(); // 곡 메인화면 어레이리스트 재생성
-        items.add(new ImageItem(R.drawable.limbo_main_image, "Limbo", "★★★★★★★★★"));
+        items.add(new ImageItem(R.drawable.cannon_main_img, "Cannon_Remix", "★★"));
+        items.add(new ImageItem(R.drawable.shining_light_main_img, "Shining_Light", "★★★"));
+        items.add(new ImageItem(R.drawable.xeus_main_img, "Xeus", "★★★★★★"));
         items.add(new ImageItem(R.drawable.odysseus_main_image, "Odysseus", "★★★★★"));
-        items.add(new ImageItem(R.drawable.xeus_main_image, "Xeus", "★★★★★★"));
+        items.add(new ImageItem(R.drawable.limbo_main_image, "Limbo", "★★★★★★★★★"));
 
         MyAdapter adapter = new MyAdapter(items, MainActivity.this); //어댑터에 이미지 리스트를 매개변수로 생성
         carouselRecyclerview.setAdapter(adapter);
@@ -243,9 +252,11 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
     public void setHardModAdapter() {
         items = null; // 곡메인화면 리스트초기화
         items = new ArrayList<>(); // 곡 이미지 어레이리스트 재생성
+        items.add(new ImageItem(R.drawable.cannon_main_img, "Cannon_Remix", "★★★"));
+        items.add(new ImageItem(R.drawable.shining_light_main_img, "Shining_Light", "★★★★"));
+        items.add(new ImageItem(R.drawable.xeus_main_img, "Xeus", "★★★★★"));
+        items.add(new ImageItem(R.drawable.odysseus_main_image, "Odysseus", "★★★★★★★★"));
         items.add(new ImageItem(R.drawable.limbo_main_image, "Limbo", "★★★★★★★★★"));
-        items.add(new ImageItem(R.drawable.odysseus_main_image, "Odysseus", "★★★★★★★★★"));
-        items.add(new ImageItem(R.drawable.xeus_main_image, "Xeus", "★★★★★★★"));
 
         MyAdapter adapter = new MyAdapter(items, MainActivity.this); //어댑터에 이미지 리스트를 매개변수로 생성
         carouselRecyclerview.setAdapter(adapter);
@@ -254,7 +265,6 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
     public void startDifficultySet() {
         difficulty = 1; //기본값 이지로 설정
         difficultyChangeText(easyBtn, 1.0f, 1.6f); //이지버튼 점점크게 애니메이터
-
     }  // 초기 난이도버튼 설정
 
     public void difficultyChangeText(TextView text, float startSize, float endSize) {
@@ -293,13 +303,19 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
 
                 switch (position) {
                     case 0:
-                        limbo();
+                        cannonRemix();
                         break;
                     case 1:
-                        odysseus();
+                        shiningLight();
                         break;
                     case 2:
                         xeus();
+                        break;
+                    case 3:
+                        odysseus();
+                        break;
+                    case 4:
+                        limbo();
                         break;
                 } //위치를 받아 곡정보를 실시간으로 삽입
 
@@ -365,6 +381,12 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
         textView.setText(spannableString); //선택된 자손의 난이도값을 텍스트로설정
     } // 하드모드 선택시 난이도 별색깔 SpannableString + 곡명 세팅
 
+    public void settingCustomDialog() {
+        SettingDialog dialog = new SettingDialog(MainActivity.this);
+        dialog.show();
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT)); //다이어로그 배경 투명처리
+    } //세팅 다이어로그 생성메소드
+
     public static void setDefaultSpeed(int speedIndex, Button speedBtn) {
         switch (speedIndex) {
             case 1:
@@ -408,12 +430,6 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
         }
     } // 화면구성시 오토모드를 현재값으로 바꿔주는 초기화메소드
 
-    public void settingCustomDialog() {
-        SettingDialog dialog = new SettingDialog(MainActivity.this);
-        dialog.show();
-        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT)); //다이어로그 배경 투명처리
-    } //세팅 다이어로그 생성메소드
-
     public void showCustomDialog() {
         SelectSongDialog dialog = new SelectSongDialog(MainActivity.this);
         dialog.show();
@@ -433,7 +449,7 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
             songImage = R.drawable.odysseus_img;
             songBPM = "187";
             songName = "Odysseus[HARD]";
-            songDifficulty = "★★★★★★★★★";
+            songDifficulty = "★★★★★★★★";
             noteData = R.raw.odysseus_hard;
             song_mp3 = R.raw.xeon;
         }
@@ -452,7 +468,7 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
             songImage = R.drawable.xeus_img;
             songBPM = "148";
             songName = "Xeus[HARD]";
-            songDifficulty = "★★★★★★★";
+            songDifficulty = "★★★★★";
             noteData = R.raw.xeus_hard;
             song_mp3 = R.raw.xeus;
         }
@@ -475,7 +491,45 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
             noteData = R.raw.limbo_hard;
             song_mp3 = R.raw.limbo;
         }
-    }  // 제우스 곡 정보 설정 메소드
+    }  // 림보 곡 정보 설정 메소드
+
+    public void shiningLight() {
+        if (difficulty == 1) {
+            songImage = R.drawable.shining_light_img;
+            songBPM = "178";
+            songName = "ShiningLight[EASY]";
+            songDifficulty = "★★★";
+            noteData = R.raw.shining_light_easy;
+            song_mp3 = R.raw.shining_light;
+        }
+        if (difficulty == 2) {
+            songImage = R.drawable.shining_light_img;
+            songBPM = "178";
+            songName = "ShiningLight[HARD]";
+            songDifficulty = "★★★★";
+            noteData = R.raw.shining_light_hard;
+            song_mp3 = R.raw.shining_light;
+        }
+    }  // 샤이닝라이트 곡 정보 설정 메소드
+
+    public void cannonRemix() {
+        if (difficulty == 1) {
+            songImage = R.drawable.cannon_img;
+            songBPM = "160";
+            songName = "Cannon_Remix[EASY]";
+            songDifficulty = "★★";
+            noteData = R.raw.cannon_easy;
+            song_mp3 = R.raw.cannon;
+        }
+        if (difficulty == 2) {
+            songImage = R.drawable.cannon_img;
+            songBPM = "160";
+            songName = "Cannon_Remix[HARD]";
+            songDifficulty = "★★★";
+            noteData = R.raw.cannon_hard;
+            song_mp3 = R.raw.cannon;
+        }
+    }  // 샤이닝라이트 곡 정보 설정 메소드
 
     @Override
     public void onItemSelected() {
