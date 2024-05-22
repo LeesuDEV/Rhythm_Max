@@ -221,7 +221,7 @@ public class LoginActivity extends AppCompatActivity {
                 .get().addOnSuccessListener(documentSnapshot -> {
                     if (documentSnapshot.exists()) {
                         MainActivity.autoModIndex = documentSnapshot.getBoolean("automode").booleanValue();
-                        MainActivity.modIndex = documentSnapshot.getLong("gamemode").intValue();
+                        MainActivity.gameModIndex = documentSnapshot.getLong("gamemode").intValue();
                         MainActivity.speedIndex = documentSnapshot.getLong("speed").intValue();
                     }
                 }); // 서버에서 오토모드,모드,스피드 인덱스값 받아옴

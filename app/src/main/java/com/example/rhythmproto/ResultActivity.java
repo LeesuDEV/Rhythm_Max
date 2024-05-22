@@ -1,7 +1,6 @@
 package com.example.rhythmproto;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
@@ -21,7 +20,7 @@ public class ResultActivity extends AppCompatActivity {
 
     ImageView songImageView;  // 노래 이미지 텍스트뷰
     TextView songNameTV, difficultyTV;  // 노래이름,난이도 텍스트뷰
-    TextView rankTV; // 랭크 텍스트뷰
+    ImageView rankImageView; // 랭크 텍스트뷰
     TextView perfectTV, greatTV, goodTV, badTV, missTV, totalTV;  // 퍼펙~배드 + 미스 텍스트뷰
     TextView scoreTV, maxComboTV, accuracyTV;  // 점수,맥스콤보,정확도 텍스트뷰
     TextView gotoMainBtn; //로비로 가는 버튼
@@ -78,7 +77,7 @@ public class ResultActivity extends AppCompatActivity {
         songNameTV = findViewById(R.id.songNameTV);
         difficultyTV = findViewById(R.id.difficultyTV);
 
-        rankTV = findViewById(R.id.resultRankTV);
+        rankImageView = findViewById(R.id.rankImageView);
 
         perfectTV = findViewById(R.id.perfectTV);
         greatTV = findViewById(R.id.greatTV);
@@ -113,7 +112,7 @@ public class ResultActivity extends AppCompatActivity {
 
         accuracy_double = Double.parseDouble(accuracy.replace("%", "")); // String 정확도 값에서 %를 제외한 숫자를 가져옴 -> double에 저장하여 Rank계산
 
-        setRank(accuracy_double, resultRank, rankTV); // 정확도를 기반으로 resultRank에 랭크를 입력해주고 텍스트뷰에 표시 해주는 메소드
+        setRank(accuracy_double, resultRank, rankImageView); // 정확도를 기반으로 resultRank에 랭크를 입력해주고 텍스트뷰에 표시 해주는 메소드
 
 
         updateBestScore(); //최고기록 DB등록 메소드
@@ -172,27 +171,19 @@ public class ResultActivity extends AppCompatActivity {
         }
     }  // db의 최고기록과 비교하여 점수를 업데이트해주는 메소드 ( 기록이 없다면 결과기록등록 )
 
-    public static void setRank(double rate, String setRank, TextView rankTV) {
+    public static void setRank(double rate, String setRank, ImageView rankImageView) {
         if (rate >= 99.5) {
-            setRank = "SS"; // 결과 랭크를 문자열로 저장
-            rankTV.setTextColor(Color.parseColor("#FFE7A3")); //99.5점 이상일시 SS
+            rankImageView.setImageResource(R.drawable.rank_ss_img); //99.5점 이상일시 SS
         } else if (rate >= 97) {
-            setRank = "S";
-            rankTV.setTextColor(Color.parseColor("#FFE7A3")); //97점 이상일시 S
+            rankImageView.setImageResource(R.drawable.rank_s_img);//97점 이상일시 S
         } else if (rate >= 90) {
-            setRank = "A";
-            rankTV.setTextColor(Color.parseColor("#AEFF001F")); //90점 이상일시 A
+            rankImageView.setImageResource(R.drawable.rank_a_img); //90점 이상일시 A
         } else if (rate >= 80) {
-            setRank = "B";
-            rankTV.setTextColor(Color.parseColor("#0088FF")); //80점 이상일시 B
+            rankImageView.setImageResource(R.drawable.rank_b_img); //80점 이상일시 B
         } else if (rate >= 70) {
-            setRank = "C";
-            rankTV.setTextColor(Color.parseColor("#4DAC25")); //70점 이상일시 C
+            rankImageView.setImageResource(R.drawable.rank_c_img); //70점 이상일시 C
         } else {
-            setRank = "D";
-            rankTV.setTextColor(Color.parseColor("#919191")); //70점 미만일시 D
+            rankImageView.setImageResource(R.drawable.rank_d_img); //70점 미만일시 D
         }
-
-        rankTV.setText(setRank);
     } //정확도,텍스트뷰를 받아 랭크를 반환해주는 메소드
 }

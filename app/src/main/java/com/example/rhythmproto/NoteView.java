@@ -49,7 +49,7 @@ public class NoteView extends View {
         setX(x);
         setY(y);
         this.width = 230; // 적절한 크기 설정
-        this.height = 50; // 적절한 크기 설정
+        this.height = 60; // 적절한 크기 설정
         loadNoteImage();
         setBackgroundColor(Color.parseColor("#000000"));
         setLayoutParams(new ViewGroup.LayoutParams(width, height));

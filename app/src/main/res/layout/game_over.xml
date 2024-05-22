@@ -20,7 +20,11 @@
         android:textColor="#BFBFBF"
         android:visibility="visible"
         android:fontFamily="@font/netmarble_b"
-        android:textAlignment="center"/>
+        android:textAlignment="center"
+        android:shadowDx="10"
+        android:shadowDy="10"
+        android:shadowRadius="5"
+        android:shadowColor="#000000"/>
 
     <TextView
         android:id="@+id/gotoMainTV"
@@ -32,7 +36,12 @@
         android:textColor="#B2E8DD0D"
         android:textStyle="bold"
         android:textSize="30dp"
-        android:visibility="visible"
-        android:fontFamily="@font/netmarble_b"/>
+        android:visibility="invisible"
+        android:fontFamily="@font/netmarble_b"
+        android:shadowDx="8"
+        android:shadowDy="8"
+        android:shadowRadius="5"
+        android:shadowColor="#000000"
+        />
 
 </LinearLayout>

@@ -108,7 +108,15 @@
                     android:textAlignment="center"
                     android:textColor="#919191"
                     android:textSize="50dp"
-                    android:visibility="visible" />
+                    android:visibility="gone" />
+
+                <ImageView
+                    android:id="@+id/rankImageView"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:layout_gravity="center"
+                  android:src="@drawable/rank_ss_img"
+                    android:visibility="visible"/>
 
             </LinearLayout>  <!-- 랭크 -->
         </LinearLayout> <!-- 곡정보+랭크 -->

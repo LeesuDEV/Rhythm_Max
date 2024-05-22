@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
     TextView song_difficulty_Main; // 현재 선택된노래 난이도 텍스트
     static int syncValue = 0; // 싱크값
     static boolean autoModIndex = false; // 0ff 기본값 오토모드 인덱스
-    static int modIndex = 0; // 모드인덱스값 0은 NORMAL , 1은 MIRROR , 2는 RANDOM
+    static int gameModIndex = 0; // 모드인덱스값 0은 NORMAL , 1은 MIRROR , 2는 RANDOM
 
     List<ImageItem> items; // 곡메인화면 어레이리스트
 
@@ -220,6 +220,10 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
                 case 4:
                     mediaPlayer = MediaPlayer.create(MainActivity.this, R.raw.limbo_main);
                     break;
+                case 5:
+                    mediaPlayer = MediaPlayer.create(MainActivity.this, R.raw.skyhigh_main);
+                    break;
+
             }
 
             if (mediaPlayer != null) {
@@ -244,6 +248,7 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
         items.add(new ImageItem(R.drawable.xeus_main_img, "Xeus", "★★★★★★"));
         items.add(new ImageItem(R.drawable.odysseus_main_image, "Odysseus", "★★★★★"));
         items.add(new ImageItem(R.drawable.limbo_main_image, "Limbo", "★★★★★★★★★"));
+        items.add(new ImageItem(R.drawable.skyhing_main_img, "SkyHigh", "★★★★★★★★"));
 
         MyAdapter adapter = new MyAdapter(items, MainActivity.this); //어댑터에 이미지 리스트를 매개변수로 생성
         carouselRecyclerview.setAdapter(adapter);
@@ -257,6 +262,7 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
         items.add(new ImageItem(R.drawable.xeus_main_img, "Xeus", "★★★★★"));
         items.add(new ImageItem(R.drawable.odysseus_main_image, "Odysseus", "★★★★★★★★"));
         items.add(new ImageItem(R.drawable.limbo_main_image, "Limbo", "★★★★★★★★★"));
+        items.add(new ImageItem(R.drawable.skyhing_main_img, "SkyHigh", "★★★★★★★"));
 
         MyAdapter adapter = new MyAdapter(items, MainActivity.this); //어댑터에 이미지 리스트를 매개변수로 생성
         carouselRecyclerview.setAdapter(adapter);
@@ -316,6 +322,9 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
                         break;
                     case 4:
                         limbo();
+                        break;
+                    case 5:
+                        skyHigh();
                         break;
                 } //위치를 받아 곡정보를 실시간으로 삽입
 
@@ -387,48 +396,62 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT)); //다이어로그 배경 투명처리
     } //세팅 다이어로그 생성메소드
 
-    public static void setDefaultSpeed(int speedIndex, Button speedBtn) {
+    public static void setDefaultSpeed(int speedIndex, ImageView speedBtn) {
         switch (speedIndex) {
             case 1:
                 setSpeed = 3000; // 1배속 값을 세팅
                 setSpeedJudgment = 1; // 1배율을 세팅
-                speedBtn.setText("1.0"); //버튼 텍스트를 1배속으로 변경
+                speedBtn.setImageResource(R.drawable.speedbtn_1x_img); //버튼 텍스트를 1배속으로 변경
                 break;
             case 2:
                 setSpeed = 2000;
                 setSpeedJudgment = 1.5f;
-                speedBtn.setText("1.5");
+                speedBtn.setImageResource(R.drawable.speedbtn_15x_img);
                 break;
             case 3:
                 setSpeed = 1500;
                 setSpeedJudgment = 2f;
-                speedBtn.setText("2.0");
+                speedBtn.setImageResource(R.drawable.speedbtn_2x_img);
                 break;
             case 4:
                 setSpeed = 1200;
                 setSpeedJudgment = 2.5f;
-                speedBtn.setText("2.5");
+                speedBtn.setImageResource(R.drawable.speedbtn_25x_img);
                 break;
             case 5:
                 setSpeed = 1000;
                 setSpeedJudgment = 3f;
-                speedBtn.setText("3.0");
+                speedBtn.setImageResource(R.drawable.speedbtn_3x_img);
                 break;
             case 6:
                 setSpeed = 857;
                 setSpeedJudgment = 3.5f;
-                speedBtn.setText("3.5");
+                speedBtn.setImageResource(R.drawable.speedbtn_35x_img);
                 break;
         }
-    } //화면 구성시 초기 인덱스값(혹은 db에서 받아온 유저의 배속값)을 버튼+배속에 설정
+    } // 다이어로그 화면 구성시 사용할 배속모드 초기 인덱스값(혹은 db에서 받아온 유저의 배속값)을 버튼+배속에 설정
 
-    public static void setDefaultAutoMode(boolean automode, Button autoModBtn) {
+    public static void setDefaultAutoMode(boolean automode, ImageView autoModBtn) {
         if (automode) {
-            autoModBtn.setText("AUTO");
+            autoModBtn.setImageResource(R.drawable.autobtn_img);
         } else {
-            autoModBtn.setText("NONE");
+            autoModBtn.setImageResource(R.drawable.nonebtn_img);
         }
-    } // 화면구성시 오토모드를 현재값으로 바꿔주는 초기화메소드
+    } // 다이어로그 화면구성시 사용할 오토모드를 앱내변수값으로 바꿔주는 초기화메소드
+
+    public static void setDefaultGameMode(int gameModeIndex, ImageView gameModBtn) {
+        switch (gameModeIndex) {
+            case 0:
+                gameModBtn.setImageResource(R.drawable.normalbtn_img); //버튼 텍스트를 1배속으로 변경
+                break;
+            case 1:
+                gameModBtn.setImageResource(R.drawable.mirrorbtn_img);
+                break;
+            case 2:
+                gameModBtn.setImageResource(R.drawable.randombtn_img);
+                break;
+        }
+    } // 다이얼로그 화면구성시 사용할 모드값을 앱내 모드변수로 설정해주는 메소드
 
     public void showCustomDialog() {
         SelectSongDialog dialog = new SelectSongDialog(MainActivity.this);
@@ -528,6 +551,25 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
             songDifficulty = "★★★";
             noteData = R.raw.cannon_hard;
             song_mp3 = R.raw.cannon;
+        }
+    }  // 캐논리믹스 곡 정보 설정 메소드
+
+    public void skyHigh() {
+        if (difficulty == 1) {
+            songImage = R.drawable.skyhigh_img;
+            songBPM = "128";
+            songName = "SkyHigh[EASY]";
+            songDifficulty = "★★★★★★★★";
+            noteData = R.raw.sky_high_easy;
+            song_mp3 = R.raw.sky_high;
+        }
+        if (difficulty == 2) {
+            songImage = R.drawable.skyhigh_img;
+            songBPM = "128";
+            songName = "SkyHigh[HARD]";
+            songDifficulty = "★★★★★★★";
+            noteData = R.raw.sky_high_hard;
+            song_mp3 = R.raw.sky_high;
         }
     }  // 샤이닝라이트 곡 정보 설정 메소드
 

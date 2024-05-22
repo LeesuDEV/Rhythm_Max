@@ -63,6 +63,7 @@ public class GameActivity extends AppCompatActivity {
     TextView judgmentTV;  // 판정 텍스트뷰
     TextView comboTV;  //콤보 텍스트뷰
     TextView accuracyTV; // 정확도 텍스트뷰
+    Button enterPrevent; // 엔터키 처리 텍스트
     static int stackCombo;  //누적 콤보
     int maxCombo; // 최고 콤보
     double accuracy; // 정확도
@@ -93,7 +94,7 @@ public class GameActivity extends AppCompatActivity {
             NoteManager.lanes[i] = new ArrayList<>();
         }  // 노트매니저의 lanes를 초기화해줌
 
-        for (int i = 0 ; i < currentLane.length; i++) {
+        for (int i = 0; i < currentLane.length; i++) {
             currentLane[i] = -1;
         } // 각 currentLane을 -1로 초기화
 
@@ -111,6 +112,18 @@ public class GameActivity extends AppCompatActivity {
         /*---------------------곡 관련 자료 받아옴 끝----------------------*/
 
         setdelayStartTime(); // 받아온 배속값 * 판정선비율 -60값을 곡 시작시간으로 설정하는 메소드
+
+        enterPrevent = findViewById(R.id.enterPrevent);
+        enterPrevent.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
+                    //no event
+                    return true;
+                }
+                return false;
+            }
+        }); // 엔터가 눌렸을때 이벤트 처리 (게임종료 방지)
 
         exitbutton = findViewById(R.id.quitGameBtn);
         exitbutton.setOnClickListener(new View.OnClickListener() {
@@ -198,11 +211,10 @@ public class GameActivity extends AppCompatActivity {
 
         // gameHandler.post(gameUpdateRunnable); // 게임핸들러에 쓰레드를 입혀서 동작 - NoteView 의 Animator에서 판정시 리스트에서 삭제하게 바꿈 05/04 23:15분
 
-
     }
 
-    private void setdelayStartTime(){
-        dalay_StartTime = (((setSpeed * judgmentLineY_Rate) - 60 ) + MainActivity.syncValue) + songDelayTime; //-60은 개발자가 설정한 디폴트 싱크값(데이터로딩등) / SyncValue는 사용자설정 싱크값
+    private void setdelayStartTime() {
+        dalay_StartTime = (((setSpeed * judgmentLineY_Rate) - 60) + MainActivity.syncValue) + songDelayTime; //-60은 개발자가 설정한 디폴트 싱크값(데이터로딩등) / SyncValue는 사용자설정 싱크값
     } // 배속 * 판정선높이 - 60(기본 싱크값) + (사용자설정 싱크값) 을 설정해주는 시작딜레이타임 ---- 게임 싱크설정 로직 메소드
 
     public void startGame() {
@@ -215,7 +227,7 @@ public class GameActivity extends AppCompatActivity {
                 public void onPrepared(MediaPlayer mp) {
                     songDelayHandler.postDelayed(() -> {
                         mp.start();
-                        mp.setVolume(MainActivity.ingameSoundAmountIndex,MainActivity.ingameSoundAmountIndex); // 인게임음악볼륨 설정값으로 노래 출력
+                        mp.setVolume(MainActivity.ingameSoundAmountIndex, MainActivity.ingameSoundAmountIndex); // 인게임음악볼륨 설정값으로 노래 출력
                     }, (int) dalay_StartTime); // 싱크값에 맞게 노래를 시작하는 메소드
                     // 노트 스케줄링 로직
                     ViewGroup layout = findViewById(R.id.noteView); // 노트를 포함할 레이아웃
@@ -510,7 +522,7 @@ public class GameActivity extends AppCompatActivity {
                         currentLane[index] = index; // 현재라인을 인덱스값으로 변경
                         touched[index] = true;  // 터치상태를 유지
                     }
-                    handleTouchMove(index,v, event);
+                    handleTouchMove(index, v, event);
                     return true;
                 }  // 터치후 움직였을때
 
@@ -526,8 +538,7 @@ public class GameActivity extends AppCompatActivity {
     } // onTouchListener을 각 버튼에 부여하고, 버튼을 눌렀을때 처리할 터치이벤트 메소드를 실행시킴
 
 
-
-    private void handleTouchMove(int index,View v, MotionEvent event) {
+    private void handleTouchMove(int index, View v, MotionEvent event) {
         float x = event.getX() + v.getLeft(); // 터치 좌표를 상대적 위치에서 절대적 위치로 변환
         int touchedLane = calculateTouchLane(x);
         if (touchedLane != currentLane[index] && touchedLane >= 0 && touchedLane < animationViews.length) {
@@ -581,8 +592,8 @@ public class GameActivity extends AppCompatActivity {
     } // 뷰가 꺼질때 노래,종소리도 같이 null로 초기화
 
 
-    private void destroyThread(){
-        if (songDelayHandler != null){
+    private void destroyThread() {
+        if (songDelayHandler != null) {
             songDelayHandler.removeCallbacksAndMessages(null);
         } // 곡준비 이전에 게임을 취소할시 곡준비 핸들러 작업스케줄 삭제
 
@@ -618,7 +629,8 @@ public class GameActivity extends AppCompatActivity {
                 touchEvent(0); //인덱스값으로 터치 로직 시작(모든 계산을 실행)
                 return true;
             case KeyEvent.KEYCODE_S:
-                touchEvent(1);;
+                touchEvent(1);
+                ;
                 return true;
             case KeyEvent.KEYCODE_SEMICOLON:
                 touchEvent(2);

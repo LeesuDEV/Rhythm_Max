@@ -6,37 +6,42 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".LoginActivity"
-    android:background="#ffffff">
+    android:background="@drawable/main_background">
 
     <ImageView
-        android:layout_width="250dp"
-        android:layout_height="wrap_content"
-        android:src="@drawable/rhythm_max"
+        android:layout_width="match_parent"
+        android:layout_height="230dp"
+        android:src="@drawable/rhythm_max_logo"
         android:layout_gravity="center"
-        android:layout_marginTop="20dp"/>
+        android:layout_marginTop="40dp"
+        android:scaleType="fitXY"/>
 
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="450dp"
-        android:gravity="center"
-        android:orientation="vertical">
+        android:layout_height="300dp"
+        android:gravity="center|top"
+        android:orientation="vertical"
+        android:layout_marginTop="40dp">
         <TextView
-            android:layout_width="200dp"
-            android:layout_height="50dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:text="환영합니다"
             android:textAlignment="center"
-            android:textSize="30dp"
+            android:textSize="45dp"
             android:textStyle="bold"
-            android:fontFamily="@font/netmarble_m"/>
+            android:fontFamily="@font/netmarble_m"
+            android:textColor="#FFFFFF"/>
 
         <TextView
             android:id="@+id/nickname"
+            android:layout_marginTop="20dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="NickName 님"
-            android:textSize="25dp"
-            android:paddingBottom="50dp"
+            android:text="Empty 님"
+            android:textSize="30dp"
+            android:textColor="#FFFFFF"
+            android:paddingBottom="30dp"
             android:fontFamily="@font/netmarble_m"/>
 
         <ImageView
@@ -50,9 +55,15 @@
             android:id="@+id/startup"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="해당 계정으로 시작하기"
+            android:text="해당 카카오계정으로 계속하기"
+            android:textSize="15dp"
+            android:textColor="#ffffff"
             android:visibility="visible"
-            android:fontFamily="@font/netmarble_m"/>
+            android:background="@drawable/keep_button_shape"
+            android:fontFamily="@font/netmarble_m"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp"
+            />
 
     </LinearLayout>
 
@@ -69,15 +80,19 @@
             android:textSize="18dp"
             android:textStyle="bold"
             android:textAlignment="center"
-            android:layout_marginTop="10dp"/>
+            android:layout_marginTop="10dp"
+            android:textColor="#FFFFFF"
+            android:fontFamily="@font/netmarble_m"/>
         <TextView
             android:id="@+id/simpleAccountRegister"
             android:layout_width="200dp"
             android:layout_height="wrap_content"
             android:text="간편계정 가입"
+            android:textColor="#FFFFFF"
             android:textSize="16dp"
             android:textStyle="bold"
             android:textAlignment="center"
-            android:layout_marginTop="10dp"/>
+            android:layout_marginTop="10dp"
+            android:fontFamily="@font/netmarble_m"/>
     </LinearLayout>
 </LinearLayout>
