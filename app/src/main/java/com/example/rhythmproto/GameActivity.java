@@ -7,6 +7,7 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.res.AssetFileDescriptor;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -19,6 +20,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.VideoView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -71,6 +73,8 @@ public class GameActivity extends AppCompatActivity {
     String accuracy_s; // 정확도 텍스트포맷 %.1f% 까지 포맷
 
     ImageView[] laneLights = new ImageView[4];  // 라인 불빛 이미지뷰
+
+    VideoView videoView; //백그라운드 영상재생 뷰
 
     AnimationController animationController;
 
@@ -211,7 +215,17 @@ public class GameActivity extends AppCompatActivity {
         animationController = new AnimationController();  // 애니메이션 컨트롤러 (판정텍스트가 연속실행시 버벅여서 컨트롤러로 실행중이면 끄고 초기화하게 처리)
 
         // gameHandler.post(gameUpdateRunnable); // 게임핸들러에 쓰레드를 입혀서 동작 - NoteView 의 Animator에서 판정시 리스트에서 삭제하게 바꿈 05/04 23:15분
+        if (MainActivity.songMV != 0) { //비디오뷰가 있을때만
+            videoView = findViewById(R.id.videoView); //백그라운드 영상재생 뷰
 
+
+            Uri videoUri = Uri.parse("android.resource://" + getPackageName() + "/" + MainActivity.songMV);
+
+            videoView.setVideoURI(videoUri); // 비디오 뷰 대기
+            videoView.setOnPreparedListener(mediaPlayer -> {
+                mediaPlayer.setVolume(0f, 0f); // 비디오플레이어 소리끄기
+            });
+        }
     }
 
     private void setdelayStartTime() {
@@ -229,6 +243,9 @@ public class GameActivity extends AppCompatActivity {
                     songDelayHandler.postDelayed(() -> {
                         mp.start();
                         mp.setVolume(MainActivity.ingameSoundAmountIndex, MainActivity.ingameSoundAmountIndex); // 인게임음악볼륨 설정값으로 노래 출력
+                        if (MainActivity.songMV != 0) { //비디오가 있을때만 재생
+                            videoView.start(); //백그라운드 비디오 스타트
+                        }
                     }, (int) dalay_StartTime); // 싱크값에 맞게 노래를 시작하는 메소드
                     // 노트 스케줄링 로직
                     ViewGroup layout = findViewById(R.id.noteView); // 노트를 포함할 레이아웃
@@ -589,6 +606,10 @@ public class GameActivity extends AppCompatActivity {
             NoteManager.lanes = new List[5];  //그대로두면 NullPointException이 뜨니 배열크기를 다시 지정해줌 (onCreate에서 초기화해도 됨)
         }
 
+        if (MainActivity.songMV != 0){
+            videoView.stopPlayback();
+        }
+
         stackCombo = 0;
     } // 뷰가 꺼질때 노래,종소리도 같이 null로 초기화
 
@@ -620,6 +641,10 @@ public class GameActivity extends AppCompatActivity {
         if (mediaPlayer != null) {
             mediaPlayer.release();
             mediaPlayer = null;  //노래 끄기
+        }
+
+        if (MainActivity.songMV != 0){
+            videoView.stopPlayback();
         }
     } //destroy관련 모든 메소드
 
@@ -653,7 +678,7 @@ public class GameActivity extends AppCompatActivity {
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out); // 2초동안 페이드인아웃
         destroyThread(); // Thread 종료관련 메소드
         animators.clear();
-    }
+    } // 휴대폰의 Back버튼 클릭시 처리 메소드
 
                 /*
     private Runnable gameUpdateRunnable = new Runnable() {

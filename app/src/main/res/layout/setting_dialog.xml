@@ -3,7 +3,7 @@
     android:layout_width="350dp"
     android:layout_height="450dp"
     android:layout_gravity="center"
-    android:background="@drawable/select_menu_background"
+    android:background="@drawable/setting_background"
     android:clipToPadding="false"
     android:elevation="40dp"
     android:orientation="vertical">
@@ -203,7 +203,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text=" - 박자보다 노트가 느림(빠르게)\n     박자보다 노트가 빠름(느리게)\n     블루투스 이어폰은 -250ms"
+            android:text=" - 박자보다 노트가 느림(빠르게)\n     박자보다 노트가 빠름(느리게)\n     블루투스 이어폰은 -300ms"
             android:textSize="16dp"
             android:fontFamily="@font/netmarble_m"
             android:textColor="#FFD6B1"

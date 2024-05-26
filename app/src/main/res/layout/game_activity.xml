@@ -28,6 +28,13 @@
                 android:background="#000000"
                 android:id="@+id/noteView">
 
+                <VideoView
+                    android:id="@+id/videoView"
+                    android:layout_width="450dp"
+                    android:layout_height="300dp"
+                    android:layout_gravity="center"
+                    android:layout_marginBottom="55dp"/>
+
                 <LinearLayout
                     android:orientation="horizontal"
                     android:layout_width="match_parent"
@@ -80,7 +87,12 @@
             android:id="@+id/judgmentLineView"
             />
 
-
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/gear"
+            android:scaleType="fitXY"/>
+        
         <ProgressBar
             android:id="@+id/health_Bar"
             android:layout_width="400dp"
@@ -226,7 +238,7 @@
             android:shadowRadius="5"/>
 
         <TextView
-            android:layout_marginTop="120dp"
+            android:layout_marginTop="70dp"
             android:id="@+id/comboTV"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -262,12 +274,6 @@
             android:text="0.0%"
             android:textColor="#BCBCBC"
             android:textStyle="bold"/>
-
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:src="@drawable/gear"
-            android:scaleType="fitXY"/>
 
     </FrameLayout>
 

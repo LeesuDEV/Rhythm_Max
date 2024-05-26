@@ -39,6 +39,7 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
     static int songImage; //곡 이미지
     static int song_mp3; //노래 파일
     static int noteData; //채보데이터
+    static int songMV; //곡 영상데이터
     String selectSong = ""; // 선택된 곡
     Button syncSetBtn; // 싱크조절 버튼
     Button bluetoothBtn; // 블루투스 이어폰 자동세팅버튼
@@ -52,6 +53,7 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
     TextView uesrNameTV; //유저이름 텍스트뷰
     TextView song_name_Main; // 현재 선택된노래 이름 텍스트
     TextView song_difficulty_Main; // 현재 선택된노래 난이도 텍스트
+    TextView rankingBtn; //랭킹버튼
     static int syncValue = 0; // 싱크값
     static boolean autoModIndex = false; // 0ff 기본값 오토모드 인덱스
     static int gameModIndex = 0; // 모드인덱스값 0은 NORMAL , 1은 MIRROR , 2는 RANDOM
@@ -60,7 +62,7 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
 
     static List<NoteData> notes; //노트배열(파싱데이터 기반)
 
-    static int difficulty; //메인화면 난이도 인자값
+    static int difficulty; //메인화면 난이도 인자값 1= 이지모드 2=하드모드
     int current_song = -1; //현재 선택된 캐러셀노래 인자값
 
     static MediaPlayer mediaPlayer; // 미리보기노래 미디어플레이어
@@ -83,10 +85,6 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
 
         easyBtn = findViewById(R.id.setEasyBtn);
         hardBtn = findViewById(R.id.setHardBtn);
-        syncCurrentText = findViewById(R.id.syncTV);
-        syncSetBtn = findViewById(R.id.syncBtn);
-        syncSetText = findViewById(R.id.syncET);
-        bluetoothBtn = findViewById(R.id.bluetoothBtn);
         settingBtn = findViewById(R.id.settingIcon);
         uesrNameTV = findViewById(R.id.userNameTV);
 
@@ -94,6 +92,7 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
         carouselRecyclerview = findViewById(R.id.recyclerView); //캐러셀 뷰
         song_name_Main = findViewById(R.id.songNameMainTV); //곡이름 메인타이틀
         song_difficulty_Main = findViewById(R.id.songDifficultyMainTV); //곡난이도 메인타이틀
+        rankingBtn = findViewById(R.id.rankingBtn); //랭킹버튼
 
         if (LoginActivity.userName != null) {
             uesrNameTV.setText(LoginActivity.userName + " 님"); //유저네임 텍스트뷰에 닉네임 표시
@@ -238,6 +237,14 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
                 musicController.resumeAnimation();
             } // 프리뷰 뮤직컨트롤러가 멈춰져있는 상태라면 노래를 다시킬떄 뮤직컨트롤러도 다시 킴. (Lottie Animation)
         }
+
+        rankingBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showRankingDialog();
+            }
+        }); //랭킹 다이어로그 출력
+
     } // 인덱스값을 토대로 미디어플레이어를 미리보기 재생시켜주는 메소드
 
     public void setEasyModAdapter() {
@@ -459,6 +466,12 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
     } // 곡을 클릭했을때 곡정보,내 최고기록,플레이모드설정,플레이버튼을 띄우는 다이어로그를 생성하는 메소드
 
+    public void showRankingDialog() {
+        RankingDialog dialog = new RankingDialog(MainActivity.this);
+        dialog.show();
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+    } // 랭킹버튼을 눌렀을시 랭킹 다이어로그 출력
+
     public void odysseus() {
         if (difficulty == 1) {
             songImage = R.drawable.odysseus_img;  // 오디세우스 이미지설정
@@ -467,6 +480,7 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
             songDifficulty = "★★★★★";  // 오디세우스 난이도
             noteData = R.raw.odysseus; // 오디세우스 채보 데이터
             song_mp3 = R.raw.xeon; // 오디세우스 mp3파일
+            songMV = R.raw.odysseus_mv;
         }
         if (difficulty == 2) {
             songImage = R.drawable.odysseus_img;
@@ -475,6 +489,7 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
             songDifficulty = "★★★★★★★★";
             noteData = R.raw.odysseus_hard;
             song_mp3 = R.raw.xeon;
+            songMV = R.raw.odysseus_mv;
         }
     }  // 오디세우스 곡 정보 설정 메소드
 
@@ -486,6 +501,7 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
             songDifficulty = "★★★★★★";
             noteData = R.raw.xeus_easy;
             song_mp3 = R.raw.xeus;
+            songMV = R.raw.xeus_mv;
         }
         if (difficulty == 2) {
             songImage = R.drawable.xeus_img;
@@ -494,6 +510,7 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
             songDifficulty = "★★★★★";
             noteData = R.raw.xeus_hard;
             song_mp3 = R.raw.xeus;
+            songMV = R.raw.xeus_mv;
         }
     }  // 제우스 곡 정보 설정 메소드
 
@@ -505,6 +522,7 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
             songDifficulty = "★★★★★★★★★";
             noteData = R.raw.limbo_easy;
             song_mp3 = R.raw.limbo;
+            songMV = R.raw.limbo_mv;
         }
         if (difficulty == 2) {
             songImage = R.drawable.limbo_img;
@@ -513,6 +531,7 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
             songDifficulty = "★★★★★★★★★";
             noteData = R.raw.limbo_hard;
             song_mp3 = R.raw.limbo;
+            songMV = R.raw.limbo_mv;
         }
     }  // 림보 곡 정보 설정 메소드
 
@@ -524,6 +543,7 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
             songDifficulty = "★★★";
             noteData = R.raw.shining_light_easy;
             song_mp3 = R.raw.shining_light;
+            songMV = R.raw.shining_light_mv;
         }
         if (difficulty == 2) {
             songImage = R.drawable.shining_light_img;
@@ -532,6 +552,7 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
             songDifficulty = "★★★★";
             noteData = R.raw.shining_light_hard;
             song_mp3 = R.raw.shining_light;
+            songMV = R.raw.shining_light_mv;
         }
     }  // 샤이닝라이트 곡 정보 설정 메소드
 
@@ -543,6 +564,7 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
             songDifficulty = "★★";
             noteData = R.raw.cannon_easy;
             song_mp3 = R.raw.cannon;
+            songMV = 0;
         }
         if (difficulty == 2) {
             songImage = R.drawable.cannon_img;
@@ -551,6 +573,7 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
             songDifficulty = "★★★";
             noteData = R.raw.cannon_hard;
             song_mp3 = R.raw.cannon;
+            songMV = 0;
         }
     }  // 캐논리믹스 곡 정보 설정 메소드
 
@@ -562,6 +585,7 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
             songDifficulty = "★★★★★★★★";
             noteData = R.raw.sky_high_easy;
             song_mp3 = R.raw.sky_high;
+            songMV = 0;
         }
         if (difficulty == 2) {
             songImage = R.drawable.skyhigh_img;
@@ -570,6 +594,7 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
             songDifficulty = "★★★★★★★";
             noteData = R.raw.sky_high_hard;
             song_mp3 = R.raw.sky_high;
+            songMV = 0;
         }
     }  // 샤이닝라이트 곡 정보 설정 메소드
 

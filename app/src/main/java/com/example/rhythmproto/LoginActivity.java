@@ -6,6 +6,9 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.RotateAnimation;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,7 +34,7 @@ public class LoginActivity extends AppCompatActivity {
     static String userId; //유저 아이디 전역변수
     static String userName; //유저 닉네임 전역변수
 
-    private TextView loginTV, registerTV;
+    private ImageView loginTV, registerTV,titleCircle;
 
     FirebaseFirestore firestore = FirebaseFirestore.getInstance(); // 파이어스토어 인스턴스 참조
 
@@ -39,12 +42,20 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login_activity);
+
+        titleCircle = findViewById(R.id.titleCircle);
         loginButton = findViewById(R.id.login);
         nickName = findViewById(R.id.nickname);
         startup = findViewById(R.id.startup);
 
         loginTV = findViewById(R.id.simpleAccountLogin);
         registerTV = findViewById(R.id.simpleAccountRegister);
+
+        RotateAnimation rotate = new RotateAnimation(0, 360, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+        rotate.setDuration(8000);
+        rotate.setRepeatCount(Animation.INFINITE);
+        titleCircle.startAnimation(rotate);
+
 
         loginTV.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -8,17 +8,13 @@
         android:background="@drawable/img"
         android:orientation="vertical">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginTop="30dp"
-            android:layout_marginBottom="20dp"
-            android:fontFamily="@font/netmarble_b"
-            android:text="RESULT"
-            android:textColor="#FFFFFF"
-            android:textSize="40dp"
-            android:textStyle="bold" />
+        <ImageView
+            android:layout_width="230dp"
+            android:layout_height="45dp"
+            android:src="@drawable/result"
+            android:layout_marginTop="45dp"
+            android:layout_marginBottom="35dp"
+            android:layout_gravity="center"/>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -93,29 +89,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center"
-                android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/resultRankTV"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:shadowColor="#000000"
-                    android:shadowDx="10"
-                    android:shadowDy="10"
-                    android:shadowRadius="15"
-                    android:text="D"
-                    android:textAlignment="center"
-                    android:textColor="#919191"
-                    android:textSize="50dp"
-                    android:visibility="gone" />
-
+                android:orientation="vertical"
+                android:padding="15dp">
                 <ImageView
                     android:id="@+id/rankImageView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                  android:src="@drawable/b_img"
+                  android:src="@drawable/rank_s"
 
                     android:visibility="visible"/>
 

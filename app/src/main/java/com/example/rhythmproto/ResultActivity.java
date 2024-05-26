@@ -10,11 +10,13 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Map;
 
 public class ResultActivity extends AppCompatActivity {
 
@@ -152,6 +154,9 @@ public class ResultActivity extends AppCompatActivity {
                                         .collection("bestRecord")
                                         .document(MainActivity.songName)
                                         .set(record, SetOptions.merge()); // 최초 기록을 업로드
+                                Map<String,Object> bestData = new HashMap<>();
+                                bestData.put(LoginActivity.userName, score+";"+accuracy); // 최고점수 랭킹갱신을 위한 Map데이터
+                                updateRanking(bestData);
                             } else {
                                 // 최고기록보다 점수가 낮으면 아무것도 하지않음.
                             }
@@ -161,6 +166,10 @@ public class ResultActivity extends AppCompatActivity {
                                     .collection("bestRecord")
                                     .document(MainActivity.songName)
                                     .set(record, SetOptions.merge()); // 최초 기록을 업로드
+
+                            Map<String,Object> bestData = new HashMap<>();
+                            bestData.put(LoginActivity.userName, score+";"+accuracy); // 최초점수 랭킹갱신을 위한 Map데이터
+                            updateRanking(bestData);
                         }
                     }).addOnFailureListener(e -> {
                                 Toast.makeText(ResultActivity.this, "error loading DB", Toast.LENGTH_SHORT).show();
@@ -171,19 +180,29 @@ public class ResultActivity extends AppCompatActivity {
         }
     }  // db의 최고기록과 비교하여 점수를 업데이트해주는 메소드 ( 기록이 없다면 결과기록등록 )
 
+    public void updateRanking(Map<String,Object> data){
+        firestore.collection("ranking").document(MainActivity.songName) // 선택된곡 랭킹정보 불러오기
+                .update(data).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
+                        //랭킹 업데이트 성공시 메소드
+                    }
+                });
+    }
+
     public static void setRank(double rate, String setRank, ImageView rankImageView) {
         if (rate >= 99.5) {
-            rankImageView.setImageResource(R.drawable.rank_ss_img); //99.5점 이상일시 SS
+            rankImageView.setImageResource(R.drawable.rank_ss); //99.5점 이상일시 SS
         } else if (rate >= 97) {
-            rankImageView.setImageResource(R.drawable.rank_s_img);//97점 이상일시 S
+            rankImageView.setImageResource(R.drawable.rank_s);//97점 이상일시 S
         } else if (rate >= 90) {
-            rankImageView.setImageResource(R.drawable.rank_a_img); //90점 이상일시 A
+            rankImageView.setImageResource(R.drawable.rank_a); //90점 이상일시 A
         } else if (rate >= 80) {
-            rankImageView.setImageResource(R.drawable.rank_b_img); //80점 이상일시 B
+            rankImageView.setImageResource(R.drawable.rank_b); //80점 이상일시 B
         } else if (rate >= 70) {
-            rankImageView.setImageResource(R.drawable.rank_c_img); //70점 이상일시 C
+            rankImageView.setImageResource(R.drawable.rank_c); //70점 이상일시 C
         } else {
-            rankImageView.setImageResource(R.drawable.rank_d_img); //70점 미만일시 D
+            rankImageView.setImageResource(R.drawable.rank_d); //70점 미만일시 D
         }
     } //정확도,텍스트뷰를 받아 랭크를 반환해주는 메소드
 }

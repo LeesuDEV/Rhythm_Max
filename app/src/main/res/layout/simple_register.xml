@@ -11,7 +11,7 @@
         android:layout_width="350dp"
         android:layout_height="300dp"
         android:layout_gravity="center"
-        android:background="@drawable/img_3"
+        android:background="@drawable/regback"
         android:clipToPadding="false"
         android:orientation="vertical">
 
@@ -111,13 +111,12 @@
 
         <Button
             android:id="@+id/registerBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="110dp"
+            android:layout_height="50dp"
             android:layout_gravity="center"
             android:layout_marginTop="30dp"
-            android:background="@drawable/login_btn"
+            android:background="@drawable/regb"
             android:fontFamily="@font/netmarble_m"
-            android:text="가입"
             android:textColor="#FFFFFF"
             android:textSize="18dp" />
     </LinearLayout>
