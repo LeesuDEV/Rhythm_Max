@@ -5,7 +5,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/result_menu_background"
+        android:background="@drawable/img"
         android:orientation="vertical">
 
         <TextView
@@ -16,7 +16,7 @@
             android:layout_marginBottom="20dp"
             android:fontFamily="@font/netmarble_b"
             android:text="RESULT"
-            android:textColor="#973E3C3C"
+            android:textColor="#FFFFFF"
             android:textSize="40dp"
             android:textStyle="bold" />
 
@@ -25,7 +25,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="15dp"
             android:layout_marginRight="15dp"
-            android:background="#25252525"
+            android:background="@drawable/result_judgment_background"
             android:orientation="horizontal">
 
             <LinearLayout
@@ -46,7 +46,7 @@
                 />
             </LinearLayout>  <!-- 이미지 -->
             <LinearLayout
-                android:layout_width="200dp"
+                android:layout_width="180dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:orientation="vertical">
@@ -112,22 +112,26 @@
 
                 <ImageView
                     android:id="@+id/rankImageView"
-                    android:layout_width="80dp"
-                    android:layout_height="80dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                  android:src="@drawable/rank_ss_img"
+                  android:src="@drawable/b_img"
+
                     android:visibility="visible"/>
 
             </LinearLayout>  <!-- 랭크 -->
         </LinearLayout> <!-- 곡정보+랭크 -->
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="220dp"
+            android:layout_height="wrap_content"
             android:layout_marginLeft="50dp"
             android:layout_marginTop="30dp"
             android:layout_marginRight="50dp"
+            android:paddingTop="7dp"
+            android:paddingBottom="7dp"
             android:background="@drawable/result_judgment_background"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:gravity="center">
 
             <LinearLayout
                 android:layout_width="150dp"
@@ -161,7 +165,7 @@
                     android:shadowRadius="5"
                     android:text="GREAT"
                     android:textAlignment="center"
-                    android:textColor="#8BE141"
+                    android:textColor="#51E141"
                     android:textSize="18dp" />
 
                 <TextView
@@ -177,7 +181,7 @@
 
                     android:text="GOOD"
                     android:textAlignment="center"
-                    android:textColor="#FF9A41"
+                    android:textColor="#36C0FF"
                     android:textSize="18dp" />
 
                 <TextView
@@ -193,7 +197,7 @@
 
                     android:text="BAD"
                     android:textAlignment="center"
-                    android:textColor="#CB6AFF"
+                    android:textColor="#B832FF"
                     android:textSize="18dp" />
 
                 <TextView
@@ -209,7 +213,7 @@
 
                     android:text="MISS"
                     android:textAlignment="center"
-                    android:textColor="#B5B5B5"
+                    android:textColor="#FFFFFF"
                     android:textSize="18dp" />
 
                 <TextView
@@ -218,14 +222,10 @@
                     android:layout_gravity="center"
                     android:layout_marginTop="20dp"
                     android:fontFamily="@font/netmarble_b"
-                    android:shadowColor="#000000"
-                    android:shadowDx="8"
-                    android:shadowDy="8"
-                    android:shadowRadius="10"
                     android:text="TOTAL"
                     android:textAlignment="center"
-                    android:textColor="#41BCFF"
-                    android:textSize="22dp"
+                    android:textColor="#89FF9D"
+                    android:textSize="24dp"
                     android:textStyle="bold" />
 
             </LinearLayout>
@@ -248,7 +248,7 @@
                     android:shadowRadius="3"
                     android:text="1325"
                     android:textAlignment="center"
-                    android:textColor="#FFE710"
+                    android:textColor="#ffffff"
                     android:textSize="18dp" />
 
                 <TextView
@@ -265,7 +265,7 @@
 
                     android:text="0"
                     android:textAlignment="center"
-                    android:textColor="#8BE141"
+                    android:textColor="#ffffff"
                     android:textSize="18dp" />
 
                 <TextView
@@ -281,7 +281,7 @@
                     android:shadowRadius="3"
                     android:text="0"
                     android:textAlignment="center"
-                    android:textColor="#FF9A41"
+                    android:textColor="#ffffff"
                     android:textSize="18dp" />
 
                 <TextView
@@ -296,7 +296,8 @@
                     android:shadowRadius="3"
                     android:text="0"
                     android:textAlignment="center"
-                    android:textColor="#CB6AFF"
+                    android:textColor="#ffffff"
+                    android:textStyle="bold"
                     android:textSize="18dp" />
 
                 <TextView
@@ -312,7 +313,7 @@
                     android:shadowRadius="3"
                     android:text="0"
                     android:textAlignment="center"
-                    android:textColor="#B5B5B5"
+                    android:textColor="#ffffff"
                     android:textSize="18dp" />
 
                 <TextView
@@ -328,8 +329,8 @@
                     android:shadowRadius="7"
                     android:text="314"
                     android:textAlignment="center"
-                    android:textColor="#41BCFF"
-                    android:textSize="22dp"
+                    android:textColor="#ffffff"
+                    android:textSize="24dp"
                     android:textStyle="bold" />
             </LinearLayout>
         </LinearLayout> <!-- 판정총합+토탈 -->
@@ -339,8 +340,11 @@
             android:layout_marginLeft="50dp"
             android:layout_marginTop="30dp"
             android:layout_marginRight="50dp"
-            android:background="@drawable/result_total_background"
-            android:orientation="horizontal">
+            android:paddingTop="7dp"
+            android:paddingBottom="7dp"
+            android:background="@drawable/result_judgment_background"
+            android:orientation="horizontal"
+            android:gravity="center">
 
             <LinearLayout
                 android:layout_width="150dp"
@@ -349,7 +353,7 @@
 
                 <TextView
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="22dp"
                     android:layout_gravity="center"
                     android:layout_margin="5dp"
                     android:fontFamily="@font/netmarble_b"
@@ -359,12 +363,12 @@
                     android:shadowRadius="5"
                     android:text="SCORE"
                     android:textAlignment="center"
-                    android:textColor="#C5C5C5"
+                    android:textColor="#ffffff"
                     android:textSize="18dp" />
 
                 <TextView
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="22dp"
                     android:layout_gravity="center"
                     android:layout_margin="5dp"
                     android:fontFamily="@font/netmarble_b"
@@ -375,12 +379,12 @@
 
                     android:text="MAX COMBO"
                     android:textAlignment="center"
-                    android:textColor="#C5C5C5"
+                    android:textColor="#ffffff"
                     android:textSize="18dp" />
 
                 <TextView
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="22dp"
                     android:layout_gravity="center"
                     android:layout_margin="5dp"
                     android:fontFamily="@font/netmarble_b"
@@ -391,7 +395,7 @@
 
                     android:text="RATE"
                     android:textAlignment="center"
-                    android:textColor="#C5C5C5"
+                    android:textColor="#ffffff"
                     android:textSize="18dp" />
             </LinearLayout>
 
@@ -403,7 +407,7 @@
                 <TextView
                     android:id="@+id/scoreTV"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="22dp"
                     android:layout_gravity="center"
                     android:layout_margin="5dp"
                     android:shadowColor="#000000"
@@ -412,13 +416,14 @@
                     android:shadowRadius="5"
                     android:text="0"
                     android:textAlignment="center"
-                    android:textColor="#C5C5C5"
+                    android:textColor="#ffffff"
+                    android:textStyle="bold"
                     android:textSize="18dp" />
 
                 <TextView
                     android:id="@+id/maxcomboTV"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="22dp"
                     android:layout_gravity="center"
                     android:layout_margin="5dp"
                     android:shadowColor="#000000"
@@ -427,13 +432,14 @@
                     android:shadowRadius="5"
                     android:text="0"
                     android:textAlignment="center"
-                    android:textColor="#C5C5C5"
+                    android:textColor="#ffffff"
+                    android:textStyle="bold"
                     android:textSize="18dp" />
 
                 <TextView
                     android:id="@+id/accuracyTV"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="22dp"
                     android:layout_gravity="center"
                     android:layout_margin="5dp"
                     android:shadowColor="#000000"
@@ -442,7 +448,8 @@
                     android:shadowRadius="5"
                     android:text="0"
                     android:textAlignment="center"
-                    android:textColor="#C5C5C5"
+                    android:textColor="#ffffff"
+                    android:textStyle="bold"
                     android:textSize="18dp" />
 
             </LinearLayout>
@@ -454,15 +461,15 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginTop="30dp"
-            android:fontFamily="@font/netmarble_b"
             android:shadowColor="#000000"
             android:shadowDx="5"
             android:shadowDy="5"
             android:shadowRadius="5"
+            android:textStyle="bold"
             android:text="GO TO MAIN"
             android:textAlignment="center"
-            android:textColor="#9EFFE600"
-            android:textSize="30dp" />
+            android:textColor="#FFF5A0"
+            android:textSize="32dp" />
     </LinearLayout>
     <TextView
         android:id="@+id/automodeTV"

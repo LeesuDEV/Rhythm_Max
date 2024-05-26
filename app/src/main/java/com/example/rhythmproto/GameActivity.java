@@ -3,6 +3,7 @@ package com.example.rhythmproto;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.res.AssetFileDescriptor;
 import android.media.MediaPlayer;
@@ -642,9 +643,19 @@ public class GameActivity extends AppCompatActivity {
         return super.onKeyDown(keyCode, event);
     } //키보드 지원을 위한 키보드 A,S,;,' 키를 1,2,3,4번 버튼을 눌러주게하는 메소드
 
+    @SuppressLint("MissingSuperCall")
+    @Override
+    public void onBackPressed() {
+        finish();
+        Intent intent = new Intent(GameActivity.this, QuitActivity.class);
+        startActivity(intent);
 
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out); // 2초동안 페이드인아웃
+        destroyThread(); // Thread 종료관련 메소드
+        animators.clear();
+    }
 
-    /*
+                /*
     private Runnable gameUpdateRunnable = new Runnable() {
         @Override
         public void run() {

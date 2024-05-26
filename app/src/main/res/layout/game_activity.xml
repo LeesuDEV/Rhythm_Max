@@ -10,57 +10,68 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#000000">
+        android:background="#000000"
+        >
 
-        <FrameLayout
-            android:layout_width="345dp"
-            android:layout_height="700dp"
-            android:layout_gravity="top|center"
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:orientation="horizontal"
-            android:background="#000000"
-            android:id="@+id/noteView">
-            <LinearLayout
+            android:weightSum="10"
+            android:gravity="center|top">
+            <FrameLayout
+                android:layout_width="0dp"
+                android:layout_height="700dp"
+                android:layout_weight="8.5"
+                android:layout_gravity="top|center"
                 android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="600dp"
-                android:weightSum="4"
-                android:id="@+id/lineLight">
-                <ImageView
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:src="@drawable/line_light"
-                    android:scaleType="fitXY"
-                    android:id="@+id/lane1_light"
-                    android:visibility="invisible"/>
+                android:background="#000000"
+                android:id="@+id/noteView">
 
-                <ImageView
-                    android:id="@+id/lane2_light"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:scaleType="fitXY"
-                    android:src="@drawable/line_light"
-                    android:visibility="invisible" />
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="600dp"
+                    android:weightSum="4"
+                    android:id="@+id/lineLight">
+                    <ImageView
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:src="@drawable/line_light"
+                        android:scaleType="fitXY"
+                        android:id="@+id/lane1_light"
+                        android:visibility="invisible"/>
 
-                <ImageView
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:src="@drawable/line_light"
-                    android:scaleType="fitXY"
-                    android:id="@+id/lane3_light"
-                    android:visibility="invisible"/>
-                <ImageView
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:src="@drawable/line_light"
-                    android:scaleType="fitXY"
-                    android:id="@+id/lane4_light"
-                    android:visibility="invisible"/>
-            </LinearLayout>
-        </FrameLayout>
+                    <ImageView
+                        android:id="@+id/lane2_light"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:scaleType="fitXY"
+                        android:src="@drawable/line_light"
+                        android:visibility="invisible" />
+
+                    <ImageView
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:src="@drawable/line_light"
+                        android:scaleType="fitXY"
+                        android:id="@+id/lane3_light"
+                        android:visibility="invisible"/>
+                    <ImageView
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:src="@drawable/line_light"
+                        android:scaleType="fitXY"
+                        android:id="@+id/lane4_light"
+                        android:visibility="invisible"/>
+                </LinearLayout>
+            </FrameLayout>
+        </LinearLayout>
+
 
         <com.example.rhythmproto.JudgmentLineView
             android:layout_width="345dp"
@@ -69,11 +80,6 @@
             android:id="@+id/judgmentLineView"
             />
 
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:src="@drawable/gear"
-            android:scaleType="fitXY"/>
 
         <ProgressBar
             android:id="@+id/health_Bar"
@@ -132,12 +138,6 @@
         </FrameLayout> <!-- 판정 폭죽효과 -->
 
         <Button
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:id="@+id/enterPrevent"
-            android:layout_gravity="center"/>
-
-        <Button
             android:layout_margin="5dp"
             android:id="@+id/quitGameBtn"
             android:layout_gravity="right"
@@ -146,6 +146,12 @@
             android:text="X"
             android:background="#8E1212"
             android:focusable="false"/>
+
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:id="@+id/enterPrevent"
+            android:layout_gravity="center"/>
 
         <LinearLayout
             android:layout_width="350sp"
@@ -256,6 +262,13 @@
             android:text="0.0%"
             android:textColor="#BCBCBC"
             android:textStyle="bold"/>
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/gear"
+            android:scaleType="fitXY"/>
+
     </FrameLayout>
 
 </LinearLayout>
