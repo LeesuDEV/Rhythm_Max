@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".LoginActivity"
-    android:background="@drawable/main_background">
+    android:background="@drawable/main_background_img">
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -17,11 +17,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:src="@drawable/main_circle"/>
+            android:src="@drawable/login_circle_img"/>
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="230dp"
-            android:src="@drawable/rhythm_max_logo"
+            android:src="@drawable/login_gamelogo_img"
             android:layout_gravity="center"
             android:scaleType="fitXY"
             android:layout_marginLeft="10dp"
@@ -70,7 +70,7 @@
             android:textSize="15dp"
             android:textColor="#ffffff"
             android:visibility="visible"
-            android:background="@drawable/keep_button_shape"
+            android:background="@drawable/login_keep_button_shape"
             android:fontFamily="@font/netmarble_m"
             android:paddingLeft="15dp"
             android:paddingRight="15dp"
@@ -116,12 +116,12 @@
             android:id="@+id/simpleAccountLogin"
             android:layout_width="200dp"
             android:layout_height="30dp"
-            android:src="@drawable/login"/>
+            android:src="@drawable/login_logo_img"/>
         <ImageView
             android:id="@+id/simpleAccountRegister"
             android:layout_marginTop="10dp"
             android:layout_width="200dp"
             android:layout_height="30dp"
-            android:src="@drawable/regiister"/>
+            android:src="@drawable/login_register_logo_img"/>
     </LinearLayout>
 </LinearLayout>

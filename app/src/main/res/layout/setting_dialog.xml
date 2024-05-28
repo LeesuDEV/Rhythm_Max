@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="350dp"
-    android:layout_height="450dp"
+    android:layout_height="500dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_gravity="center"
-    android:background="@drawable/setting_background"
+    android:background="@drawable/setting_background_shape"
     android:clipToPadding="false"
     android:elevation="40dp"
     android:orientation="vertical">
@@ -15,7 +16,7 @@
         <ImageView
             android:layout_width="60dp"
             android:layout_height="60dp"
-            android:src="@drawable/setting_icon"
+            android:src="@drawable/main_setting_icon"
             android:layout_gravity="center"
             android:layout_marginLeft="50dp"/>
         <TextView
@@ -116,7 +117,45 @@
             android:layout_gravity="center"
             android:fontFamily="@font/netmarble_m"/>
     </LinearLayout>
+    <LinearLayout
+        android:layout_marginTop="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="게임배경 영상"
+            android:textSize="18dp"
+            android:fontFamily="@font/netmarble_m"
+            android:textColor="#FFD6B1"
+            android:layout_gravity="center"
+            android:layout_marginLeft="20dp"/>
 
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/backgroundSwitch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:checked="true"
+            android:thumb="@drawable/switch_thumb_shape"
+            android:layout_marginLeft="20dp"
+            app:switchMinWidth="20dp"
+            app:track="@drawable/setting_background_selector"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="OFF/ON"
+            android:textSize="14dp"
+            android:fontFamily="@font/netmarble_b"
+            android:textColor="#FFFFFF"
+            android:layout_gravity="center"
+            android:layout_marginLeft="20dp"/>
+
+
+    </LinearLayout>
     <LinearLayout
         android:layout_marginTop="10dp"
         android:layout_width="match_parent"
@@ -203,7 +242,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text=" - 박자보다 노트가 느림(빠르게)\n     박자보다 노트가 빠름(느리게)\n     블루투스 이어폰은 -300ms"
+            android:text="    무선헤드셋은          -100ms\n    블루투스 이어폰은 -400ms"
             android:textSize="16dp"
             android:fontFamily="@font/netmarble_m"
             android:textColor="#FFD6B1"

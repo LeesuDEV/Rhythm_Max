@@ -3,7 +3,7 @@
     android:layout_width="380dp"
     android:layout_height="700dp"
     android:layout_gravity="center"
-    android:background="@drawable/setting_background"
+    android:background="@drawable/setting_background_shape"
     android:clipToPadding="false"
     android:elevation="40dp"
     android:orientation="vertical"
@@ -41,7 +41,7 @@
             android:layout_width="80dp"
             android:layout_height="80dp"
             android:layout_margin="15dp"
-            android:background="@drawable/select_image_corner"
+            android:background="@drawable/ranking_selectsong_image_corner"
             android:elevation="10dp"
             android:padding="2dp"
             android:scaleType="fitXY"
@@ -98,7 +98,7 @@
                 android:layout_height="match_parent"
                 android:orientation="vertical"
                 android:gravity="center|top"
-                android:background="@drawable/ranking_rank_background"
+                android:background="@drawable/ranking_rank_background_shape"
               >
 
             </LinearLayout>
@@ -140,7 +140,7 @@
         android:layout_height="0dp"
         android:layout_weight="1.6"
         android:layout_margin="20dp"
-        android:background="@drawable/result_judgment_background"
+        android:background="@drawable/result_judgment_background_shape"
         android:orientation="horizontal"
         android:weightSum="10">
         <LinearLayout
@@ -178,7 +178,7 @@
             android:layout_height="match_parent"
             android:orientation="vertical"
             android:gravity="center|top"
-            android:background="@drawable/ranking_rank_background"
+            android:background="@drawable/ranking_rank_background_shape"
             android:layout_margin="5dp">
             <TextView
                 android:layout_width="wrap_content"

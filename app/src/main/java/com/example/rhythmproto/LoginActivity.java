@@ -142,6 +142,7 @@ public class LoginActivity extends AppCompatActivity {
                 .addOnSuccessListener(documentSnapshot -> {
                     if (documentSnapshot.exists()) {
                         startIntent(userId, userName); //인턴트 시작 메소드
+                        loadSettingDB(userId); // 세팅정보 불러오기
                         Toast.makeText(LoginActivity.this, "환영합니다," + documentSnapshot.getString("userName") + "님", Toast.LENGTH_SHORT).show(); //환영문구 출력
                     } else {
                         // 문서가 존재하지 않을 때만 새 데이터 저장
@@ -212,6 +213,7 @@ public class LoginActivity extends AppCompatActivity {
                     if (documentSnapshot.exists()) {
                         MainActivity.previewSoundAmountIndex = documentSnapshot.getDouble("preview").floatValue();
                         MainActivity.ingameSoundAmountIndex = documentSnapshot.getDouble("ingame").floatValue();
+                        MainActivity.backgroundIndex = documentSnapshot.getBoolean("background").booleanValue();
                     }
                 }); // 서버에서 프리뷰와 인게임볼륨을 받아옴
 

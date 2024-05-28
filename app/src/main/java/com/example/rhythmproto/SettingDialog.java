@@ -5,8 +5,11 @@ import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.CompoundButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
+
+import androidx.appcompat.widget.SwitchCompat;
 
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions;
@@ -21,6 +24,7 @@ public class SettingDialog extends Dialog {
     TextView currentSyncTV;
     FirebaseFirestore firestore = FirebaseFirestore.getInstance(); // 파이어스토어 인스턴스 참조
     Context context;
+    SwitchCompat backgroundSwitch;
 
     public SettingDialog(Context context) {
         super(context);
@@ -37,6 +41,7 @@ public class SettingDialog extends Dialog {
         fastSync = findViewById(R.id.syncFastBtn);
         slowSync = findViewById(R.id.syncSlowBtn);
         currentSyncTV = findViewById(R.id.currentSyncTV);
+        backgroundSwitch = findViewById(R.id.backgroundSwitch);
 
         previewSoundBar.setProgress((int) (MainActivity.previewSoundAmountIndex * 10)); // 현재 프리뷰볼륨으로 setting progress값 설정
         previewSoundBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -73,10 +78,23 @@ public class SettingDialog extends Dialog {
         }); // 인게임볼륨 조절
 
         currentSyncTV.setText("" + MainActivity.syncValue);
+
+        backgroundSwitch.setChecked(MainActivity.backgroundIndex); //초기 백그라운드 onoff 스위치 설정값
+        backgroundSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    MainActivity.backgroundIndex = true;
+                } else {
+                    MainActivity.backgroundIndex = false;
+                }
+            }
+        });
+
         fastSync.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                MainActivity.syncValue -= 10;
+                MainActivity.syncValue -= 50;
                 currentSyncTV.setText("" + MainActivity.syncValue);
             }
         });
@@ -84,10 +102,11 @@ public class SettingDialog extends Dialog {
         slowSync.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                MainActivity.syncValue += 10;
+                MainActivity.syncValue += 50;
                 currentSyncTV.setText("" + MainActivity.syncValue);
             }
         });
+
     }
 
     @Override
@@ -95,6 +114,7 @@ public class SettingDialog extends Dialog {
         HashMap<String, Object> setting = new HashMap<>();
         setting.put("ingame", MainActivity.ingameSoundAmountIndex);
         setting.put("preview", MainActivity.previewSoundAmountIndex); // 해쉬맵에 인게임,프리뷰 볼륨을 담아서 파이어베이스에 올릴준비를함
+        setting.put("background", MainActivity.backgroundIndex);
 
         firestore.collection("users")
                 .document(LoginActivity.userId)

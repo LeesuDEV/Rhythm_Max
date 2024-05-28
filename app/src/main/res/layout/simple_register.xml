@@ -11,7 +11,7 @@
         android:layout_width="350dp"
         android:layout_height="300dp"
         android:layout_gravity="center"
-        android:background="@drawable/regback"
+        android:background="@drawable/login_register_dialog_background_img"
         android:clipToPadding="false"
         android:orientation="vertical">
 
@@ -115,7 +115,7 @@
             android:layout_height="50dp"
             android:layout_gravity="center"
             android:layout_marginTop="30dp"
-            android:background="@drawable/regb"
+            android:background="@drawable/login_register_btn_img"
             android:fontFamily="@font/netmarble_m"
             android:textColor="#FFFFFF"
             android:textSize="18dp" />

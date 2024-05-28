@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@drawable/main_menu_background"
+    android:background="@drawable/loading_background_shape"
     tools:context=".MissionFail">
 
     <TextView

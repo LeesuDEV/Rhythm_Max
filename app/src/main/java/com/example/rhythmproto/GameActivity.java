@@ -229,8 +229,8 @@ public class GameActivity extends AppCompatActivity {
     }
 
     private void setdelayStartTime() {
-        dalay_StartTime = (((setSpeed * judgmentLineY_Rate) - 60) + MainActivity.syncValue) + songDelayTime; //-60은 개발자가 설정한 디폴트 싱크값(데이터로딩등) / SyncValue는 사용자설정 싱크값
-    } // 배속 * 판정선높이 - 60(기본 싱크값) + (사용자설정 싱크값) 을 설정해주는 시작딜레이타임 ---- 게임 싱크설정 로직 메소드
+        dalay_StartTime = (((setSpeed * judgmentLineY_Rate)) + MainActivity.syncValue) + songDelayTime; // SyncValue는 사용자설정 싱크값
+    } // 배속 * 판정선높이 - (사용자설정 싱크값) 을 설정해주는 시작딜레이타임 ---- 게임 싱크설정 로직 메소드
 
     public void startGame() {
         try {
@@ -243,7 +243,7 @@ public class GameActivity extends AppCompatActivity {
                     songDelayHandler.postDelayed(() -> {
                         mp.start();
                         mp.setVolume(MainActivity.ingameSoundAmountIndex, MainActivity.ingameSoundAmountIndex); // 인게임음악볼륨 설정값으로 노래 출력
-                        if (MainActivity.songMV != 0) { //비디오가 있을때만 재생
+                        if (MainActivity.songMV != 0 && MainActivity.backgroundIndex) { //비디오가 있고,백그라운드를 켯을때만 재생
                             videoView.start(); //백그라운드 비디오 스타트
                         }
                     }, (int) dalay_StartTime); // 싱크값에 맞게 노래를 시작하는 메소드
@@ -606,7 +606,7 @@ public class GameActivity extends AppCompatActivity {
             NoteManager.lanes = new List[5];  //그대로두면 NullPointException이 뜨니 배열크기를 다시 지정해줌 (onCreate에서 초기화해도 됨)
         }
 
-        if (MainActivity.songMV != 0){
+        if (MainActivity.songMV != 0 && MainActivity.backgroundIndex){
             videoView.stopPlayback();
         }
 
@@ -643,9 +643,9 @@ public class GameActivity extends AppCompatActivity {
             mediaPlayer = null;  //노래 끄기
         }
 
-        if (MainActivity.songMV != 0){
+        if (MainActivity.songMV != 0 && MainActivity.backgroundIndex){
             videoView.stopPlayback();
-        }
+        } //영상끄기
     } //destroy관련 모든 메소드
 
     @Override

@@ -16,7 +16,6 @@ import androidx.annotation.NonNull;
 
 public class NoteView extends View {
     private float x, y; // 노트의 위치
-
     float value; // 노트의 현재 y위치 값
     private int screenHeight; //화면의 높이
     private int width, height; // 노트의 크기
@@ -34,7 +33,7 @@ public class NoteView extends View {
 
     public void loadNoteImage() {
         noteWhite = BitmapFactory.decodeResource(getResources(), R.drawable.white_note);
-        noteBlue = BitmapFactory.decodeResource(getResources(), R.drawable.blue_note);
+        noteBlue = BitmapFactory.decodeResource(getResources(), R.drawable.game_blue_note);
         anitNoteWhite = Bitmap.createScaledBitmap(noteWhite,width,height,true);
         antiNoteBlue = Bitmap.createScaledBitmap(noteBlue,width,height,true);
     }

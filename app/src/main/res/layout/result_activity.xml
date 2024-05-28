@@ -11,7 +11,7 @@
         <ImageView
             android:layout_width="230dp"
             android:layout_height="45dp"
-            android:src="@drawable/result"
+            android:src="@drawable/result_logo_img"
             android:layout_marginTop="45dp"
             android:layout_marginBottom="35dp"
             android:layout_gravity="center"/>
@@ -21,7 +21,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="15dp"
             android:layout_marginRight="15dp"
-            android:background="@drawable/result_judgment_background"
+            android:background="@drawable/result_judgment_background_shape"
             android:orientation="horizontal">
 
             <LinearLayout
@@ -34,7 +34,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_margin="10dp"
-                    android:background="@drawable/select_image_corner"
+                    android:background="@drawable/ranking_selectsong_image_corner"
                     android:elevation="10dp"
                     android:padding="2dp"
                     android:scaleType="fitXY"
@@ -110,7 +110,7 @@
             android:layout_marginRight="50dp"
             android:paddingTop="7dp"
             android:paddingBottom="7dp"
-            android:background="@drawable/result_judgment_background"
+            android:background="@drawable/result_judgment_background_shape"
             android:orientation="horizontal"
             android:gravity="center">
 
@@ -323,7 +323,7 @@
             android:layout_marginRight="50dp"
             android:paddingTop="7dp"
             android:paddingBottom="7dp"
-            android:background="@drawable/result_judgment_background"
+            android:background="@drawable/result_judgment_background_shape"
             android:orientation="horizontal"
             android:gravity="center">
 

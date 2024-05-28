@@ -73,6 +73,7 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
 
     static float previewSoundAmountIndex = 1.0f; // 배경음악 크기 인덱스값
     static float ingameSoundAmountIndex = 1.0f; // 인게임음악 크기 인덱스값
+    static boolean backgroundIndex = true; // 백그라운드 on off 값
 
     LottieAnimationView musicController;
     FirebaseFirestore firestore = FirebaseFirestore.getInstance();
