@@ -2,6 +2,7 @@ package com.example.rhythmproto;
 
 import android.animation.ObjectAnimator;
 import android.graphics.Color;
+import android.graphics.Point;
 import android.graphics.drawable.ColorDrawable;
 import android.media.MediaPlayer;
 import android.os.Bundle;
@@ -9,12 +10,15 @@ import android.os.Handler;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;
+import android.view.Display;
+import android.view.Gravity;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.Switch;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -51,9 +55,9 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
     EditText syncSetText; // 싱크조절 에딧텍스트
     TextView syncCurrentText; // 싱크현재값 텍스트
     TextView uesrNameTV; //유저이름 텍스트뷰
-    TextView song_name_Main; // 현재 선택된노래 이름 텍스트
-    TextView song_difficulty_Main; // 현재 선택된노래 난이도 텍스트
-    TextView rankingBtn; //랭킹버튼
+    static TextView song_name_Main; // 현재 선택된노래 이름 텍스트
+    static TextView song_difficulty_Main; // 현재 선택된노래 난이도 텍스트
+    static TextView rankingBtn; //랭킹버튼
     static int syncValue = 0; // 싱크값
     static boolean autoModIndex = false; // 0ff 기본값 오토모드 인덱스
     static int gameModIndex = 0; // 모드인덱스값 0은 NORMAL , 1은 MIRROR , 2는 RANDOM
@@ -463,8 +467,20 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
 
     public void showCustomDialog() {
         SelectSongDialog dialog = new SelectSongDialog(MainActivity.this);
-        dialog.show();
+        dialog.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+        dialog.getWindow().setGravity(Gravity.BOTTOM);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.show();
+//디스플레이 해상도를 가져와서
+        Display display = getWindowManager ().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+//비율에 맞게 다이얼로그 크기를 지정
+        Window window = dialog.getWindow();
+        int x=(int)(size.x *1.0f);
+        int y=(int)(size.y * 0.5f);
+        window.setLayout(x, y);
     } // 곡을 클릭했을때 곡정보,내 최고기록,플레이모드설정,플레이버튼을 띄우는 다이어로그를 생성하는 메소드
 
     public void showRankingDialog() {
@@ -601,6 +617,9 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
 
     @Override
     public void onItemSelected() {
+        song_name_Main.setVisibility(View.GONE);
+        song_difficulty_Main.setVisibility(View.GONE);
+        rankingBtn.setVisibility(View.GONE);
         showCustomDialog();
     } //다이어로그 인터페이스 오버라이드 메소드
 
