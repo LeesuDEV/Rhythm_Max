@@ -242,7 +242,7 @@
                 android:layout_height="60dp"
                 android:scaleType="fitXY"
                 android:layout_marginRight="17dp"
-                android:src="@drawable/startbtn_img_new"
+                android:src="@drawable/startbtn_img"
                 android:layout_marginLeft="17dp"/>
         </LinearLayout> <!-- 게임스타트 버튼 -->
 
