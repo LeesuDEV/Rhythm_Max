@@ -5,6 +5,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -88,9 +89,9 @@ public class RankingDialog extends Dialog {
                                 }
                             });
 
-                            Typeface typeFace = ResourcesCompat.getFont(context, R.font.netmarble_b);
+                            Typeface typeFace = ResourcesCompat.getFont(context, R.font.netmarble_b); //텍스트 타입
                             textViewNum = new TextView[userScores.size()];
-                            textViewName = new TextView[userScores.size()];
+                            textViewName = new TextView[userScores.size()];  // 순위,이름,점수,정확도 텍스트뷰 선언
                             textViewScore = new TextView[userScores.size()];
                             textViewAccuracy = new TextView[userScores.size()];
                             int height = Math.round(25 * getContext().getResources().getDisplayMetrics().density); // 25dp값을 화면비율에서 픽셀값추출
@@ -120,10 +121,16 @@ public class RankingDialog extends Dialog {
 
                                 textViewName[i] = new TextView(context);
                                 textViewName[i].setText(userScores.get(i).getUserName()); //해당랭킹의 유저이름
-                                textViewName[i].setTextSize(20);
+                                if(textViewName[i].getText().toString().length() >= 7) {
+                                    textViewName[i].setTextSize(17);
+                                } else {
+                                    textViewName[i].setTextSize(20);
+                                }
+                                textViewName[i].setGravity(View.TEXT_ALIGNMENT_CENTER);
                                 textViewName[i].setTypeface(typeFace);
                                 textViewName[i].setLayoutParams(layoutParams);
                                 textViewName[i].setTextColor(Color.WHITE);
+                                MovingText.moveText(textViewName[i]); //옆으로 움직이는 텍스트(초과시)
                                 rankingNameLayout.addView(textViewName[i]);
 
                                 textViewScore[i] = new TextView(context);

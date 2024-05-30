@@ -24,7 +24,6 @@ public class SelectSongDialog extends Dialog {
     String bestRank; //최고랭크
 
     ImageView startBtn;
-    TextView cancelBtn;
 
     ImageView setSpeedBtn;
     ImageView gameModBtn;
@@ -48,7 +47,6 @@ public class SelectSongDialog extends Dialog {
         bpmTV = findViewById(R.id.bpmTV);
 
         startBtn = findViewById(R.id.startBtn);
-        cancelBtn = findViewById(R.id.cencelBtn);
 
         setSpeedBtn = findViewById(R.id.setSpeedBtn);
         gameModBtn = findViewById(R.id.gameModBtn);
@@ -62,6 +60,9 @@ public class SelectSongDialog extends Dialog {
 
        // songImageView.setImageResource(MainActivity.songImage);  // 선택된곡의 이미지 세팅
         songNameTV.setText(MainActivity.songName);  // 선택된곡의 이름 세팅
+
+        MovingText.moveText(songNameTV); //옆으로 슬라이드 되는 텍스트뷰
+
         bpmTV.setText("bpm : " + MainActivity.songBPM);  // 선택된곡의 bpm 세팅
         if (MainActivity.difficulty == 1) {
             MainActivity.easyModDifficultyColor(MainActivity.songDifficulty, difficultyTV);
@@ -164,12 +165,6 @@ public class SelectSongDialog extends Dialog {
                 dismiss();
             }
         }); // 게임정보를 넘기고 게임스타트를 해주는 스타트버튼 리스너
-        cancelBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dismiss();
-            }
-        }); // 다이어로그를 닫는 취소버튼 리스너
     }
 
     @Override
@@ -184,7 +179,6 @@ public class SelectSongDialog extends Dialog {
                 .collection("setting")
                 .document("mode")
                 .set(setting, SetOptions.merge()); // 유저 곡세팅을 업로드
-        MainActivity.rankingBtn.setVisibility(View.VISIBLE);
         MainActivity.song_difficulty_Main.setVisibility(View.VISIBLE);
         MainActivity.song_name_Main.setVisibility(View.VISIBLE);
         super.dismiss();

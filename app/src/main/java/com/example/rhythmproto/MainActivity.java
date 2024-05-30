@@ -15,10 +15,12 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -97,7 +99,6 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
         carouselRecyclerview = findViewById(R.id.recyclerView); //캐러셀 뷰
         song_name_Main = findViewById(R.id.songNameMainTV); //곡이름 메인타이틀
         song_difficulty_Main = findViewById(R.id.songDifficultyMainTV); //곡난이도 메인타이틀
-        rankingBtn = findViewById(R.id.rankingBtn); //랭킹버튼
 
         if (LoginActivity.userName != null) {
             uesrNameTV.setText(LoginActivity.userName + " 님"); //유저네임 텍스트뷰에 닉네임 표시
@@ -242,14 +243,6 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
                 musicController.resumeAnimation();
             } // 프리뷰 뮤직컨트롤러가 멈춰져있는 상태라면 노래를 다시킬떄 뮤직컨트롤러도 다시 킴. (Lottie Animation)
         }
-
-        rankingBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showRankingDialog();
-            }
-        }); //랭킹 다이어로그 출력
-
     } // 인덱스값을 토대로 미디어플레이어를 미리보기 재생시켜주는 메소드
 
     public void setEasyModAdapter() {
@@ -468,10 +461,21 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
     public void showCustomDialog() {
         SelectSongDialog dialog = new SelectSongDialog(MainActivity.this);
         dialog.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
-        dialog.getWindow().setGravity(Gravity.BOTTOM);
+        dialog.getWindow().setGravity(Gravity.CENTER);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
         dialog.show();
+
+        // 슬라이드 업 애니메이션 적용
+        View dialogView = dialog.getWindow().getDecorView();
+        dialogView.setTranslationY(dialogView.getHeight());
+        dialogView.animate()
+                .translationY(0)
+                .setInterpolator(new DecelerateInterpolator())
+                .setDuration(500)
+                .start();
+
 //디스플레이 해상도를 가져와서
         Display display = getWindowManager ().getDefaultDisplay();
         Point size = new Point();
@@ -482,12 +486,6 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
         int y=(int)(size.y * 0.5f);
         window.setLayout(x, y);
     } // 곡을 클릭했을때 곡정보,내 최고기록,플레이모드설정,플레이버튼을 띄우는 다이어로그를 생성하는 메소드
-
-    public void showRankingDialog() {
-        RankingDialog dialog = new RankingDialog(MainActivity.this);
-        dialog.show();
-        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-    } // 랭킹버튼을 눌렀을시 랭킹 다이어로그 출력
 
     public void odysseus() {
         if (difficulty == 1) {
@@ -617,10 +615,28 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
 
     @Override
     public void onItemSelected() {
-        song_name_Main.setVisibility(View.GONE);
-        song_difficulty_Main.setVisibility(View.GONE);
-        rankingBtn.setVisibility(View.GONE);
-        showCustomDialog();
+        Animation fadeOut = AnimationUtils.loadAnimation(this,R.anim.fade_out_text);
+        song_name_Main.startAnimation(fadeOut);
+        song_difficulty_Main.startAnimation(fadeOut);
+
+        fadeOut.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                song_name_Main.setVisibility(View.GONE);
+                song_difficulty_Main.setVisibility(View.GONE);
+                showCustomDialog();
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
     } //다이어로그 인터페이스 오버라이드 메소드
 
     @Override
