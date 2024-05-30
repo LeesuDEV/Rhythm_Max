@@ -82,7 +82,7 @@
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
-                        android:src="@drawable/line_light"
+                        android:src="@drawable/line_light2"
                         android:scaleType="fitXY"
                         android:id="@+id/lane3_light"
                         android:visibility="invisible"/>
@@ -90,7 +90,7 @@
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
-                        android:src="@drawable/line_light"
+                        android:src="@drawable/line_light2"
                         android:scaleType="fitXY"
                         android:id="@+id/lane4_light"
                         android:visibility="invisible"/>
