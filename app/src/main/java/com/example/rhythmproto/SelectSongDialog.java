@@ -15,7 +15,6 @@ import com.google.firebase.firestore.SetOptions;
 import java.util.HashMap;
 
 public class SelectSongDialog extends Dialog {
-    ImageView songImageView;
     TextView songNameTV;
     TextView difficultyTV;
     TextView bpmTV;
@@ -31,6 +30,7 @@ public class SelectSongDialog extends Dialog {
     ImageView gameModBtn;
     ImageView autoModBtn;
     FirebaseFirestore firestore = FirebaseFirestore.getInstance(); // 파이어스토어 인스턴스 참조
+    Activity activity;
     Context context;
 
     public SelectSongDialog(Context context) {
@@ -42,8 +42,7 @@ public class SelectSongDialog extends Dialog {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.song_setting_dialog);
-
-        songImageView = findViewById(R.id.selectSongImageView);
+        //songImageView = findViewById(R.id.selectSongImageView);
         songNameTV = findViewById(R.id.songNameTV);
         difficultyTV = findViewById(R.id.difficultyTV);
         bpmTV = findViewById(R.id.bpmTV);
@@ -59,7 +58,9 @@ public class SelectSongDialog extends Dialog {
         myBestRateTV = findViewById(R.id.myBestRateTV);
         myBestRankImg = findViewById(R.id.myBestRankImg);
 
-        songImageView.setImageResource(MainActivity.songImage);  // 선택된곡의 이미지 세팅
+        activity = (Activity) context;
+
+       // songImageView.setImageResource(MainActivity.songImage);  // 선택된곡의 이미지 세팅
         songNameTV.setText(MainActivity.songName);  // 선택된곡의 이름 세팅
         bpmTV.setText("bpm : " + MainActivity.songBPM);  // 선택된곡의 bpm 세팅
         if (MainActivity.difficulty == 1) {
@@ -154,7 +155,6 @@ public class SelectSongDialog extends Dialog {
                 MainActivity.notes = OsuFileParser.parseOsuFile(context, MainActivity.noteData);  // 선택된곡 노트데이터를 리스트에 삽입
                 Intent intent = new Intent(context, LoadingActivity.class); // 인턴트생성
 
-                Activity activity = (Activity) context;
                 activity.finish();  // 현재 액티비티 종료
 
                 activity.overridePendingTransition(R.anim.fade_in, R.anim.fade_out); // 2초동안 페이드인아웃
@@ -184,7 +184,9 @@ public class SelectSongDialog extends Dialog {
                 .collection("setting")
                 .document("mode")
                 .set(setting, SetOptions.merge()); // 유저 곡세팅을 업로드
-
+        MainActivity.rankingBtn.setVisibility(View.VISIBLE);
+        MainActivity.song_difficulty_Main.setVisibility(View.VISIBLE);
+        MainActivity.song_name_Main.setVisibility(View.VISIBLE);
         super.dismiss();
     }
 

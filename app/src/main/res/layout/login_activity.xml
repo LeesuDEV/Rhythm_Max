@@ -10,8 +10,10 @@
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="230dp"
+        android:layout_height="350dp"
         android:layout_marginTop="40dp">
+
+
         <ImageView
             android:id="@+id/titleCircle"
             android:layout_width="wrap_content"
@@ -19,21 +21,22 @@
             android:layout_gravity="center"
             android:src="@drawable/login_circle_img"/>
         <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="230dp"
+            android:layout_width="330dp"
+            android:layout_height="330dp"
             android:src="@drawable/login_gamelogo_img"
             android:layout_gravity="center"
             android:scaleType="fitXY"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"/>
+
     </FrameLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="300dp"
+        android:layout_height="wrap_content"
         android:gravity="center|top"
         android:orientation="vertical"
-        android:layout_marginTop="40dp">
+        android:layout_marginTop="20dp">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -52,7 +55,7 @@
             android:text="Empty 님"
             android:textSize="30dp"
             android:textColor="#FFFFFF"
-            android:paddingBottom="30dp"
+            android:paddingBottom="10dp"
             android:fontFamily="@font/netmarble_m"/>
 
         <ImageView
