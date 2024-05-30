@@ -64,7 +64,7 @@
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
-                        android:src="@drawable/line_light2"
+                        android:src="@drawable/line_light"
                         android:scaleType="fitXY"
                         android:id="@+id/lane1_light"
                         android:visibility="invisible"/>
@@ -75,14 +75,14 @@
                         android:layout_height="match_parent"
                         android:layout_weight="1"
                         android:scaleType="fitXY"
-                        android:src="@drawable/line_light2"
+                        android:src="@drawable/line_light"
                         android:visibility="invisible" />
 
                     <ImageView
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
-                        android:src="@drawable/line_light2"
+                        android:src="@drawable/line_light"
                         android:scaleType="fitXY"
                         android:id="@+id/lane3_light"
                         android:visibility="invisible"/>
@@ -90,7 +90,7 @@
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
-                        android:src="@drawable/line_light2"
+                        android:src="@drawable/line_light"
                         android:scaleType="fitXY"
                         android:id="@+id/lane4_light"
                         android:visibility="invisible"/>
