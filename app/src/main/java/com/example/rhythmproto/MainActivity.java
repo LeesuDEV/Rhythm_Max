@@ -461,7 +461,7 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
     public void showCustomDialog() {
         SelectSongDialog dialog = new SelectSongDialog(MainActivity.this);
         dialog.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
-        dialog.getWindow().setGravity(Gravity.CENTER);
+        dialog.getWindow().setGravity(Gravity.BOTTOM);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
@@ -473,7 +473,7 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
         dialogView.animate()
                 .translationY(0)
                 .setInterpolator(new DecelerateInterpolator())
-                .setDuration(500)
+                .setDuration(200)
                 .start();
 
 //디스플레이 해상도를 가져와서
@@ -616,6 +616,7 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
     @Override
     public void onItemSelected() {
         Animation fadeOut = AnimationUtils.loadAnimation(this,R.anim.fade_out_text);
+        fadeOut.setDuration(200);
         song_name_Main.startAnimation(fadeOut);
         song_difficulty_Main.startAnimation(fadeOut);
 
