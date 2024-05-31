@@ -3,7 +3,7 @@
     android:layout_width="380dp"
     android:layout_height="700dp"
     android:layout_gravity="center"
-    android:background="@drawable/setting_background_shape"
+    android:background="@drawable/rankingback"
     android:clipToPadding="false"
     android:elevation="40dp"
     android:orientation="vertical"
@@ -35,12 +35,21 @@
 
         android:layout_marginRight="10dp"
         android:orientation="vertical">
+        <ImageView
+            android:layout_width="60dp"
+            android:layout_height="45dp"
+            android:layout_margin="15dp"
+            android:elevation="10dp"
+            android:padding="2dp"
+            android:scaleType="fitXY"
+            android:src="@drawable/ranking"
+            android:layout_gravity="center"/>
 
         <ImageView
             android:id="@+id/selectSongImageView"
             android:layout_width="80dp"
             android:layout_height="80dp"
-            android:layout_margin="15dp"
+            android:layout_marginBottom="10"
             android:background="@drawable/ranking_selectsong_image_corner"
             android:elevation="10dp"
             android:padding="2dp"
@@ -109,7 +118,8 @@
                 android:layout_weight="3.2"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
-                android:gravity="center|top">
+                android:gravity="center|top"
+                android:background="@drawable/ranking_rank_background_shape">
 
             </LinearLayout>
             <LinearLayout
@@ -118,7 +128,8 @@
                 android:layout_weight="3.2"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
-                android:gravity="center|top">
+                android:gravity="center|top"
+                android:background="@drawable/ranking_rank_background_shape">
 
             </LinearLayout>
 
@@ -128,7 +139,8 @@
                 android:layout_weight="2.5"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
-                android:gravity="center|top">
+                android:gravity="center|top"
+                android:background="@drawable/ranking_rank_background_shape">
 
             </LinearLayout>
 
