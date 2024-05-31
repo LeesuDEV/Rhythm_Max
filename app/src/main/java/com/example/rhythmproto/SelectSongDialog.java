@@ -6,6 +6,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -179,9 +181,17 @@ public class SelectSongDialog extends Dialog {
                 .collection("setting")
                 .document("mode")
                 .set(setting, SetOptions.merge()); // 유저 곡세팅을 업로드
+
         MainActivity.song_difficulty_Main.setVisibility(View.VISIBLE);
         MainActivity.song_name_Main.setVisibility(View.VISIBLE);
+
+        Animation fadeIn = AnimationUtils.loadAnimation(context,R.anim.fade_in_text);
+        fadeIn.setDuration(500);
+        MainActivity.song_name_Main.startAnimation(fadeIn);
+        MainActivity.song_difficulty_Main.startAnimation(fadeIn);
+
         super.dismiss();
+
     }
 
     public void loadBestScore() {
