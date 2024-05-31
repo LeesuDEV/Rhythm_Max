@@ -15,7 +15,6 @@
         android:layout_gravity="center"
         android:layout_marginTop="250dp"
         android:textSize="50sp"
-        android:textStyle="italic"
         android:textColor="#FFD400"
         android:visibility="visible"
         android:fontFamily="@font/netmarble_b"
