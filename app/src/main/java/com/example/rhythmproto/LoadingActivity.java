@@ -3,13 +3,16 @@ package com.example.rhythmproto;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.animation.Animation;
+import android.view.animation.RotateAnimation;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class LoadingActivity extends AppCompatActivity {
-
+ImageView loadingIMG;
     TextView loadingTV; // 게임오버,메인으로가기 텍스트뷰
     int i = 1;
     Runnable run = new Runnable() {
@@ -25,6 +28,11 @@ public class LoadingActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.loading);
+        loadingIMG = findViewById(R.id.loadingImg);
+        RotateAnimation rotate = new RotateAnimation(0, 360, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+        rotate.setDuration(500);
+        rotate.setRepeatCount(Animation.INFINITE);
+        loadingIMG.startAnimation(rotate);
 
         loadingTV = findViewById(R.id.loadingText);
 
