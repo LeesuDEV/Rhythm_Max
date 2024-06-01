@@ -68,7 +68,7 @@ public class SelectSongDialog extends Dialog {
         myBestRankImg.setAlpha(0f);
 
         ObjectAnimator zoomIn = ObjectAnimator.ofFloat(myBestRankImg, "alpha", 0f, 1f);
-        zoomIn.setDuration(1500);
+        zoomIn.setDuration(300);
 
         AnimatorSet animatorSet = new AnimatorSet();
         animatorSet.playTogether(zoomIn); //동시에 실행하도록 세팅
@@ -82,6 +82,7 @@ public class SelectSongDialog extends Dialog {
             public void onClick(View v) {
                 RankingDialog dialog = new RankingDialog(context);
                 dialog.show();
+                dialog.getWindow().getAttributes().windowAnimations = R.style.fade_Dialog;
                 dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT)); //다이어로그 배경 투명처리
                 dismiss();
             }
@@ -223,7 +224,7 @@ public class SelectSongDialog extends Dialog {
         MainActivity.song_name_Main.setVisibility(View.VISIBLE);
 
         Animation fadeIn = AnimationUtils.loadAnimation(context, R.anim.fade_in_text);
-        fadeIn.setDuration(500);
+        fadeIn.setDuration(200);
         MainActivity.song_name_Main.startAnimation(fadeIn);
         MainActivity.song_difficulty_Main.startAnimation(fadeIn);
 
