@@ -116,6 +116,10 @@ public class ResultActivity extends AppCompatActivity {
         maxComboTV.setText("" + maxCombo);
         accuracyTV.setText("" + accuracy);
 
+        MovingText.moveText(songNameTV); //옆으로 슬라이드 되는 텍스트뷰
+
+        rankImageView.setAlpha(0f);
+
         accuracy_double = Double.parseDouble(accuracy.replace("%", "")); // String 정확도 값에서 %를 제외한 숫자를 가져옴 -> double에 저장하여 Rank계산
 
         setRank(accuracy_double, resultRank, rankImageView); // 정확도를 기반으로 resultRank에 랭크를 입력해주고 텍스트뷰에 표시 해주는 메소드
