@@ -120,7 +120,10 @@ public class LoginActivity extends AppCompatActivity {
                         Toast.makeText(LoginActivity.this,"로그아웃에 성공했습니다.",Toast.LENGTH_SHORT).show();
 
                         nickName.setText(null);
+
+                        simpleLoginForm.setAlpha(0f);
                         simpleLoginForm.setVisibility(View.VISIBLE);
+
                         kakaoLayout.setVisibility(View.GONE);
                     }
                     return null;
