@@ -10,6 +10,10 @@
 
     <style name="DialogSlide" parent="Theme.AppCompat.Light.Dialog">
         <item name="android:windowEnterAnimation">@anim/dialog_slide_up</item>
-        <item name="android:windowExitAnimation">@anim/dialog_slide_up</item>
+        <item name="android:windowExitAnimation">@anim/dialog_slide_down</item>
+    </style>
+    <style name="fade_Dialog">
+        <item name="android:windowEnterAnimation">@anim/fade_in</item>
+        <item name="android:windowExitAnimation">@anim/fade_out</item>
     </style>
 </resources>
