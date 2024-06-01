@@ -470,6 +470,7 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
         dialog.show();
+        dialog.getWindow().getAttributes().windowAnimations = R.style.DialogSlide;
 
         // 슬라이드 업 애니메이션 적용
         View dialogView = dialog.getWindow().getDecorView();
@@ -623,7 +624,7 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
         fadeOut.setDuration(200);
         song_name_Main.startAnimation(fadeOut);
         song_difficulty_Main.startAnimation(fadeOut);
-
+        showCustomDialog();
         fadeOut.setAnimationListener(new Animation.AnimationListener() {
             @Override
             public void onAnimationStart(Animation animation) {
@@ -634,7 +635,7 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
             public void onAnimationEnd(Animation animation) {
                 song_name_Main.setVisibility(View.GONE);
                 song_difficulty_Main.setVisibility(View.GONE);
-                showCustomDialog();
+
             }
 
             @Override
