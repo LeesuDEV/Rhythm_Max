@@ -250,7 +250,7 @@
             android:layout_gravity="top|center"
             android:layout_marginTop="55dp"
              android:text="0"
-            android:textColor="#8FFFFFFF"
+            android:textColor="#E8979797"
             android:textSize="80sp"
             android:textStyle="bold"
             android:visibility="visible" />
@@ -263,7 +263,7 @@
             android:layout_marginTop="10dp"
             android:text="0"
             android:textAlignment="center"
-            android:textColor="#CEFFFFFF"
+            android:textColor="#9FECECEC"
             android:textSize="18sp"
             android:textStyle="bold" />
 

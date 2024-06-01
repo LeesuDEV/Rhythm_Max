@@ -2,14 +2,14 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="340dp"
+    android:layout_height="wrap_content"
     android:layout_gravity="bottom">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="center"
-        android:background="@drawable/tpback"
+        android:background="@android:color/transparent"
         android:orientation="vertical">
 
         <FrameLayout
@@ -29,48 +29,43 @@
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="6"
+                    android:layout_weight="6.3"
                     android:orientation="horizontal">
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="8dp"
                         android:layout_marginTop="8dp"
                         android:layout_marginBottom="8dp"
-                        android:orientation="vertical">
+                        android:orientation="vertical"
+                        >
 
                         <LinearLayout
                             android:layout_width="match_parent"
-                            android:layout_height="100dp"
+                            android:layout_height="wrap_content"
                             android:background="@drawable/select_song_detail_shape"
                             android:orientation="vertical"
-                            android:paddingLeft="13dp"
+                            android:paddingLeft="12dp"
                             android:paddingTop="8dp"
-                            android:paddingRight="13dp"
+                            android:paddingRight="12dp"
                             android:paddingBottom="8dp">
 
                             <TextView
                                 android:id="@+id/songNameTV"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:shadowColor="#000000"
-                                android:shadowDx="3"
-                                android:shadowDy="3"
-                                android:shadowRadius="3"
+                                android:fontFamily="@font/netmarble_m"
+                                android:layout_marginTop="3dp"
                                 android:text=""
                                 android:textColor="#D1FCFD"
-                                android:textSize="24dp"
-                                android:textStyle="bold" />
+                                android:textSize="24dp" />
 
                             <TextView
-
                                 android:id="@+id/bpmTV"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:shadowColor="#000000"
-                                android:shadowDx="3"
-                                android:shadowDy="3"
+                                android:fontFamily="@font/netmarble_m"
+                                android:layout_marginTop="3dp"
                                 android:shadowRadius="5"
                                 android:text=""
                                 android:textColor="#FFFFFF"
@@ -80,13 +75,9 @@
                                 android:id="@+id/difficultyTV"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_marginTop="3dp"
-                                android:shadowColor="#000000"
-                                android:shadowDx="3"
-                                android:shadowDy="3"
-                                android:shadowRadius="5"
                                 android:text=""
                                 android:textColor="#ff0000"
+                                android:layout_marginTop="3dp"
                                 android:textSize="20dp" />
                         </LinearLayout>
 
@@ -94,72 +85,67 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="left"
-                            android:layout_marginLeft="8dp"
+                            android:layout_marginLeft="12dp"
                             android:layout_marginTop="10dp"
-                            android:orientation="horizontal">
+                            android:paddingTop="3dp"
+                            android:orientation="horizontal"
+                            >
 
                             <TextView
                                 android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
+                                android:layout_height="29dp"
                                 android:layout_gravity="center"
-                                android:shadowColor="#000000"
-                                android:shadowDx="3"
-                                android:shadowDy="3"
-                                android:shadowRadius="5"
+                                android:fontFamily="@font/netmarble_m"
+
                                 android:text="Best Score"
                                 android:textColor="#CC9905"
                                 android:textSize="20dp" />
 
                             <TextView
+                                android:fontFamily="@font/netmarble_m"
                                 android:id="@+id/myBestScoreTV"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center"
                                 android:layout_marginLeft="10dp"
                                 android:gravity="center|left"
-                                android:shadowColor="#000000"
-                                android:shadowDx="3"
-                                android:shadowDy="3"
-                                android:shadowRadius="5"
+
                                 android:text=""
                                 android:textColor="#ffffff"
-                                android:textSize="21dp"
-                                android:textStyle="bold" />
+                                android:textSize="20dp"
+                              />
                         </LinearLayout> <!-- 최고점수 텍스트뷰 -->
                         <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="left"
-                            android:layout_marginLeft="8dp"
+                            android:layout_marginLeft="12dp"
                             android:orientation="horizontal">
 
                             <TextView
+                                android:fontFamily="@font/netmarble_m"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center"
-                                android:shadowColor="#000000"
-                                android:shadowDx="3"
-                                android:shadowDy="3"
-                                android:shadowRadius="5"
+
                                 android:text="Best Rate"
                                 android:textColor="#CC9905"
-                                android:textSize="18dp" />
+                                android:textSize="18dp"
+                                />
 
                             <TextView
+                                android:fontFamily="@font/netmarble_m"
                                 android:id="@+id/myBestRateTV"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center"
                                 android:layout_marginLeft="10dp"
                                 android:gravity="center|left"
-                                android:shadowColor="#000000"
-                                android:shadowDx="3"
-                                android:shadowDy="3"
-                                android:shadowRadius="5"
+
                                 android:text=""
                                 android:textColor="#FFBE00"
-                                android:textSize="22dp"
-                                android:textStyle="bold" />
+                                android:textSize="18dp"
+                               />
 
                         </LinearLayout> <!-- 정확도 텍스트뷰 -->
                     </LinearLayout>
@@ -170,13 +156,12 @@
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="4"
+                    android:layout_weight="3.7"
                     android:orientation="horizontal">
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_marginLeft="8dp"
                         android:gravity="center|top"
                         android:orientation="vertical"
                         android:weightSum="10">
@@ -185,12 +170,13 @@
                             android:id="@+id/myBestRankImg"
                             android:layout_width="126dp"
                             android:layout_height="0dp"
-                            android:layout_gravity="center"
-                            android:layout_marginTop="12dp"
+                            android:layout_gravity="right"
+                            android:layout_marginTop="8dp"
                             android:layout_weight="7.6"
                             android:elevation="10dp"
-                            android:paddingTop="5dp"
-                            android:paddingBottom="35dp"
+                            android:paddingTop="3dp"
+                            android:paddingLeft="5dp"
+                            android:paddingBottom="38dp"
                             android:scaleType="fitXY"
                             android:visibility="visible" />
 
@@ -221,7 +207,6 @@
                             <TextView
                                 android:layout_width="0dp"
                                 android:layout_height="match_parent"
-                                android:layout_marginRight="8dp"
                                 android:layout_weight="1.65"
                                 android:ems="4"
                                 android:fontFamily="@font/netmarble_m"
@@ -246,9 +231,9 @@
             android:layout_width="match_parent"
             android:layout_height="56dp"
             android:layout_gravity="center"
-            android:layout_marginLeft="23dp"
+            android:layout_marginLeft="10dp"
             android:layout_marginTop="10dp"
-            android:layout_marginRight="23dp"
+            android:layout_marginRight="10dp"
             android:orientation="horizontal"
             android:weightSum="3">
 
@@ -285,15 +270,13 @@
             android:layout_gravity="center"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
-            android:layout_marginBottom="16dp"
+            android:layout_marginBottom="10dp"
             android:orientation="horizontal">
 
             <ImageView
                 android:id="@+id/startBtn"
                 android:layout_width="wrap_content"
-                android:layout_height="64dp"
-                android:layout_marginLeft="13dp"
-                android:layout_marginRight="13dp"
+                android:layout_height="60dp"
                 android:scaleType="fitXY"
                 android:src="@drawable/startbtn_img" />
         </LinearLayout> <!-- 게임스타트 버튼 -->
