@@ -29,7 +29,7 @@ public class AnimationController {
                 judgmentImage.setImageResource(R.drawable.good_judgment);
                 break;
             case "BAD" :
-                judgmentImage.setImageResource(R.drawable.miss_judgment);
+                judgmentImage.setImageResource(R.drawable.bad_judgment);
                 break;
             case "MISS" :
                 judgmentImage.setImageResource(R.drawable.miss_judgment);

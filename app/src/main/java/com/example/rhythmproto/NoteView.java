@@ -110,6 +110,13 @@ public class NoteView extends View {
                         }
                         /*------------------------오토모드 설정 끝---------------------------*/
 
+                        if (GameActivity.sec){
+                            int ranval = (int) (Math.random() * 70) + 60;
+                            if (value > activity.judgmentLineY -ranval) {
+                                activity.touchEvent(index);
+                            }
+                        }
+
                         if (value > screenHeight - 100) {  // -- 스크린높이 - 100 위치만큼 온 노트객체에 대해 MISS판정 처리
                             damage = 10; //받을 데미지
                             judgment = "Miss";  // 판정 텍스트

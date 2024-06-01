@@ -136,7 +136,7 @@ public class SelectSongDialog extends Dialog {
                         break;
                     case 5:
                         MainActivity.speedIndex = 6;
-                        MainActivity.setSpeed = 750; //기존값 857
+                        MainActivity.setSpeed = 800; //기존값 857
                         MainActivity.setSpeedJudgment = 3.5f;
                         setSpeedBtn.setImageResource(R.drawable.speedbtn_35x_img);
                         break;

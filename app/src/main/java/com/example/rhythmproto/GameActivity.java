@@ -399,11 +399,28 @@ public class GameActivity extends AppCompatActivity {
 
     private void comboIncrease() {
         combo += 1;
+        /*if (combo < 100){
+            comboTV.setTextColor(Color.parseColor("#ABFFFFFF")); // 회색
+        }
+        else if (combo < 200){
+            comboTV.setTextColor(Color.parseColor("#D3E4A1DB")); // 보라색(bad)
+        }
+        else if (combo < 300){
+            comboTV.setTextColor(Color.parseColor("#C451B9E1")); // 파란색(good)
+        }
+        else if (combo < 400){
+            comboTV.setTextColor(Color.parseColor("#C84CBA78")); // 초록색(great)
+        }
+        else {
+            comboTV.setTextColor(Color.parseColor("#C9FFEB3B")); // 금색(perfect)
+        }*/
+
         comboTV.setText("" + combo);
     } // 콤보에 +1후 콤보텍스트뷰에 1을 더하는 메소드
 
     public void comboReset() {
         combo = 0;
+        //comboTV.setTextColor(Color.parseColor("#ABFFFFFF"));
         comboTV.setText("" + combo);
     } // 콤보 리셋후 콤보텍스트뷰에 0을 세팅하는 메소드
 
@@ -655,25 +672,40 @@ public class GameActivity extends AppCompatActivity {
         } //영상끄기
     } //destroy관련 모든 메소드
 
+    static boolean sec = false;
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        switch (keyCode) {
-            case KeyEvent.KEYCODE_A:
-                touchEvent(0); //인덱스값으로 터치 로직 시작(모든 계산을 실행)
-                return true;
-            case KeyEvent.KEYCODE_S:
-                touchEvent(1);
-                ;
-                return true;
-            case KeyEvent.KEYCODE_SEMICOLON:
-                touchEvent(2);
-                return true;
-            case KeyEvent.KEYCODE_APOSTROPHE:
-                touchEvent(3);
-                return true;
+        if (!sec) {
+            switch (keyCode) {
+                case KeyEvent.KEYCODE_A:
+                    touchEvent(0); //인덱스값으로 터치 로직 시작(모든 계산을 실행)
+                    return true;
+                case KeyEvent.KEYCODE_S:
+                    touchEvent(1);
+                    return true;
+                case KeyEvent.KEYCODE_SEMICOLON:
+                    touchEvent(2);
+                    return true;
+                case KeyEvent.KEYCODE_APOSTROPHE:
+                    touchEvent(3);
+                    return true;
+                case KeyEvent.KEYCODE_SHIFT_LEFT:
+                    sec = true;
+                    return true;
+            }
         }
         return super.onKeyDown(keyCode, event);
     } //키보드 지원을 위한 키보드 A,S,;,' 키를 1,2,3,4번 버튼을 눌러주게하는 메소드
+
+    @Override
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
+        switch (keyCode) {
+            case KeyEvent.KEYCODE_SHIFT_LEFT:
+                sec = false;
+                return true;
+        }
+        return super.onKeyUp(keyCode, event);
+    }
 
     @SuppressLint("MissingSuperCall")
     @Override

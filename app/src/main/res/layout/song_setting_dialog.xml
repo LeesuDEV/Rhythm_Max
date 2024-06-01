@@ -43,7 +43,7 @@
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="100dp"
-                            android:background="@drawable/selectsong_song_detail"
+                            android:background="@drawable/select_song_detail_shape"
                             android:orientation="vertical"
                             android:paddingLeft="13dp"
                             android:paddingTop="8dp"
