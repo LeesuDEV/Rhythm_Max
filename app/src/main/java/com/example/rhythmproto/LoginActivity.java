@@ -1,5 +1,6 @@
 package com.example.rhythmproto;
 
+import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -11,7 +12,6 @@ import android.view.animation.RotateAnimation;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -117,12 +117,15 @@ public class LoginActivity extends AppCompatActivity {
                     } else {
                         //로그아웃 성공
                         Log.d("Success","로그아웃 성공");
-                        Toast.makeText(LoginActivity.this,"로그아웃에 성공했습니다.",Toast.LENGTH_SHORT).show();
 
                         nickName.setText(null);
 
                         simpleLoginForm.setAlpha(0f);
                         simpleLoginForm.setVisibility(View.VISIBLE);
+
+                        ObjectAnimator alphaAnimator = ObjectAnimator.ofFloat(simpleLoginForm, "alpha", 0f, 1f);
+                        alphaAnimator.setDuration(1500);
+                        alphaAnimator.start();
 
                         kakaoLayout.setVisibility(View.GONE);
                     }
@@ -142,7 +145,14 @@ public class LoginActivity extends AppCompatActivity {
                 if (user != null) {  // 유저데이터가 있다면
                     nickName.setText(user.getKakaoAccount().getProfile().getNickname() + " 님"); //닉네임 텍스트에 유저이름 설정
                     simpleLoginForm.setVisibility(View.GONE);
+
+                    kakaoLayout.setAlpha(0f);
                     kakaoLayout.setVisibility(View.VISIBLE);
+
+                    ObjectAnimator alphaAnimator = ObjectAnimator.ofFloat(kakaoLayout, "alpha", 0f, 1f);
+                    alphaAnimator.setDuration(1500);
+                    alphaAnimator.start();
+
                     startup.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -155,7 +165,13 @@ public class LoginActivity extends AppCompatActivity {
                 } else {
                     // 로그인이 되어 있지 않다면 위와 반대로
                     nickName.setText(null);
+                    simpleLoginForm.setAlpha(0f);
                     simpleLoginForm.setVisibility(View.VISIBLE);
+
+                    ObjectAnimator alphaAnimator = ObjectAnimator.ofFloat(simpleLoginForm, "alpha", 0f, 1f);
+                    alphaAnimator.setDuration(1500);
+                    alphaAnimator.start();
+
                     kakaoLayout.setVisibility(View.GONE);
                 }
                 return null;
@@ -173,7 +189,7 @@ public class LoginActivity extends AppCompatActivity {
                     if (documentSnapshot.exists()) {
                         startIntent(userId, userName); //인턴트 시작 메소드
                         loadSettingDB(userId); // 세팅정보 불러오기
-                        Toast.makeText(LoginActivity.this, "환영합니다," + documentSnapshot.getString("userName") + "님", Toast.LENGTH_SHORT).show(); //환영문구 출력
+                        //Toast.makeText(LoginActivity.this, "환영합니다," + documentSnapshot.getString("userName") + "님", Toast.LENGTH_SHORT).show(); //환영문구 출력
                     } else {
                         // 문서가 존재하지 않을 때만 새 데이터 저장
                         Map<String, Object> user = new HashMap<>();
@@ -214,7 +230,7 @@ public class LoginActivity extends AppCompatActivity {
 
                         loadSettingDB(userId); //DB값을 설정값으로 설정
 
-                        Toast.makeText(LoginActivity.this, "회원가입 성공. 환영합니다, " + userName + "님", Toast.LENGTH_SHORT).show(); //환영 문구 출력
+                        //Toast.makeText(LoginActivity.this, "회원가입 성공. 환영합니다, " + userName + "님", Toast.LENGTH_SHORT).show(); //환영 문구 출력
                         startIntent(userId, userName);
                     }
                 })
