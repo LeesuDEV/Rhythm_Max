@@ -120,7 +120,7 @@ public class NoteView extends View {
                             activity.comboReset();  // 콤보 초기화
                             setJudgment("MISS");  // 판정 처리후 레이아웃에서 노트뷰를 제거하는 메소드
                             activity.updateScore(judgment);  //점수텍스트뷰에 판정점수 추가
-                            activity.animationController.startAnimation(activity.judgmentTV, "MISS", color); // 판정텍스트뷰 애니메이션 시작
+                            activity.animationController.startAnimation(activity.judgmentTV, "MISS"); // 판정텍스트뷰 애니메이션 시작
 
                             animation.cancel(); // 노트 애니메이션 종료
                             noteLayout.removeView(noteView); // 뷰에서 노트 제거  -- 아마 판정

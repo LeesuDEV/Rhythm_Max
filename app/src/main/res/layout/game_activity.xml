@@ -10,31 +10,30 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#000000"
-        >
+        android:background="#000000">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:gravity="center|top"
             android:orientation="horizontal"
-            android:weightSum="10"
-            android:gravity="center|top">
+            android:weightSum="10">
+
             <FrameLayout
+                android:id="@+id/noteView"
                 android:layout_width="0dp"
                 android:layout_height="700dp"
-                android:layout_weight="8.5"
                 android:layout_gravity="top|center"
-                android:orientation="horizontal"
+                android:layout_weight="8.5"
                 android:background="#000000"
-                android:id="@+id/noteView">
+                android:orientation="horizontal">
 
                 <VideoView
                     android:id="@+id/videoView"
                     android:layout_width="450dp"
                     android:layout_height="260dp"
                     android:layout_gravity="center"
-                    android:layout_marginBottom="65dp"
-                    />
+                    android:layout_marginBottom="65dp" />
 
 
                 <ImageView
@@ -42,8 +41,7 @@
                     android:layout_height="260dp"
                     android:layout_gravity="center"
                     android:layout_marginBottom="65dp"
-                    android:visibility="gone"
-                  /> <!--테스팅용 이미지사진 첨부-->
+                    android:visibility="gone" /> <!--테스팅용 이미지사진 첨부-->
 
                 <View
                     android:layout_width="match_parent"
@@ -51,23 +49,23 @@
                     android:layout_gravity="center"
                     android:layout_marginBottom="65dp"
                     android:background="@drawable/game_video_foreground_shape"
-                    android:visibility="visible"
-                    />
+                    android:visibility="visible" />
 
                 <LinearLayout
-                    android:orientation="horizontal"
+                    android:id="@+id/lineLight"
                     android:layout_width="match_parent"
                     android:layout_height="600dp"
-                    android:weightSum="4"
-                    android:id="@+id/lineLight">
+                    android:orientation="horizontal"
+                    android:weightSum="4">
+
                     <ImageView
+                        android:id="@+id/lane1_light"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
-                        android:src="@drawable/line_light"
                         android:scaleType="fitXY"
-                        android:id="@+id/lane1_light"
-                        android:visibility="invisible"/>
+                        android:src="@drawable/line_light"
+                        android:visibility="invisible" />
 
                     <ImageView
                         android:id="@+id/lane2_light"
@@ -79,109 +77,107 @@
                         android:visibility="invisible" />
 
                     <ImageView
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:src="@drawable/line_light"
-                        android:scaleType="fitXY"
                         android:id="@+id/lane3_light"
-                        android:visibility="invisible"/>
-                    <ImageView
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
-                        android:src="@drawable/line_light"
                         android:scaleType="fitXY"
+                        android:src="@drawable/line_light"
+                        android:visibility="invisible" />
+
+                    <ImageView
                         android:id="@+id/lane4_light"
-                        android:visibility="invisible"/>
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:scaleType="fitXY"
+                        android:src="@drawable/line_light"
+                        android:visibility="invisible" />
                 </LinearLayout>
             </FrameLayout>
         </LinearLayout>
 
 
         <com.example.rhythmproto.JudgmentLineView
+            android:id="@+id/judgmentLineView"
             android:layout_width="345dp"
             android:layout_height="700dp"
-            android:layout_gravity="top|center"
-            android:id="@+id/judgmentLineView"
-            />
+            android:layout_gravity="top|center" />
 
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:src="@drawable/game_gear"
-            android:scaleType="fitXY"/>
-        
+            android:scaleType="fitXY"
+            android:src="@drawable/game_gear" />
+
         <ProgressBar
             android:id="@+id/health_Bar"
+            style="@android:style/Widget.ProgressBar.Horizontal"
             android:layout_width="400dp"
             android:layout_height="15dp"
-            android:layout_marginTop="300dp"
             android:layout_marginLeft="-183.5dp"
-            style="@android:style/Widget.ProgressBar.Horizontal"
-            android:rotation="270"
+            android:layout_marginTop="300dp"
             android:max="100"
             android:progress="40"
-            /> <!--체력바-->
+            android:rotation="270" /> <!--체력바-->
 
         <FrameLayout
-            android:layout_marginTop="520dp"
-            android:orientation="horizontal"
+            android:id="@+id/hitEffect"
             android:layout_width="345dp"
             android:layout_height="80dp"
             android:layout_gravity="top|center"
-            android:id="@+id/hitEffect">
+            android:layout_marginTop="520dp"
+            android:orientation="horizontal">
+
             <com.airbnb.lottie.LottieAnimationView
                 android:id="@+id/animation_view1"
                 android:layout_width="86.25dp"
                 android:layout_height="80dp"
                 android:layout_weight="1"
-                android:visibility="invisible"
                 android:scaleType="fitXY"
-                />  <!-- 초기에는 보이지 않도록 설정 -->
+                android:visibility="invisible" />  <!-- 초기에는 보이지 않도록 설정 -->
             <com.airbnb.lottie.LottieAnimationView
                 android:id="@+id/animation_view2"
-                android:layout_marginLeft="86.25dp"
                 android:layout_width="86.25dp"
                 android:layout_height="80dp"
+                android:layout_marginLeft="86.25dp"
                 android:layout_weight="1"
-                android:visibility="invisible"
                 android:scaleType="fitXY"
-                />
+                android:visibility="invisible" />
+
             <com.airbnb.lottie.LottieAnimationView
                 android:id="@+id/animation_view3"
-                android:layout_marginLeft="172.5dp"
                 android:layout_width="86.25dp"
                 android:layout_height="80dp"
+                android:layout_marginLeft="172.5dp"
                 android:layout_weight="1"
-                android:visibility="invisible"
                 android:scaleType="fitXY"
-                />
+                android:visibility="invisible" />
+
             <com.airbnb.lottie.LottieAnimationView
                 android:id="@+id/animation_view4"
-                android:layout_marginLeft="258.75dp"
                 android:layout_width="86.25dp"
                 android:layout_height="80dp"
+                android:layout_marginLeft="258.75dp"
                 android:layout_weight="1"
-                android:visibility="invisible"
                 android:scaleType="fitXY"
-                />
+                android:visibility="invisible" />
         </FrameLayout> <!-- 판정 폭죽효과 -->
 
         <Button
-            android:layout_margin="5dp"
             android:id="@+id/quitGameBtn"
-            android:layout_gravity="right"
             android:layout_width="20dp"
             android:layout_height="20dp"
+            android:layout_gravity="right"
+            android:layout_margin="5dp"
             android:background="@drawable/exit_btn"
             android:focusable="false" />
 
         <Button
+            android:id="@+id/enterPrevent"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:id="@+id/enterPrevent"
-            android:layout_gravity="center"/>
+            android:layout_gravity="center" />
 
         <LinearLayout
             android:layout_width="350sp"
@@ -239,47 +235,35 @@
                 android:textSize="25dp" />
         </LinearLayout>
 
-        <TextView
-            android:layout_marginTop="100dp"
+        <ImageView
             android:id="@+id/judgmentTV"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="150dp"
+            android:layout_height="40dp"
             android:layout_gravity="center"
-            android:text=""
-            android:textColor="#12B300"
-            android:textSize="35sp"
-            android:textStyle="bold"
-            android:visibility="visible"
-            android:shadowDx="5"
-            android:shadowDy="5"
-            android:shadowColor="#80CACACA"
-            android:shadowRadius="5"/>
+            android:layout_marginTop="100dp"
+            android:visibility="visible" />
 
         <TextView
-            android:layout_marginTop="70dp"
             android:id="@+id/comboTV"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="top|center"
-            android:text="0"
-            android:textColor="#979797"
-            android:textSize="70sp"
+            android:layout_marginTop="55dp"
+             android:text="0"
+            android:textColor="#E8979797"
+            android:textSize="80sp"
             android:textStyle="bold"
-            android:visibility="visible"
-            android:shadowDx="5"
-            android:shadowDy="5"
-            android:shadowColor="#80CACACA"
-            android:shadowRadius="5"/>
+            android:visibility="visible" />
 
         <TextView
             android:id="@+id/scoreTV"
-            android:layout_marginTop="10dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="top|center"
+            android:layout_marginTop="10dp"
             android:text="0"
             android:textAlignment="center"
-            android:textColor="#ECECEC"
+            android:textColor="#9FECECEC"
             android:textSize="18sp"
             android:textStyle="bold" />
 
@@ -291,7 +275,7 @@
             android:layout_marginTop="50dp"
             android:text="0.0%"
             android:textColor="#BCBCBC"
-            android:textStyle="bold"/>
+            android:textStyle="bold" />
 
     </FrameLayout>
 

@@ -89,7 +89,10 @@ public class RankingDialog extends Dialog {
                                 }
                             });
 
-                            Typeface typeFace = ResourcesCompat.getFont(context, R.font.netmarble_b); //텍스트 타입
+                            //리팩토링 or Dart언어로 재구현시 함수로 뺄것(필수)
+
+                            Typeface typeFace_m = ResourcesCompat.getFont(context, R.font.netmarble_m); //텍스트 타입
+                            Typeface typeFace_b = ResourcesCompat.getFont(context, R.font.netmarble_b); //텍스트 타입
                             textViewNum = new TextView[userScores.size()];
                             textViewName = new TextView[userScores.size()];  // 순위,이름,점수,정확도 텍스트뷰 선언
                             textViewScore = new TextView[userScores.size()];
@@ -98,6 +101,20 @@ public class RankingDialog extends Dialog {
 
                             for (int j = 0; j < userScores.size(); j++) {
                                 if (userScores.get(j).getUserName().equals(LoginActivity.userName)) { //유저의 이름과 일치하는 정보가 있는지 확인
+                                    switch (j) {
+                                        case 0:
+                                            myRankTV.setTextColor(Color.parseColor("#F6D764")); //금색
+                                            break;
+                                        case 1:
+                                            myRankTV.setTextColor(Color.parseColor("#A3A3A3")); //은색
+                                            break;
+                                        case 2:
+                                            myRankTV.setTextColor(Color.parseColor("#CD7F32")); //동색
+                                            break;
+                                        default:
+                                            myRankTV.setTextColor(Color.WHITE); // 아닐시 화이트
+                                            break;
+                                    }
                                     myRankTV.setText("" + (j + 1)); //일치하는 정보의 순위를 입력(인자값을 가지고 추측가능)
                                     userScoreTV.setText("" + userScores.get(j).getScore()); // 해당하는 정보의 점수값을 추출
                                 }
@@ -107,8 +124,6 @@ public class RankingDialog extends Dialog {
 
                                 textViewNum[i] = new TextView(context);
                                 textViewNum[i].setText("" + (i + 1)); //랭킹을 표시
-                                textViewNum[i].setTextSize(20);
-                                textViewNum[i].setTypeface(typeFace);
                                 LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
                                         LinearLayout.LayoutParams.WRAP_CONTENT,
                                         LinearLayout.LayoutParams.WRAP_CONTENT
@@ -116,35 +131,100 @@ public class RankingDialog extends Dialog {
                                 layoutParams.height = height;
                                 layoutParams.setMargins(0, 10, 0, 10);
                                 textViewNum[i].setLayoutParams(layoutParams);
-                                textViewNum[i].setTextColor(Color.WHITE);
+                                switch (i) {
+                                    case 0:
+                                        textViewNum[i].setTextColor(Color.parseColor("#F6D764")); //금색
+                                        textViewNum[i].setTextSize(19);
+                                        textViewNum[i].setTypeface(typeFace_b); // 볼드체
+                                        break;
+                                    case 1:
+                                        textViewNum[i].setTextColor(Color.parseColor("#A3A3A3")); //은색
+                                        textViewNum[i].setTextSize(19);
+                                        textViewNum[i].setTypeface(typeFace_b); // 볼드체
+                                        break;
+                                    case 2:
+                                        textViewNum[i].setTextColor(Color.parseColor("#CD7F32")); //동색
+                                        textViewNum[i].setTextSize(19);
+                                        textViewNum[i].setTypeface(typeFace_b); // 볼드체
+                                        break;
+                                    default:
+                                        textViewNum[i].setTextColor(Color.WHITE); // 아닐시 화이트
+                                        textViewNum[i].setTypeface(typeFace_m); // 아닐시 netmarble_m
+                                        textViewNum[i].setTextSize(17);
+                                        break;
+                                }
                                 rankingNumLayout.addView(textViewNum[i]);
 
                                 textViewName[i] = new TextView(context);
                                 textViewName[i].setText(userScores.get(i).getUserName()); //해당랭킹의 유저이름
-                                if(textViewName[i].getText().toString().length() >= 7) {
-                                    textViewName[i].setTextSize(17);
-                                } else {
-                                    textViewName[i].setTextSize(20);
-                                }
                                 textViewName[i].setGravity(View.TEXT_ALIGNMENT_CENTER);
-                                textViewName[i].setTypeface(typeFace);
                                 textViewName[i].setLayoutParams(layoutParams);
                                 textViewName[i].setTextColor(Color.WHITE);
-                                MovingText.moveText(textViewName[i]); //옆으로 움직이는 텍스트(초과시)
+                                switch (i) {
+                                    case 0:
+                                        textViewName[i].setTypeface(typeFace_b); // 볼드체
+                                        textViewName[i].setTextSize(17);
+                                        break;
+                                    case 1:
+                                        textViewName[i].setTypeface(typeFace_b); // 볼드체
+                                        textViewName[i].setTextSize(17);
+                                        break;
+                                    case 2:
+                                        textViewName[i].setTypeface(typeFace_b); // 볼드체
+                                        textViewName[i].setTextSize(17);
+                                        break;
+                                    default:
+                                        textViewName[i].setTypeface(typeFace_m); // 아닐시 netmarble_m
+                                        textViewName[i].setTextSize(15);
+                                        break;
+                                }
                                 rankingNameLayout.addView(textViewName[i]);
 
                                 textViewScore[i] = new TextView(context);
                                 textViewScore[i].setText("" + userScores.get(i).getScore()); //해당랭킹의 유저스코어
-                                textViewScore[i].setTextSize(20);
-                                textViewScore[i].setTypeface(typeFace);
+
+                                switch (i) {
+                                    case 0:
+                                        textViewScore[i].setTypeface(typeFace_b); // 볼드체
+                                        textViewScore[i].setTextSize(17);
+                                        break;
+                                    case 1:
+                                        textViewScore[i].setTypeface(typeFace_b); // 볼드체
+                                        textViewScore[i].setTextSize(17);
+                                        break;
+                                    case 2:
+                                        textViewScore[i].setTypeface(typeFace_b); // 볼드체
+                                        textViewScore[i].setTextSize(17);
+                                        break;
+                                    default:
+                                        textViewScore[i].setTypeface(typeFace_m); // 아닐시 netmarble_m
+                                        textViewScore[i].setTextSize(15);
+                                        break;
+                                }
                                 textViewScore[i].setLayoutParams(layoutParams);
                                 textViewScore[i].setTextColor(Color.WHITE);
                                 rankingScoreLayout.addView(textViewScore[i]);
 
                                 textViewAccuracy[i] = new TextView(context);
                                 textViewAccuracy[i].setText("" + userScores.get(i).getAccuracy()); //해당랭킹의 정확도
-                                textViewAccuracy[i].setTextSize(20);
-                                textViewAccuracy[i].setTypeface(typeFace);
+                                switch (i) {
+                                    case 0:
+                                        textViewAccuracy[i].setTypeface(typeFace_b); // 볼드체
+                                        textViewAccuracy[i].setTextSize(17);
+                                        break;
+                                    case 1:
+                                        textViewAccuracy[i].setTypeface(typeFace_b); // 볼드체
+                                        textViewAccuracy[i].setTextSize(17);
+                                        break;
+                                    case 2:
+                                        textViewAccuracy[i].setTypeface(typeFace_b); // 볼드체
+                                        textViewAccuracy[i].setTextSize(17);
+                                        break;
+                                    default:
+                                        textViewAccuracy[i].setTypeface(typeFace_m); // 아닐시 netmarble_m
+                                        textViewAccuracy[i].setTextSize(15);
+                                        break;
+                                }
                                 textViewAccuracy[i].setLayoutParams(layoutParams);
                                 textViewAccuracy[i].setTextColor(Color.WHITE);
                                 rankingAccuracyLayout.addView(textViewAccuracy[i]);

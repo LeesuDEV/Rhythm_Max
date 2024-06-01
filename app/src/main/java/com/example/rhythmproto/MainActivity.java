@@ -10,6 +10,7 @@ import android.os.Handler;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;
+import android.util.Log;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.View;
@@ -47,19 +48,14 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
     static int noteData; //채보데이터
     static int songMV; //곡 영상데이터
     String selectSong = ""; // 선택된 곡
-    Button syncSetBtn; // 싱크조절 버튼
-    Button bluetoothBtn; // 블루투스 이어폰 자동세팅버튼
 
     ImageView settingBtn; //세팅 다이어로그 버튼
 
     TextView easyBtn;  //이지모드 버튼
     TextView hardBtn;  //하드모드 버튼
-    EditText syncSetText; // 싱크조절 에딧텍스트
-    TextView syncCurrentText; // 싱크현재값 텍스트
     TextView uesrNameTV; //유저이름 텍스트뷰
     static TextView song_name_Main; // 현재 선택된노래 이름 텍스트
     static TextView song_difficulty_Main; // 현재 선택된노래 난이도 텍스트
-    static TextView rankingBtn; //랭킹버튼
     static int syncValue = 0; // 싱크값
     static boolean autoModIndex = false; // 0ff 기본값 오토모드 인덱스
     static int gameModIndex = 0; // 모드인덱스값 0은 NORMAL , 1은 MIRROR , 2는 RANDOM
@@ -80,9 +76,9 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
     static float previewSoundAmountIndex = 1.0f; // 배경음악 크기 인덱스값
     static float ingameSoundAmountIndex = 1.0f; // 인게임음악 크기 인덱스값
     static boolean backgroundIndex = true; // 백그라운드 on off 값
+    boolean defaultPreview = true; // 초기 프리뷰 인자값
 
     LottieAnimationView musicController;
-    FirebaseFirestore firestore = FirebaseFirestore.getInstance();
 
     //1배속 = 3000ms , 1.5배속 = 2000ms , 2배속 = 1500ms , 2.5배속 = 1200ms, 3배속 = 1000ms, 3.5배속 = 857ms
     @Override
@@ -121,9 +117,11 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                playPreview(0); //메인화면 limbo 초기 플레이
+                defaultPreview = false; //초기 프리뷰 인자
+                playPreview(0); //메인화면 첫번째곡(초기곡) 프리뷰 플레이
+                Log.d("run","run");
             }
-        }, 1000);
+        }, 500); // 화면전환의 부드러움을 위해 1초 딜레이
 
         musicController = findViewById(R.id.musicController);
         musicController.setOnClickListener(new View.OnClickListener() {
@@ -199,6 +197,12 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
     }
 
     public void playPreview(int index) {
+        if (defaultPreview){
+            return;
+        }
+
+        Log.d("returnCheck","return");
+
         if (index != current_song) { // 인자값이 현재 선택된곡 인자값과 똑같지 않을때만 실행
             if (mediaPlayer != null) { //미디어플레이어 객체가 비지않고
                 if (mediaPlayer.isPlaying()) { // 플레이중이라면
@@ -461,7 +465,7 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
     public void showCustomDialog() {
         SelectSongDialog dialog = new SelectSongDialog(MainActivity.this);
         dialog.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
-        dialog.getWindow().setGravity(Gravity.CENTER);
+        dialog.getWindow().setGravity(Gravity.BOTTOM);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
@@ -473,7 +477,7 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
         dialogView.animate()
                 .translationY(0)
                 .setInterpolator(new DecelerateInterpolator())
-                .setDuration(500)
+                .setDuration(200)
                 .start();
 
 //디스플레이 해상도를 가져와서
@@ -616,6 +620,7 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
     @Override
     public void onItemSelected() {
         Animation fadeOut = AnimationUtils.loadAnimation(this,R.anim.fade_out_text);
+        fadeOut.setDuration(200);
         song_name_Main.startAnimation(fadeOut);
         song_difficulty_Main.startAnimation(fadeOut);
 

@@ -63,7 +63,7 @@ public class GameActivity extends AppCompatActivity {
     int miss; // 미스 수
 
     TextView scoreTV;  // 점수 텍스트뷰
-    TextView judgmentTV;  // 판정 텍스트뷰
+    ImageView judgmentTV;  // 판정 텍스트뷰
     TextView comboTV;  //콤보 텍스트뷰
     TextView accuracyTV; // 정확도 텍스트뷰
     Button enterPrevent; // 엔터키 처리 텍스트
@@ -77,6 +77,7 @@ public class GameActivity extends AppCompatActivity {
     VideoView videoView; //백그라운드 영상재생 뷰
 
     AnimationController animationController;
+    ComboAnimationController comboAnimationController;
 
     MediaPlayer mediaPlayer; // 노래 플레이어 객체
     float dalay_StartTime; // 노래 시작 시간 +시간은 더 빠르게, -시간은 더 느리게 (2배속 - 1500ms기준 1140)
@@ -135,7 +136,7 @@ public class GameActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 finish();
-                Intent intent = new Intent(GameActivity.this, QuitActivity.class);
+                Intent intent = new Intent(GameActivity.this, MainActivity.class);
                 startActivity(intent);
 
                 overridePendingTransition(R.anim.fade_in, R.anim.fade_out); // 2초동안 페이드인아웃
@@ -213,6 +214,7 @@ public class GameActivity extends AppCompatActivity {
         startGame(); // 노래를 준비하고, 노래가 준비가 되면 노트를 생성하는 메소드. OnPreParedListener이 사용됨.
 
         animationController = new AnimationController();  // 애니메이션 컨트롤러 (판정텍스트가 연속실행시 버벅여서 컨트롤러로 실행중이면 끄고 초기화하게 처리)
+        comboAnimationController = new ComboAnimationController(); // 콤보 바운스 컨트롤러
 
         // gameHandler.post(gameUpdateRunnable); // 게임핸들러에 쓰레드를 입혀서 동작 - NoteView 의 Animator에서 판정시 리스트에서 삭제하게 바꿈 05/04 23:15분
         if (MainActivity.songMV != 0) { //비디오뷰가 있을때만
@@ -332,7 +334,9 @@ public class GameActivity extends AppCompatActivity {
                     note.setJudgment("Perfect"); //판정처리
                     updateScore(judgment);  //판정에따라 점수를 추가
                     increaseMaxCombo(combo); // 맥스콤보 로직
-                    animationController.startAnimation(judgmentTV, judgment, color);  // 화면중앙에 노트판정 텍스트를 애니메이션 효과로 출력하는 메소드(매개변수는 String 형태)
+                    animationController.startAnimation(judgmentTV, judgment);  // 화면중앙에 노트판정 텍스트를 애니메이션 효과로 출력하는 메소드(매개변수는 String 형태)
+                    comboAnimationController.startAnimation(comboTV);
+
                     noteManager.removeNoteFromLane(note); // lanes 배열에서 이 객체의 노트뷰를 삭제.
                 } else if (distance <= JudgmentWindow.GREAT * setSpeedJudgment) {
                     heal = 3;
@@ -345,7 +349,8 @@ public class GameActivity extends AppCompatActivity {
                     note.setJudgment("Great");
                     updateScore(judgment);
                     increaseMaxCombo(combo);
-                    animationController.startAnimation(judgmentTV, judgment, color);
+                    animationController.startAnimation(judgmentTV, judgment);
+                    comboAnimationController.startAnimation(comboTV);
                     noteManager.removeNoteFromLane(note); // lanes 배열에서 이 객체의 노트뷰를 삭제.
                 } else if (distance <= JudgmentWindow.GOOD * setSpeedJudgment) {
                     heal = 2;
@@ -358,7 +363,8 @@ public class GameActivity extends AppCompatActivity {
                     note.setJudgment("Good");
                     updateScore(judgment);
                     increaseMaxCombo(combo);
-                    animationController.startAnimation(judgmentTV, judgment, color);
+                    animationController.startAnimation(judgmentTV, judgment);
+                    comboAnimationController.startAnimation(comboTV);
                     noteManager.removeNoteFromLane(note); // lanes 배열에서 이 객체의 노트뷰를 삭제.
                 } else if (distance <= JudgmentWindow.BAD * setSpeedJudgment) {
                     damage = 5;
@@ -371,7 +377,8 @@ public class GameActivity extends AppCompatActivity {
                     note.setJudgment("BAD");
                     updateScore(judgment);
                     increaseMaxCombo(combo);
-                    animationController.startAnimation(judgmentTV, judgment, color);
+                    animationController.startAnimation(judgmentTV, judgment);
+                    comboAnimationController.startAnimation(comboTV);
                     noteManager.removeNoteFromLane(note); // lanes 배열에서 이 객체의 노트뷰를 삭제.
                 }
                 note.setJudged(true);
@@ -672,7 +679,7 @@ public class GameActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         finish();
-        Intent intent = new Intent(GameActivity.this, QuitActivity.class);
+        Intent intent = new Intent(GameActivity.this, MainActivity.class);
         startActivity(intent);
 
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out); // 2초동안 페이드인아웃

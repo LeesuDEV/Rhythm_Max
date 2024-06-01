@@ -33,3 +33,6 @@ app/google-services.json
 
 # MusicFile
 res/raw/*
+
+*.apk
+*.zip

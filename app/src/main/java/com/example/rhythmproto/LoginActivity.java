@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -30,11 +31,13 @@ import kotlin.jvm.functions.Function2;
 public class LoginActivity extends AppCompatActivity {
     private static final String TAG = "LoginActivity";
     private View loginButton, startup;
+    TextView logOutBtn;
     private TextView nickName;
     static String userId; //유저 아이디 전역변수
     static String userName; //유저 닉네임 전역변수
 
     private ImageView loginTV, registerTV,titleCircle;
+    FrameLayout kakaoLayout,simpleLoginForm;
 
     FirebaseFirestore firestore = FirebaseFirestore.getInstance(); // 파이어스토어 인스턴스 참조
 
@@ -45,8 +48,11 @@ public class LoginActivity extends AppCompatActivity {
 
         titleCircle = findViewById(R.id.titleCircle);
         loginButton = findViewById(R.id.login);
+        logOutBtn = findViewById(R.id.logOutBtn);
         nickName = findViewById(R.id.nickname);
         startup = findViewById(R.id.startup);
+        kakaoLayout = findViewById(R.id.kakaoLayout);
+        simpleLoginForm = findViewById(R.id.simpleLoginForm);
 
         loginTV = findViewById(R.id.simpleAccountLogin);
         registerTV = findViewById(R.id.simpleAccountRegister);
@@ -101,6 +107,27 @@ public class LoginActivity extends AppCompatActivity {
             }
         }); //카카오 최초로그인 버튼
 
+        logOutBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                UserApiClient.getInstance().logout(throwable -> {
+                    if (throwable != null) {
+                        //로그아웃 실패
+                        Log.e("Failed Logout Kakao",String.valueOf(throwable));
+                    } else {
+                        //로그아웃 성공
+                        Log.d("Success","로그아웃 성공");
+                        Toast.makeText(LoginActivity.this,"로그아웃에 성공했습니다.",Toast.LENGTH_SHORT).show();
+
+                        nickName.setText(null);
+                        simpleLoginForm.setVisibility(View.VISIBLE);
+                        kakaoLayout.setVisibility(View.GONE);
+                    }
+                    return null;
+                });
+            }
+        });
+
         updateKakaoLoginUi();
     }
 
@@ -111,8 +138,8 @@ public class LoginActivity extends AppCompatActivity {
                 // 로그인이 되어있으면
                 if (user != null) {  // 유저데이터가 있다면
                     nickName.setText(user.getKakaoAccount().getProfile().getNickname() + " 님"); //닉네임 텍스트에 유저이름 설정
-                    loginButton.setVisibility(View.GONE); //카카오 로그인버튼 비활성화
-                    startup.setVisibility(View.VISIBLE); //해당계정으로 시작 버튼 활성화
+                    simpleLoginForm.setVisibility(View.GONE);
+                    kakaoLayout.setVisibility(View.VISIBLE);
                     startup.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -125,8 +152,8 @@ public class LoginActivity extends AppCompatActivity {
                 } else {
                     // 로그인이 되어 있지 않다면 위와 반대로
                     nickName.setText(null);
-                    loginButton.setVisibility(View.VISIBLE);
-                    startup.setVisibility(View.GONE);
+                    simpleLoginForm.setVisibility(View.VISIBLE);
+                    kakaoLayout.setVisibility(View.GONE);
                 }
                 return null;
             }
@@ -199,6 +226,9 @@ public class LoginActivity extends AppCompatActivity {
         this.userName = userName;
 
         startActivity(intent); //인턴트 시작
+
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out); // 2초동안 페이드인아웃
+
         finish();
     } // 인턴트 시작하는 메소드
 

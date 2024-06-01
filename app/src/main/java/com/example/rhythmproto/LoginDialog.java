@@ -65,6 +65,9 @@ public class LoginDialog extends Dialog {
         activity.finish();  // 현재 액티비티 종료
 
         context.startActivity(intent); //인턴트 시작
+
+        activity.overridePendingTransition(R.anim.fade_in, R.anim.fade_out); // 2초동안 페이드인아웃
+
         dismiss(); //다이어로그 닫기
     } // 인턴트 시작하는 메소드
 }

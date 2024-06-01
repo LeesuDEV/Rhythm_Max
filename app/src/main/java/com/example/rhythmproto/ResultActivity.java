@@ -1,7 +1,11 @@
 package com.example.rhythmproto;
 
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -116,6 +120,25 @@ public class ResultActivity extends AppCompatActivity {
 
         setRank(accuracy_double, resultRank, rankImageView); // 정확도를 기반으로 resultRank에 랭크를 입력해주고 텍스트뷰에 표시 해주는 메소드
 
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                ObjectAnimator zoomIn = ObjectAnimator.ofFloat(rankImageView, "alpha", 0f, 1f);
+                zoomIn.setDuration(1500);
+
+                AnimatorSet animatorSet = new AnimatorSet();
+                animatorSet.playTogether(zoomIn); //동시에 실행하도록 세팅
+
+                animatorSet.start(); // 애니메이션 시작
+                Log.d("startAnima","anima");
+            }
+        },500);
+
+        if (MainActivity.difficulty == 1) {
+            MainActivity.easyModDifficultyColor(MainActivity.songDifficulty, difficultyTV);
+        } else {
+            MainActivity.hardModDifficultyColor(MainActivity.songDifficulty, difficultyTV);
+        } //이지모드는 이지모드색깔로 텍스트뷰 설정, 하드모드는 하드모드 색깔로 텍스트뷰 설정
 
         updateBestScore(); //최고기록 DB등록 메소드
 

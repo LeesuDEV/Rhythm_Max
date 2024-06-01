@@ -1,12 +1,20 @@
 package com.example.rhythmproto;
 
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -31,6 +39,7 @@ public class SelectSongDialog extends Dialog {
     FirebaseFirestore firestore = FirebaseFirestore.getInstance(); // 파이어스토어 인스턴스 참조
     Activity activity;
     Context context;
+    LinearLayout rankBtn;
 
     public SelectSongDialog(Context context) {
         super(context);
@@ -56,9 +65,31 @@ public class SelectSongDialog extends Dialog {
         myBestRateTV = findViewById(R.id.myBestRateTV);
         myBestRankImg = findViewById(R.id.myBestRankImg);
 
+        myBestRankImg.setAlpha(0f);
+
+        ObjectAnimator zoomIn = ObjectAnimator.ofFloat(myBestRankImg, "alpha", 0f, 1f);
+        zoomIn.setDuration(1500);
+
+        AnimatorSet animatorSet = new AnimatorSet();
+        animatorSet.playTogether(zoomIn); //동시에 실행하도록 세팅
+
+        animatorSet.start(); // 애니메이션 시작
+
+        rankBtn = findViewById(R.id.rankBtn);
+
+        rankBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                RankingDialog dialog = new RankingDialog(context);
+                dialog.show();
+                dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT)); //다이어로그 배경 투명처리
+                dismiss();
+            }
+        });
+
         activity = (Activity) context;
 
-       // songImageView.setImageResource(MainActivity.songImage);  // 선택된곡의 이미지 세팅
+        // songImageView.setImageResource(MainActivity.songImage);  // 선택된곡의 이미지 세팅
         songNameTV.setText(MainActivity.songName);  // 선택된곡의 이름 세팅
 
         MovingText.moveText(songNameTV); //옆으로 슬라이드 되는 텍스트뷰
@@ -105,7 +136,7 @@ public class SelectSongDialog extends Dialog {
                         break;
                     case 5:
                         MainActivity.speedIndex = 6;
-                        MainActivity.setSpeed = 857;
+                        MainActivity.setSpeed = 750; //기존값 857
                         MainActivity.setSpeedJudgment = 3.5f;
                         setSpeedBtn.setImageResource(R.drawable.speedbtn_35x_img);
                         break;
@@ -153,14 +184,22 @@ public class SelectSongDialog extends Dialog {
         startBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                if (MainActivity.mediaPlayer != null) {
+                    MainActivity.mediaPlayer.stop();
+                    MainActivity.mediaPlayer.release();
+                    MainActivity.mediaPlayer = null;
+                    Log.d("finish_Song", "finish");
+                }
+
                 MainActivity.notes = OsuFileParser.parseOsuFile(context, MainActivity.noteData);  // 선택된곡 노트데이터를 리스트에 삽입
                 Intent intent = new Intent(context, LoadingActivity.class); // 인턴트생성
 
-                activity.finish();  // 현재 액티비티 종료
+                context.startActivity(intent);
 
                 activity.overridePendingTransition(R.anim.fade_in, R.anim.fade_out); // 2초동안 페이드인아웃
 
-                context.startActivity(intent);
+                activity.finish();  // 현재 액티비티 종료
 
                 dismiss();
             }
@@ -179,9 +218,17 @@ public class SelectSongDialog extends Dialog {
                 .collection("setting")
                 .document("mode")
                 .set(setting, SetOptions.merge()); // 유저 곡세팅을 업로드
+
         MainActivity.song_difficulty_Main.setVisibility(View.VISIBLE);
         MainActivity.song_name_Main.setVisibility(View.VISIBLE);
+
+        Animation fadeIn = AnimationUtils.loadAnimation(context, R.anim.fade_in_text);
+        fadeIn.setDuration(500);
+        MainActivity.song_name_Main.startAnimation(fadeIn);
+        MainActivity.song_difficulty_Main.startAnimation(fadeIn);
+
         super.dismiss();
+
     }
 
     public void loadBestScore() {
@@ -197,10 +244,10 @@ public class SelectSongDialog extends Dialog {
                         myBestRateTV.setText(bestAccuracy); //최고정확도를 가져옴
                         myBestScoreTV.setText(bestScore); //최고점수를 가져옴
 
-                        ResultActivity.setRank(Double.parseDouble(bestAccuracy),bestRank,myBestRankImg); // 정확도를 기반으로 resultRank에 랭크를 입력해주고 텍스트뷰에 표시 해주는 메소드
+                        ResultActivity.setRank(Double.parseDouble(bestAccuracy), bestRank, myBestRankImg); // 정확도를 기반으로 resultRank에 랭크를 입력해주고 텍스트뷰에 표시 해주는 메소드
                     } else { // 최고기록이 없다면 (데이터 null)
-                        myBestRateTV.setText("No Data"); //최고정확도를 비움
-                        myBestScoreTV.setText("No Data"); //최고점수를 비움
+                        myBestRateTV.setText("-"); //최고정확도를 비움
+                        myBestScoreTV.setText("-"); //최고점수를 비움
                         myBestRankImg.setVisibility(View.INVISIBLE); //최고랭크를 비움
                     }
                 }).addOnFailureListener(e -> {

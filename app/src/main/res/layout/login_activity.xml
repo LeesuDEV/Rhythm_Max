@@ -4,9 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/main_background_img"
     android:orientation="vertical"
-    tools:context=".LoginActivity"
-    android:background="@drawable/main_background_img">
+    tools:context=".LoginActivity">
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -19,112 +19,132 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:src="@drawable/login_circle_img"/>
+            android:src="@drawable/login_circle_img" />
+
         <ImageView
             android:layout_width="330dp"
             android:layout_height="330dp"
-            android:src="@drawable/login_gamelogo_img"
             android:layout_gravity="center"
-            android:scaleType="fitXY"
             android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"/>
+            android:layout_marginRight="10dp"
+            android:scaleType="fitXY"
+            android:src="@drawable/login_gamelogo_img" />
 
     </FrameLayout>
 
-    <LinearLayout
+    <FrameLayout
+        android:id="@+id/kakaoLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_marginTop="20dp"
         android:gravity="center|top"
         android:orientation="vertical"
-        android:layout_marginTop="20dp">
+        android:visibility="visible">
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/netmarble_m"
             android:text="환영합니다"
             android:textAlignment="center"
+            android:layout_gravity="center|top"
+            android:layout_marginTop="10dp"
+            android:textColor="#FFFFFF"
             android:textSize="45dp"
-            android:textStyle="bold"
-            android:fontFamily="@font/netmarble_m"
-            android:textColor="#FFFFFF"/>
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/nickname"
-            android:layout_marginTop="20dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Empty 님"
-            android:textSize="30dp"
-            android:textColor="#FFFFFF"
+            android:layout_marginTop="70dp"
+            android:fontFamily="@font/netmarble_m"
             android:paddingBottom="10dp"
-            android:fontFamily="@font/netmarble_m"/>
-
-        <ImageView
-            android:id="@+id/login"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:srcCompat="@drawable/kakao_login_medium_wide"
-            android:visibility="gone"/>
+            android:layout_gravity="center|top"
+            android:text="Empty 님"
+            android:textColor="#FFFFFF"
+            android:textSize="30dp" />
 
         <Button
             android:id="@+id/startup"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="해당 카카오계정으로 계속하기"
-            android:textSize="15dp"
-            android:textColor="#ffffff"
-            android:visibility="visible"
             android:background="@drawable/login_keep_button_shape"
             android:fontFamily="@font/netmarble_m"
             android:paddingLeft="15dp"
             android:paddingRight="15dp"
-            />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:gravity="center">
-        <!--TextView
-            android:id="@+id/simpleAccountLogin"
-            android:layout_width="200dp"
-            android:layout_height="wrap_content"
-            android:text="간편계정으로 시작하기"
-            android:textSize="18dp"
-            android:textStyle="bold"
-            android:textAlignment="center"
-            android:layout_marginTop="10dp"
-            android:textColor="#FFFFFF"
-            android:fontFamily="@font/netmarble_m"/>
-        <TextView
-            android:id="@+id/simpleAccountRegister"
-            android:layout_width="200dp"
-            android:layout_height="wrap_content"
-            android:text="간편계정 가입"
-            android:textColor="#FFFFFF"
-            android:textSize="16dp"
-            android:textStyle="bold"
-            android:textAlignment="center"
-            android:layout_marginTop="10dp"
-            android:fontFamily="@font/netmarble_m"/-->
+            android:layout_gravity="center|top"
+            android:layout_marginTop="120dp"
+            android:text="해당 카카오계정으로 계속하기"
+            android:textColor="#ffffff"
+            android:textSize="15dp"
+            android:visibility="visible"/>
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:src="@drawable/titilebar"
-            android:layout_marginLeft="40dp"
-            android:layout_marginRight="40dp"/>
+            android:layout_gravity="center|bottom"
+            android:layout_marginBottom="50dp"
+            android:layout_marginLeft="100dp"
+            android:layout_marginRight="100dp"
+           android:layout_marginTop="55dp"
+            android:src="@drawable/titilebar" />
+
+        <TextView
+            android:id="@+id/logOutBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/netmarble_m"
+            android:layout_gravity="center|bottom"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp"
+            android:layout_marginBottom="18dp"
+            android:text="로그아웃"
+            android:textColor="#ffffff"
+            android:textSize="25sp"
+            android:visibility="visible"/>
+
+    </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/simpleLoginForm"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone">
+
 
         <ImageView
             android:id="@+id/simpleAccountLogin"
             android:layout_width="200dp"
-            android:layout_height="30dp"
-            android:src="@drawable/login_logo_img"/>
+            android:layout_height="40dp"
+            android:layout_gravity="center|top"
+            android:layout_marginTop="100dp"
+            android:src="@drawable/login_logo_img" />
+
+
         <ImageView
             android:id="@+id/simpleAccountRegister"
-            android:layout_marginTop="10dp"
-            android:layout_width="200dp"
-            android:layout_height="30dp"
-            android:src="@drawable/login_register_logo_img"/>
-    </LinearLayout>
+            android:layout_width="250dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center|top"
+            android:layout_marginTop="155dp"
+            android:src="@drawable/login_register_logo_img" />
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center|bottom"
+            android:layout_marginLeft="40dp"
+            android:layout_marginRight="40dp"
+            android:layout_marginBottom="100dp"
+            android:src="@drawable/titilebar" />
+
+        <ImageView
+            android:id="@+id/login"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center|bottom"
+            android:layout_marginBottom="35dp"
+            android:visibility="visible"
+            app:srcCompat="@drawable/kakao_login_medium_wide" />
+    </FrameLayout>
 </LinearLayout>
