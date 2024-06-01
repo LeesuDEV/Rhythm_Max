@@ -188,23 +188,22 @@
                             android:layout_weight="2"
                             android:gravity="center"
                             android:orientation="horizontal"
-                            android:weightSum="3">
+                            android:weightSum="1">
 
-                            <View
+                            <!--View
                                 android:layout_width="0dp"
                                 android:layout_height="match_parent"
-                                android:layout_weight="0.2" />
+                                android:layout_weight="0.2" /-->
 
                             <ImageView
                                 android:id="@+id/imageView2"
                                 android:layout_width="0dp"
                                 android:layout_height="match_parent"
-                                android:layout_weight="0.7"
+                                android:layout_weight="0.9"
                                 android:gravity="center|center_vertical"
-                                android:padding="2dp"
-                                app:srcCompat="@drawable/ranking" />
+                                app:srcCompat="@drawable/rank" />
 
-                            <TextView
+                            <!--TextView
                                 android:layout_width="0dp"
                                 android:layout_height="match_parent"
                                 android:layout_weight="1.65"
@@ -218,7 +217,7 @@
                                 android:shadowRadius="3"
                                 android:text="RANK"
                                 android:textColor="#FFE279"
-                                android:textSize="26sp" />
+                                android:textSize="26sp" /-->
                         </LinearLayout>
                     </LinearLayout>
 
