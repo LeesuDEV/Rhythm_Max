@@ -30,6 +30,7 @@ public class RankingDialog extends Dialog {
     TextView[] textViewNum, textViewName, textViewScore, textViewAccuracy;
     ImageView selectSongImageView;
     TextView songNameTV, difficultyTV;
+    TextView rankingExitBtn;
 
     public RankingDialog(Context context) {
         super(context);
@@ -52,6 +53,15 @@ public class RankingDialog extends Dialog {
         selectSongImageView = findViewById(R.id.selectSongImageView);
         songNameTV = findViewById(R.id.songNameTV);
         difficultyTV = findViewById(R.id.difficultyTV);
+
+        rankingExitBtn = findViewById(R.id.rankingExitBtn);
+
+        rankingExitBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dismiss();
+            }
+        });
 
         selectSongImageView.setImageResource(MainActivity.songImage);
         songNameTV.setText(MainActivity.songName);

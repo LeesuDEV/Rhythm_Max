@@ -3,5 +3,5 @@
     <translate
         android:fromYDelta="100%"
         android:toYDelta="0%"
-        android:duration="300" /> <!-- 지속 시간 1000ms (1초) -->
+        android:duration="1000" /> <!-- 지속 시간 1000ms (1초) -->
 </set>

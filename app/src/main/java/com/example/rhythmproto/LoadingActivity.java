@@ -32,7 +32,7 @@ ImageView loadingIMG;
                 finish();
                 overridePendingTransition(R.anim.fade_in, R.anim.fade_out); // 2초동안 페이드인아웃
             }
-        }, 3000); //2초후 게임시작
+        }, 3000); //3초후 게임시작
     }
 
     @Override
