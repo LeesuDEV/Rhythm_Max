@@ -201,6 +201,7 @@ public class LoginActivity extends AppCompatActivity {
                         HashMap<String, Object> setting = new HashMap<>();
                         setting.put("ingame", 1.0);
                         setting.put("preview", 1.0); // 초기 인자값들
+                        setting.put("background", true);
 
                         firestore.collection("users")
                                 .document(userId)

@@ -14,6 +14,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class MissionFail extends AppCompatActivity {
 
+    AnimatorSet animatorSet;
+
     TextView gameoverTV,gotomainTV; // 게임오버,메인으로가기 텍스트뷰
 
     @Override
@@ -35,27 +37,33 @@ public class MissionFail extends AppCompatActivity {
                 overridePendingTransition(R.anim.fade_in, R.anim.fade_out); // 2초동안 페이드인아웃
             }
         });
+
+
     }
 
     public void gameOverAnimation(){
-        ObjectAnimator gameOver = ObjectAnimator.ofFloat(gameoverTV,"alpha",0f,1f); // 텍스트 애니메이션 설정
-        gameOver.setDuration(1000); //1초동안 진행
+        ObjectAnimator fadeIn = ObjectAnimator.ofFloat(gotomainTV, "alpha", 0f, 1f);
+        fadeIn.setDuration(500); // 0.5초 동안 페이드인
 
-        ObjectAnimator gotomain = ObjectAnimator.ofFloat(gotomainTV,"alpha",0f,1f);
-        gotomain.setDuration(1500);
+        ObjectAnimator stay = ObjectAnimator.ofFloat(gotomainTV, "alpha", 1f, 1f);
+        stay.setDuration(500); // 1초간 유지
 
-        AnimatorSet animatorSet = new AnimatorSet();
-        animatorSet.playSequentially(gameOver,gotomain); //AnimatorSet을 이용해 순차저긍로 애니메이션을 진행시킴
+        ObjectAnimator fadeOut = ObjectAnimator.ofFloat(gotomainTV, "alpha", 1f, 0f);
+        fadeOut.setDuration(500); // 0.5초 동안 페이드아웃
+
+        animatorSet = new AnimatorSet();
+        animatorSet.playSequentially(fadeIn, stay, fadeOut);
+
         animatorSet.addListener(new AnimatorListenerAdapter() {
             @Override
-            public void onAnimationStart(Animator animation) {
-                gameoverTV.setVisibility(View.VISIBLE);   // 애니메이터가 시작할때 게임오버가 1초동안 진행
-            }
-            @Override
             public void onAnimationEnd(Animator animation) {
-                gotomainTV.setVisibility(View.VISIBLE);  // 게임오버 애니메이터가 끝나고나면 메인으로가 1초동안 진행
+                if(animatorSet != null) {
+                    animatorSet.start();
+                }
             }
         });
         animatorSet.start();
+
+        gotomainTV.setVisibility(View.VISIBLE);
     }
 }
