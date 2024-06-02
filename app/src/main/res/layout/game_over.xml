@@ -1,47 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="@drawable/loading_background_shape"
-    tools:context=".MissionFail">
+    android:background="@drawable/rankingback"
+    android:orientation="vertical">
 
     <TextView
         android:id="@+id/gameOverTV"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="GAME OVER"
         android:layout_gravity="center"
         android:layout_marginTop="250dp"
         android:textSize="60sp"
-        android:textStyle="italic"
-        android:textColor="#BFBFBF"
-        android:visibility="visible"
         android:fontFamily="@font/netmarble_b"
-        android:textAlignment="center"
-        android:shadowDx="10"
-        android:shadowDy="10"
-        android:shadowRadius="5"
-        android:shadowColor="#000000"/>
+        android:textStyle="bold"
+        android:textColor="#FFFFFF"/>
 
     <TextView
         android:id="@+id/gotoMainTV"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginTop="50dp"
-        android:text="go to main"
-        android:textColor="#B2E8DD0D"
-        android:textStyle="bold"
-        android:textSize="30dp"
-        android:visibility="invisible"
-        android:fontFamily="@font/netmarble_b"
-        android:shadowDx="8"
-        android:shadowDy="8"
-        android:shadowRadius="5"
-        android:shadowColor="#000000"
-        />
+        android:layout_marginTop="200dp"
+        android:text="GO TO MAIN"
+        android:textAlignment="center"
+        android:textColor="#FFF5A0"
+        android:textSize="32dp"
+        android:textStyle="bold"/>
 
 </LinearLayout>
