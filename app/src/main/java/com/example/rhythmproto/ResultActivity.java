@@ -1,5 +1,7 @@
 package com.example.rhythmproto;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.content.Intent;
@@ -53,6 +55,9 @@ public class ResultActivity extends AppCompatActivity {
 
     FirebaseFirestore firestore = FirebaseFirestore.getInstance();
     String resultRank; //결과랭크
+    TextView newRecordTV;
+
+    AnimatorSet animatorSet;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -98,6 +103,7 @@ public class ResultActivity extends AppCompatActivity {
 
         gotoMainBtn = findViewById(R.id.gotoMainBtn);
         automodeTV = findViewById(R.id.automodeTV);
+        newRecordTV = findViewById(R.id.newRecordTV);
 
         /*------------ 결과창에 게임정보 입력 시작------------*/
 
@@ -134,9 +140,9 @@ public class ResultActivity extends AppCompatActivity {
                 animatorSet.playTogether(zoomIn); //동시에 실행하도록 세팅
 
                 animatorSet.start(); // 애니메이션 시작
-                Log.d("startAnima","anima");
+                Log.d("startAnima", "anima");
             }
-        },500);
+        }, 500);
 
         if (MainActivity.difficulty == 1) {
             MainActivity.easyModDifficultyColor(MainActivity.songDifficulty, difficultyTV);
@@ -181,9 +187,12 @@ public class ResultActivity extends AppCompatActivity {
                                         .collection("bestRecord")
                                         .document(MainActivity.songName)
                                         .set(record, SetOptions.merge()); // 최초 기록을 업로드
-                                Map<String,Object> bestData = new HashMap<>();
-                                bestData.put(LoginActivity.userName, score+";"+accuracy); // 최고점수 랭킹갱신을 위한 Map데이터
+                                Map<String, Object> bestData = new HashMap<>();
+                                bestData.put(LoginActivity.userName, score + ";" + accuracy); // 최고점수 랭킹갱신을 위한 Map데이터
                                 updateRanking(bestData);
+
+                                noticeNewRecord();
+
                             } else {
                                 // 최고기록보다 점수가 낮으면 아무것도 하지않음.
                             }
@@ -194,9 +203,11 @@ public class ResultActivity extends AppCompatActivity {
                                     .document(MainActivity.songName)
                                     .set(record, SetOptions.merge()); // 최초 기록을 업로드
 
-                            Map<String,Object> bestData = new HashMap<>();
-                            bestData.put(LoginActivity.userName, score+";"+accuracy); // 최초점수 랭킹갱신을 위한 Map데이터
+                            Map<String, Object> bestData = new HashMap<>();
+                            bestData.put(LoginActivity.userName, score + ";" + accuracy); // 최초점수 랭킹갱신을 위한 Map데이터
                             updateRanking(bestData);
+
+                            noticeNewRecord();
                         }
                     }).addOnFailureListener(e -> {
                                 Toast.makeText(ResultActivity.this, "error loading DB", Toast.LENGTH_SHORT).show();
@@ -207,7 +218,7 @@ public class ResultActivity extends AppCompatActivity {
         }
     }  // db의 최고기록과 비교하여 점수를 업데이트해주는 메소드 ( 기록이 없다면 결과기록등록 )
 
-    public void updateRanking(Map<String,Object> data){
+    public void updateRanking(Map<String, Object> data) {
         firestore.collection("ranking").document(MainActivity.songName) // 선택된곡 랭킹정보 불러오기
                 .update(data).addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
@@ -232,4 +243,38 @@ public class ResultActivity extends AppCompatActivity {
             rankImageView.setImageResource(R.drawable.rank_d); //70점 미만일시 D
         }
     } //정확도,텍스트뷰를 받아 랭크를 반환해주는 메소드
+
+    public void noticeNewRecord(){
+        ObjectAnimator fadeIn = ObjectAnimator.ofFloat(newRecordTV, "alpha", 0f, 1f);
+        fadeIn.setDuration(500); // 0.5초 동안 페이드인
+
+        ObjectAnimator stay = ObjectAnimator.ofFloat(newRecordTV, "alpha", 1f, 1f);
+        stay.setDuration(500); // 1초간 유지
+
+        ObjectAnimator fadeOut = ObjectAnimator.ofFloat(newRecordTV, "alpha", 1f, 0f);
+        fadeOut.setDuration(500); // 0.5초 동안 페이드아웃
+
+        animatorSet = new AnimatorSet();
+        animatorSet.playSequentially(fadeIn, stay, fadeOut);
+
+        animatorSet.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                if(animatorSet != null) {
+                    animatorSet.start();
+                }
+            }
+        });
+        animatorSet.start();
+
+        newRecordTV.setVisibility(View.VISIBLE);
+    } //최고기록 갱신을 알리는 텍스트뷰 발광효과
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        if (animatorSet != null) {
+            animatorSet = null;
+        }
+    }
 }

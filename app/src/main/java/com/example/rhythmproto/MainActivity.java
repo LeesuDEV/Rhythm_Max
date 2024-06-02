@@ -478,7 +478,7 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
         dialogView.animate()
                 .translationY(0)
                 .setInterpolator(new DecelerateInterpolator())
-                .setDuration(200)
+                .setDuration(1000)
                 .start();
 
 //디스플레이 해상도를 가져와서

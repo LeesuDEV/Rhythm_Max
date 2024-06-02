@@ -470,4 +470,17 @@
         android:textColor="#ff0000"
         android:textSize="18dp"
         android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/newRecordTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center|top"
+        android:layout_marginTop="98dp"
+        android:fontFamily="@font/netmarble_m"
+        android:text="NewRecord!!"
+        android:textColor="#F9E96F"
+        android:textSize="20dp"
+        android:visibility="gone" />
+
 </FrameLayout>
